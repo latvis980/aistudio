@@ -1,3 +1,97 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ─── Onest font from Google Fonts ─────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700&display=swap');
+
+/* ─── Base styles ──────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-cream text-ink font-onest;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  ::selection {
+    background-color: rgba(199, 91, 43, 0.15);
+  }
+}
+
+/* ─── Component utilities ──────────────────────────── */
+@layer components {
+  /* Horizontal rule matching the design */
+  .divider {
+    @apply border-t border-border;
+  }
+
+  /* The signature bracket link: [ TEXT ] */
+  .bracket-link {
+    @apply text-nav uppercase tracking-wide-nav text-muted
+           hover:text-ink transition-colors duration-300
+           cursor-pointer inline-flex items-center gap-1;
+  }
+  .bracket-link::before {
+    content: '[\00a0';
+  }
+  .bracket-link::after {
+    content: '\00a0]';
+  }
+
+  /* Tag labels: RESIDENTIAL, COMPLETED, MEDIA */
+  .tag-label {
+    @apply text-tag uppercase tracking-wide-tag text-muted;
+  }
+
+  /* Content area right of sidebar */
+  .content-area {
+    @apply ms-0 lg:ms-sidebar;
+  }
+
+  /* Page title: "works", "press", "news" */
+  .page-title {
+    @apply text-page-title lowercase font-light text-ink;
+  }
+
+  /* Section label: "about", "founder", "project info" */
+  .section-label {
+    @apply text-section-label lowercase font-normal text-ink;
+  }
+}
+
+/* ─── RTL adjustments ──────────────────────────────── */
+[dir='rtl'] .bracket-link::before {
+  content: ']\00a0';
+}
+[dir='rtl'] .bracket-link::after {
+  content: '\00a0[';
+}
+
+/* ─── Scrollbar (subtle) ───────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+/* ─── Image hover scale (used on project cards) ──── */
+.img-hover-scale {
+  @apply overflow-hidden;
+}
+.img-hover-scale img {
+  @apply transition-transform duration-600 ease-out;
+}
+.img-hover-scale:hover img {
+  transform: scale(1.04);
+}
