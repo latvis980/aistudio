@@ -16,7 +16,12 @@ interface Props {
   params: { slug: string }
 }
 
+export const dynamicParams = true
+
 export async function generateStaticParams() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_KEY) {
+    return []
+  }
   const supabase = createServerClient()
   const { data } = await supabase.from('projects').select('slug')
   return (data || []).map((p) => ({ slug: p.slug }))

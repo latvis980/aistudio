@@ -6,6 +6,7 @@ import { Lang } from './types'
  *
  * Usage: getField(project, 'title', 'ru') → title_ru or title_en
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getField<T extends Record<string, any>>(
   item: T,
   field: string,

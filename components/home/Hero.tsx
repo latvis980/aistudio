@@ -1,15 +1,13 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Lang } from '@/lib/types'
 
 interface HeroProps {
-  lang: Lang
   tagline: string
   description: string
 }
 
-export default function Hero({ lang, tagline, description }: HeroProps) {
+export default function Hero({ tagline, description }: HeroProps) {
   return (
     <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 pt-8 lg:pt-16 pb-16 lg:pb-24">
       <motion.div

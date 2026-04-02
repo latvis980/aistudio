@@ -27,7 +27,7 @@ function GalleryItem({
   const isInView = useInView(ref, { once: true, margin: '-50px' })
 
   const caption = image.caption_en
-    ? getField(image as any, 'caption', lang)
+    ? getField(image, 'caption', lang)
     : `${projectTitle} — ${index + 1}`
 
   return (
