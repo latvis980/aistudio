@@ -39,8 +39,12 @@ export default async function StudioPage() {
     {}
   )
 
-  const aboutText = contentMap.about ? getField(contentMap.about, 'content', lang) : ''
-  const founderText = contentMap.founder ? getField(contentMap.founder, 'content', lang) : ''
+  const defaultAboutText = `AI Studio is an international practice that works across architecture, urbanism, and interior design. The studio develops contemporary, context-driven projects, ranging from private residences to large-scale, mixed-use and urban developments. Its work is defined by a strong clarity of concept, spatial precision, and a commitment to exceptional quality.\nToday, AI Studio operates globally, collaborating with developers, consultants, and cultural institutions across Europe, the UK, the Middle East, Asia, and the Americas. Each project begins with a careful reading of its physical and cultural context, ensuring that their contemporary designs are deeply rooted in unique architectural settings.`
+
+  const defaultFounderText = `AI Studio is an international practice that works across architecture, urbanism, and interior design. The studio develops contemporary, context-driven projects, ranging from private residences to large-scale, mixed-use and urban developments. Its work is defined by a strong clarity of concept, spatial precision, and a commitment to exceptional quality.\nToday, AI Studio operates globally, collaborating with developers, consultants, and cultural institutions across Europe, the UK, the Middle East, Asia, and the Americas. Each project begins with a careful reading of its physical and cultural context, ensuring that their contemporary designs are deeply rooted in unique architectural settings.`
+
+  const aboutText = contentMap.about ? getField(contentMap.about, 'content', lang) || defaultAboutText : defaultAboutText
+  const founderText = contentMap.founder ? getField(contentMap.founder, 'content', lang) || defaultFounderText : defaultFounderText
 
   return (
     <>
