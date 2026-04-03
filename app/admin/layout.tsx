@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
+import { AdminProjectsProvider } from './projects-context'
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: '◻' },
@@ -164,7 +165,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             {/* Page content */}
             <main className="flex-1 px-4 lg:px-8 py-6">
-              {children}
+              <AdminProjectsProvider>
+                {children}
+              </AdminProjectsProvider>
             </main>
           </div>
         </div>
