@@ -5,7 +5,7 @@ import { getLangFromCookies } from '@/lib/utils'
 import { t } from '@/lib/i18n'
 import { NewsItem as NewsItemType } from '@/lib/types'
 import Breadcrumb from '@/components/layout/Breadcrumb'
-import NewsItemCard from '@/components/ui/NewsItem'
+import NewsList from '@/components/ui/NewsList'
 
 export const metadata: Metadata = {
   title: 'News',
@@ -26,11 +26,7 @@ export default async function NewsPage() {
     <>
       <Breadcrumb crumbs={[{ label: t('news', lang) }]} lang={lang} />
       <h1 className="page-title mb-8">{t('news', lang)}</h1>
-      <div>
-        {((items as NewsItemType[]) || []).map((item) => (
-          <NewsItemCard key={item.id} item={item} lang={lang} />
-        ))}
-      </div>
+      <NewsList items={(items as NewsItemType[]) || []} lang={lang} />
     </>
   )
 }
