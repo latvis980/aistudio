@@ -6,6 +6,11 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import { Project, Typology, Status } from '@/lib/types'
 import { Toggle, InlineSelect, Toast } from '@/components/admin/AdminUI'
+import { useAdminProjects } from '../projects-context'
+
+function thumbnailUrl(url: string): string {
+  return url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?width=100&height=100'
+}
 
 const TYPOLOGIES: { value: Typology; label: string }[] = [
   { value: 'residential', label: 'Residential' },
@@ -30,13 +35,25 @@ export default function AdminProjectsPage() {
   const searchParams = useSearchParams()
   const filterParam = searchParams.get('filter') as Filter | null
 
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
+  const { projects: cachedProjects, setProjects: cacheProjects } = useAdminProjects()
+  const [projects, setProjectsLocal] = useState<Project[]>(cachedProjects || [])
+  const [loading, setLoading] = useState(!cachedProjects)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<Filter>(filterParam || 'all')
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
+  // Sync local state to cache on every change
+  const setProjects = useCallback((update: Project[] | ((prev: Project[]) => Project[])) => {
+    setProjectsLocal((prev) => {
+      const next = typeof update === 'function' ? update(prev) : update
+      cacheProjects(next)
+      return next
+    })
+  }, [cacheProjects])
+
   const loadProjects = useCallback(async () => {
+    if (cachedProjects) return // already cached — skip fetch
+
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -48,7 +65,7 @@ export default function AdminProjectsPage() {
       setProjects(data || [])
     }
     setLoading(false)
-  }, [])
+  }, [cachedProjects, setProjects])
 
   useEffect(() => { loadProjects() }, [loadProjects])
 
@@ -64,7 +81,7 @@ export default function AdminProjectsPage() {
       return
     }
 
-    // Optimistic update
+    // Optimistic update (also syncs to context cache)
     setProjects((prev) =>
       prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
     )
@@ -284,7 +301,7 @@ export default function AdminProjectsPage() {
                       <div className="w-12 h-8 rounded overflow-hidden bg-gray-100">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={project.cover_image}
+                          src={thumbnailUrl(project.cover_image)}
                           alt=""
                           className="w-full h-full object-cover"
                         />
