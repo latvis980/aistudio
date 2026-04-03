@@ -1,14 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Anthropic from '@anthropic-ai/sdk'
 
-const anthropic = new Anthropic()
+const DEEPL_API_URL = 'https://api-free.deepl.com/v2/translate'
+
+// DeepL language codes for target languages
+const TARGET_LANGS = [
+  { code: 'ru', deepl: 'RU' },
+  { code: 'ar', deepl: 'AR' },
+  { code: 'zh', deepl: 'ZH' },
+  { code: 'es', deepl: 'ES' },
+] as const
 
 /**
  * POST /api/translate
  * Body: { fields: { title: "...", description: "...", body: "..." } }
  * Returns: { translations: { title: { ru: "...", ar: "...", zh: "...", es: "..." }, ... } }
+ *
+ * Requires DEEPL_API_KEY env var.
+ * Uses the free-tier endpoint; swap to api.deepl.com for Pro plans.
  */
 export async function POST(request: NextRequest) {
+  const apiKey = process.env.DEEPL_API_KEY
+  if (!apiKey) {
+    return NextResponse.json({ error: 'DEEPL_API_KEY is not configured' }, { status: 500 })
+  }
+
   try {
     const { fields } = await request.json()
 
@@ -17,48 +32,55 @@ export async function POST(request: NextRequest) {
     }
 
     // Only translate non-empty fields
-    const toTranslate = Object.entries(fields as Record<string, string>)
+    const entries = Object.entries(fields as Record<string, string>)
       .filter(([, v]) => typeof v === 'string' && v.trim().length > 0)
 
-    if (toTranslate.length === 0) {
+    if (entries.length === 0) {
       return NextResponse.json({ translations: {} })
     }
 
-    const fieldList = toTranslate
-      .map(([key, value]) => `### ${key}\n${value}`)
-      .join('\n\n')
+    const fieldKeys = entries.map(([k]) => k)
+    const fieldTexts = entries.map(([, v]) => v)
 
-    const prompt = `You are a professional translator for an architectural studio's website. Translate the following content fields from English into Russian (ru), Arabic (ar), Simplified Chinese (zh), and Spanish (es).
+    // Translate to all target languages in parallel (one request per language)
+    const results = await Promise.all(
+      TARGET_LANGS.map(async ({ code, deepl }) => {
+        const res = await fetch(DEEPL_API_URL, {
+          method: 'POST',
+          headers: {
+            Authorization: `DeepL-Auth-Key ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: fieldTexts,
+            source_lang: 'EN',
+            target_lang: deepl,
+            // Preserve formatting (markdown, newlines)
+            tag_handling: 'text',
+            preserve_formatting: true,
+          }),
+        })
 
-Preserve all formatting exactly — line breaks, markdown (bold, italic, headers), and special characters. For architectural and technical terms, use the correct professional terminology in each target language.
+        if (!res.ok) {
+          const err = await res.text()
+          throw new Error(`DeepL error for ${deepl}: ${res.status} ${err}`)
+        }
 
-Fields to translate:
-${fieldList}
+        const data = await res.json() as { translations: { text: string }[] }
+        return { code, texts: data.translations.map((t) => t.text) }
+      })
+    )
 
-Return a single valid JSON object with this exact structure — no markdown, no explanation, just the JSON:
-{
-  "fieldName1": { "ru": "...", "ar": "...", "zh": "...", "es": "..." },
-  "fieldName2": { "ru": "...", "ar": "...", "zh": "...", "es": "..." }
-}
-
-Replace fieldName1, fieldName2, etc. with the actual field names from above.`
-
-    const message = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 4096,
-      messages: [{ role: 'user', content: prompt }],
-    })
-
-    const text = message.content[0].type === 'text' ? message.content[0].text : ''
-
-    // Extract JSON from response (handles cases where model adds surrounding text)
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) {
-      console.error('No JSON in translation response:', text)
-      return NextResponse.json({ error: 'Unexpected response format from translation model' }, { status: 500 })
+    // Reshape: { fieldKey: { ru: "...", ar: "...", zh: "...", es: "..." } }
+    const translations: Record<string, Record<string, string>> = {}
+    for (let i = 0; i < fieldKeys.length; i++) {
+      const key = fieldKeys[i]
+      translations[key] = {}
+      for (const { code, texts } of results) {
+        translations[key][code] = texts[i]
+      }
     }
 
-    const translations = JSON.parse(jsonMatch[0])
     return NextResponse.json({ translations })
   } catch (error) {
     console.error('Translation error:', error)
