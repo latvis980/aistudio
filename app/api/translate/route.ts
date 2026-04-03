@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const DEEPL_API_URL = 'https://api-free.deepl.com/v2/translate'
+// Auto-detect endpoint: free keys end with ":fx", paid keys don't
+function getDeepLUrl(apiKey: string): string {
+  const base = apiKey.endsWith(':fx')
+    ? 'https://api-free.deepl.com'
+    : 'https://api.deepl.com'
+  return `${base}/v2/translate`
+}
 
 // DeepL language codes for target languages
 const TARGET_LANGS = [
   { code: 'ru', deepl: 'RU' },
   { code: 'ar', deepl: 'AR' },
-  { code: 'zh', deepl: 'ZH' },
+  { code: 'zh', deepl: 'ZH-HANS' },
   { code: 'es', deepl: 'ES' },
 ] as const
 
@@ -16,13 +22,15 @@ const TARGET_LANGS = [
  * Returns: { translations: { title: { ru: "...", ar: "...", zh: "...", es: "..." }, ... } }
  *
  * Requires DEEPL_API_KEY env var.
- * Uses the free-tier endpoint; swap to api.deepl.com for Pro plans.
+ * Auto-detects free vs paid endpoint based on key format.
  */
 export async function POST(request: NextRequest) {
   const apiKey = process.env.DEEPL_API_KEY
   if (!apiKey) {
     return NextResponse.json({ error: 'DEEPL_API_KEY is not configured' }, { status: 500 })
   }
+
+  const deeplUrl = getDeepLUrl(apiKey)
 
   try {
     const { fields } = await request.json()
@@ -45,7 +53,7 @@ export async function POST(request: NextRequest) {
     // Translate to all target languages in parallel (one request per language)
     const results = await Promise.all(
       TARGET_LANGS.map(async ({ code, deepl }) => {
-        const res = await fetch(DEEPL_API_URL, {
+        const res = await fetch(deeplUrl, {
           method: 'POST',
           headers: {
             Authorization: `DeepL-Auth-Key ${apiKey}`,
@@ -55,8 +63,6 @@ export async function POST(request: NextRequest) {
             text: fieldTexts,
             source_lang: 'EN',
             target_lang: deepl,
-            // Preserve formatting (markdown, newlines)
-            tag_handling: 'text',
             preserve_formatting: true,
           }),
         })
