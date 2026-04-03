@@ -143,7 +143,7 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
         {totalPages > 1 && (
           <div className="flex items-center gap-6 mt-12 pt-8 border-t border-border">
             <button
-              onClick={() => setPage((p) => p - 1)}
+              onClick={() => { setPage((p) => p - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
               disabled={page === 1}
               className={cn('bracket-link', page === 1 && 'opacity-30 cursor-not-allowed pointer-events-none')}
             >
@@ -153,7 +153,7 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
               {page} / {totalPages}
             </span>
             <button
-              onClick={() => setPage((p) => p + 1)}
+              onClick={() => { setPage((p) => p + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
               disabled={page === totalPages}
               className={cn('bracket-link', page === totalPages && 'opacity-30 cursor-not-allowed pointer-events-none')}
             >
