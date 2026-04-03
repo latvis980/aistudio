@@ -162,14 +162,14 @@ export default function PressEditorPage() {
           <legend className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2">{label}</legend>
           <div>
             <label className="block text-xs text-gray-500 mb-1">Title</label>
-            <input type="text" value={(item as Record<string, unknown>)[`title_${code}`] as string || ''}
+            <input type="text" value={(item as unknown as Record<string, unknown>)[`title_${code}`] as string || ''}
               onChange={(e) => updateLocal(`title_${code}`, e.target.value)}
               dir={code === 'ar' ? 'rtl' : 'ltr'}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]" />
           </div>
           <div>
             <label className="block text-xs text-gray-500 mb-1">Description</label>
-            <textarea value={(item as Record<string, unknown>)[`description_${code}`] as string || ''}
+            <textarea value={(item as unknown as Record<string, unknown>)[`description_${code}`] as string || ''}
               onChange={(e) => updateLocal(`description_${code}`, e.target.value)}
               dir={code === 'ar' ? 'rtl' : 'ltr'} rows={3}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md resize-y focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]" />
