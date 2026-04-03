@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import { PressItem, PressCategory } from '@/lib/types'
-import { Toggle, StatusBadge, InlineSelect, ProjectPicker, Toast } from '@/components/admin/AdminUI'
+import { Toggle, InlineSelect, ProjectPicker, Toast } from '@/components/admin/AdminUI'
 
 const CATEGORIES: { value: PressCategory; label: string }[] = [
   { value: 'media', label: 'Media' },

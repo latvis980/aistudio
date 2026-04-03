@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import { Project, Typology, Status } from '@/lib/types'
-import { Toggle, StatusBadge, InlineSelect, Toast } from '@/components/admin/AdminUI'
+import { Toggle, InlineSelect, Toast } from '@/components/admin/AdminUI'
 
 const TYPOLOGIES: { value: Typology; label: string }[] = [
   { value: 'residential', label: 'Residential' },
@@ -27,7 +27,6 @@ const STATUSES: { value: Status; label: string }[] = [
 type Filter = 'all' | 'hidden' | 'featured' | 'nocover' | Typology | Status
 
 export default function AdminProjectsPage() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const filterParam = searchParams.get('filter') as Filter | null
 
@@ -109,7 +108,8 @@ export default function AdminProjectsPage() {
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
       return next
     })
   }
