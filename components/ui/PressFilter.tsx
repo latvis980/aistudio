@@ -14,9 +14,11 @@ interface PressFilterProps {
 }
 
 const TABS = ['all', 'featured', 'media', 'interview', 'awards'] as const
+const PAGE_SIZE = 15
 
 export default function PressFilter({ items, lang, initialCategory }: PressFilterProps) {
   const [activeTab, setActiveTab] = useState(initialCategory || 'all')
+  const [page, setPage] = useState(1)
 
   const filtered = useMemo(() => {
     if (activeTab === 'all') return items
@@ -24,13 +26,21 @@ export default function PressFilter({ items, lang, initialCategory }: PressFilte
     return items.filter((i) => i.category === activeTab)
   }, [items, activeTab])
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  function changeTab(tab: string) {
+    setActiveTab(tab)
+    setPage(1)
+  }
+
   return (
     <>
       <div className="flex gap-4 mb-8">
         {TABS.map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => changeTab(tab)}
             className={cn(
               'text-nav uppercase tracking-wide-nav transition-colors duration-300',
               activeTab === tab ? 'text-ink' : 'text-muted hover:text-ink'
@@ -43,7 +53,7 @@ export default function PressFilter({ items, lang, initialCategory }: PressFilte
 
       <div>
         <AnimatePresence mode="popLayout">
-          {filtered.map((item) => (
+          {paginated.map((item) => (
             <motion.div
               key={item.id}
               layout
@@ -61,6 +71,28 @@ export default function PressFilter({ items, lang, initialCategory }: PressFilte
           <p className="text-body text-muted py-12 text-center">No press items found.</p>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center gap-6 mt-12 pt-8 border-t border-border">
+          <button
+            onClick={() => setPage((p) => p - 1)}
+            disabled={page === 1}
+            className={cn('bracket-link', page === 1 && 'opacity-30 cursor-not-allowed pointer-events-none')}
+          >
+            ←
+          </button>
+          <span className="text-nav text-muted tabular-nums">
+            {page} / {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => p + 1)}
+            disabled={page === totalPages}
+            className={cn('bracket-link', page === totalPages && 'opacity-30 cursor-not-allowed pointer-events-none')}
+          >
+            →
+          </button>
+        </div>
+      )}
     </>
   )
 }
