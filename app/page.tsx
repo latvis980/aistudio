@@ -39,7 +39,7 @@ export default async function HomePage() {
     .select('*')
     .eq('is_featured', true)
     .order('display_order', { ascending: true })
-    .limit(6)
+    .limit(4)
 
   return (
     <>
