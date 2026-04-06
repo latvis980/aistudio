@@ -14,11 +14,8 @@ export default function Footer({ lang }: FooterProps) {
       <div className="divider" />
 
       <div className="py-12 flex flex-col lg:flex-row gap-12 lg:gap-16">
-        {/* Left column — get in touch + email + socials */}
-        <div className="flex flex-col gap-3 lg:min-w-[260px]">
-          <div className="text-nav uppercase tracking-wide-nav text-ink mb-0">
-            {t('get_in_touch', lang)}
-          </div>
+        {/* Desktop left column — email + socials */}
+        <div className="hidden lg:flex flex-col gap-3 lg:min-w-[260px]">
           <a
             href="mailto:office@aistudio.co.uk"
             className="text-accent hover:text-accent/80 transition-colors duration-300 text-body"
@@ -26,25 +23,50 @@ export default function Footer({ lang }: FooterProps) {
             office@aistudio.co.uk
           </a>
           <div className="flex flex-col gap-1">
-            <BracketLink href="https://t.me/" external>
-              Telegram
-            </BracketLink>
             <BracketLink href="https://linkedin.com/" external>
               LinkedIn
             </BracketLink>
-            <BracketLink href="/studio#get-in-touch">
-              {t('address_and_phone', lang)}
+            <BracketLink href="https://t.me/a_d_u_media" external>
+              a/d/u
             </BracketLink>
           </div>
+        </div>
+
+        {/* Mobile contacts — single line */}
+        <div className="flex lg:hidden items-center gap-2 text-body-sm">
+          <a
+            href="mailto:office@aistudio.co.uk"
+            className="text-accent hover:text-accent/80 transition-colors duration-300"
+          >
+            office@aistudio.co.uk
+          </a>
+          <span className="text-muted">|</span>
+          <a
+            href="https://linkedin.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted hover:text-ink transition-colors duration-300"
+          >
+            linkedin
+          </a>
+          <span className="text-muted">|</span>
+          <a
+            href="https://t.me/a_d_u_media"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted hover:text-ink transition-colors duration-300"
+          >
+            a/d/u
+          </a>
         </div>
 
         {/* Right columns — sitemap */}
         <div className="flex flex-wrap gap-x-16 gap-y-8 text-body-sm">
           {/* Works */}
           <div>
-            <div className="text-nav uppercase tracking-wide-nav text-ink mb-3">
+            <Link href="/works" className="text-nav uppercase tracking-wide-nav text-ink mb-3 block hover:text-accent transition-colors duration-300">
               {t('works', lang)}
-            </div>
+            </Link>
             <div className="flex flex-col gap-1.5">
               {['residential', 'office', 'public', 'hospitality', 'mixed-use', 'masterplan', 'interior'].map(
                 (typ) => (
@@ -62,9 +84,9 @@ export default function Footer({ lang }: FooterProps) {
 
           {/* Press */}
           <div>
-            <div className="text-nav uppercase tracking-wide-nav text-ink mb-3">
+            <Link href="/press" className="text-nav uppercase tracking-wide-nav text-ink mb-3 block hover:text-accent transition-colors duration-300">
               {t('press', lang)}
-            </div>
+            </Link>
             <div className="flex flex-col gap-1.5">
               {['media', 'interviews', 'awards'].map((cat) => (
                 <Link
@@ -80,13 +102,14 @@ export default function Footer({ lang }: FooterProps) {
 
           {/* Studio */}
           <div>
-            <div className="text-nav uppercase tracking-wide-nav text-ink mb-3">
+            <Link href="/studio" className="text-nav uppercase tracking-wide-nav text-ink mb-3 block hover:text-accent transition-colors duration-300">
               {t('studio', lang)}
-            </div>
+            </Link>
             <div className="flex flex-col gap-1.5">
               {[
-                { key: 'about', href: '/studio' },
+                { key: 'about', href: '/studio#about' },
                 { key: 'news', href: '/news' },
+                { key: 'get_in_touch', href: '/studio#get-in-touch' },
               ].map(({ key, href }) => (
                 <Link
                   key={key}
