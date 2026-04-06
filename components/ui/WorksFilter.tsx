@@ -55,6 +55,7 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
   function changeFilter(value: string) {
     setActiveFilter(value)
     setPage(1)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   function changeSearch(value: string) {
