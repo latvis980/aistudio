@@ -88,7 +88,7 @@ export default async function StudioPage() {
 
       <div className="divider mb-12" />
 
-      <section className="flex flex-col lg:flex-row gap-8 lg:gap-16">
+      <section id="get-in-touch" className="flex flex-col lg:flex-row gap-8 lg:gap-16 scroll-mt-24">
         <div className="lg:w-[200px] shrink-0">
           <h2 className="section-label">{t('get_in_touch', lang)}</h2>
         </div>

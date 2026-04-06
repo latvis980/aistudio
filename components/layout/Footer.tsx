@@ -14,8 +14,11 @@ export default function Footer({ lang }: FooterProps) {
       <div className="divider" />
 
       <div className="py-12 flex flex-col lg:flex-row gap-12 lg:gap-16">
-        {/* Left column — email + socials */}
+        {/* Left column — get in touch + email + socials */}
         <div className="flex flex-col gap-3 lg:min-w-[260px]">
+          <div className="text-nav uppercase tracking-wide-nav text-ink mb-0">
+            {t('get_in_touch', lang)}
+          </div>
           <a
             href="mailto:office@aistudio.co.uk"
             className="text-accent hover:text-accent/80 transition-colors duration-300 text-body"
@@ -28,6 +31,9 @@ export default function Footer({ lang }: FooterProps) {
             </BracketLink>
             <BracketLink href="https://linkedin.com/" external>
               LinkedIn
+            </BracketLink>
+            <BracketLink href="/studio#get-in-touch">
+              {t('address_and_phone', lang)}
             </BracketLink>
           </div>
         </div>
@@ -80,7 +86,6 @@ export default function Footer({ lang }: FooterProps) {
             <div className="flex flex-col gap-1.5">
               {[
                 { key: 'about', href: '/studio' },
-                { key: 'contact', href: '/contact' },
                 { key: 'news', href: '/news' },
               ].map(({ key, href }) => (
                 <Link

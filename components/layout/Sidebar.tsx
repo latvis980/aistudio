@@ -17,7 +17,6 @@ const NAV_ITEMS = [
   { key: 'works', href: '/works' },
   { key: 'press', href: '/press' },
   { key: 'studio', href: '/studio' },
-  { key: 'contact', href: '/contact' },
 ]
 
 export default function Sidebar({ lang }: SidebarProps) {

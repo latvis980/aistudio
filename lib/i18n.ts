@@ -144,6 +144,9 @@ const UI_LABELS: Record<string, Record<Lang, string>> = {
   selected_projects: {
     en: 'Selected projects', ru: 'Избранные проекты', ar: 'مشاريع مختارة', zh: '精选项目', es: 'Proyectos seleccionados',
   },
+  address_and_phone: {
+    en: 'Address and Phone', ru: 'Адрес и телефон', ar: 'العنوان والهاتف', zh: '地址与电话', es: 'Dirección y teléfono',
+  },
 }
 
 /**

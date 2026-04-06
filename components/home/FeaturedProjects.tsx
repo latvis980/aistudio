@@ -66,7 +66,7 @@ export default function FeaturedProjects({ projects, lang }: FeaturedProjectsPro
         <BracketLink href="/works">
           {t('explore_portfolio', lang)}
         </BracketLink>
-        <BracketLink href="/contact">
+        <BracketLink href="/studio#get-in-touch">
           {t('get_in_touch', lang)}
         </BracketLink>
       </motion.div>
