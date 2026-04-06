@@ -59,7 +59,7 @@ export default async function StudioPage() {
 
       <div className="divider mb-12" />
 
-      <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
+      <section id="about" className="scroll-mt-24 flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
         <div className="lg:w-[200px] shrink-0">
           <h2 className="section-label">{t('about', lang)}</h2>
         </div>
