@@ -52,7 +52,7 @@ export default function RootLayout({
         </div>
 
         {/* Main content area */}
-        <main className="content-area px-6 lg:px-content-px pt-8 lg:pt-12 pb-8 min-h-screen">
+        <main className="content-area px-6 lg:ps-content-px lg:pe-content-px-end pt-8 lg:pt-12 pb-8 min-h-screen">
           {children}
           <Footer lang={lang} />
         </main>
