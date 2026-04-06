@@ -33,19 +33,23 @@ export default async function HomePage() {
     ? getField(contentMap.home_description, 'content', lang)
     : ''
 
-  // Fetch featured projects
-  const { data: featuredProjects } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('is_featured', true)
+  // Fetch homepage slides with linked projects
+  const { data: slides } = await supabase
+    .from('homepage_slides')
+    .select('image_url, display_order, projects(*)')
     .order('display_order', { ascending: true })
-    .limit(4)
+    .limit(6)
+
+  const featuredItems = (slides || []).map((s: any) => ({
+    ...(s.projects as Project),
+    slide_image: s.image_url as string | null,
+  }))
 
   return (
     <>
       <Hero tagline={tagline} description={description} />
       <FeaturedProjects
-        projects={(featuredProjects as Project[]) || []}
+        projects={featuredItems}
         lang={lang}
       />
     </>

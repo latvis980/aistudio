@@ -7,8 +7,12 @@ import BracketLink from '@/components/ui/BracketLink'
 import { Project, Lang } from '@/lib/types'
 import { getField, t } from '@/lib/i18n'
 
+interface FeaturedItem extends Project {
+  slide_image?: string | null
+}
+
 interface FeaturedProjectsProps {
-  projects: Project[]
+  projects: FeaturedItem[]
   lang: Lang
 }
 
@@ -38,9 +42,9 @@ export default function FeaturedProjects({ projects, lang }: FeaturedProjectsPro
               href={`/works/${project.slug}`}
               className="block shrink-0 w-[180px] lg:w-[220px] img-hover-scale group"
             >
-              {project.cover_image ? (
+              {(project.slide_image || project.cover_image) ? (
                 <Image
-                  src={project.cover_image}
+                  src={project.slide_image || project.cover_image!}
                   alt={title}
                   width={220}
                   height={160}

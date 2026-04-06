@@ -9,6 +9,7 @@ import { AdminProjectsProvider } from './projects-context'
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: '◻' },
+  { label: 'Homepage', href: '/admin/homepage', icon: '⌂' },
   { label: 'Projects', href: '/admin/projects', icon: '▦' },
   { label: 'Press', href: '/admin/press', icon: '▤' },
   { label: 'News', href: '/admin/news', icon: '▧' },
