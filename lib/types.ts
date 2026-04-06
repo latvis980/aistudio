@@ -142,6 +142,15 @@ export interface NewsItem {
   created_at: string
 }
 
+// ─── Homepage Slides ─────────────────────────────────
+export interface HomepageSlide {
+  id: string
+  project_id: string
+  image_url: string | null
+  display_order: number
+  created_at: string
+}
+
 // ─── Site Content ────────────────────────────────────
 export interface SiteContent {
   id: string
