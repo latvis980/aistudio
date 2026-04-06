@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lang } from '@/lib/types'
@@ -29,12 +30,14 @@ export default function Sidebar({ lang }: SidebarProps) {
       <aside className="hidden lg:flex flex-col fixed top-0 start-0 w-sidebar h-screen z-40 px-8 py-8">
         {/* Logo */}
         <Link href="/" className="block mb-12 group">
-          <div className="text-[1.6rem] font-medium tracking-tight leading-none">
-            ai<span className="text-accent">/</span>studio
-          </div>
-          <div className="text-[0.5rem] uppercase tracking-[0.25em] text-muted mt-1.5">
-            Architecture · Design · Urbanism
-          </div>
+          <Image
+            src="/images/logo-header.png"
+            alt="AI Studio — Architecture · Design · Urbanism"
+            width={1743}
+            height={417}
+            className="w-[140px] h-auto"
+            priority
+          />
         </Link>
 
         {/* Nav links */}
@@ -60,8 +63,15 @@ export default function Sidebar({ lang }: SidebarProps) {
       {/* ── Mobile header ───────────────────────────── */}
       <header className="lg:hidden fixed top-0 start-0 end-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-border">
         <div className="flex items-center justify-between px-5 h-14">
-          <Link href="/" className="text-xl font-medium tracking-tight">
-            ai<span className="text-accent">/</span>studio
+          <Link href="/" className="block">
+            <Image
+              src="/images/logo-header.png"
+              alt="AI Studio"
+              width={1743}
+              height={417}
+              className="h-8 w-auto"
+              priority
+            />
           </Link>
 
           <button

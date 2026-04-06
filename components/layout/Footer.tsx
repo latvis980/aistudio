@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import BracketLink from '@/components/ui/BracketLink'
 import { Lang } from '@/lib/types'
 import { t } from '@/lib/i18n'
@@ -99,11 +100,13 @@ export default function Footer({ lang }: FooterProps) {
       <div className="divider" />
       <div className="py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-9 h-9 bg-ink rounded-sm flex items-center justify-center">
-            <span className="text-cream text-xs font-medium">
-              ai<span className="text-accent">/</span>
-            </span>
-          </div>
+          <Image
+            src="/images/logo-footer.png"
+            alt="AI Studio"
+            width={540}
+            height={540}
+            className="w-9 h-9 rounded-sm"
+          />
           <span className="text-body-sm text-muted">
             © 2005–{new Date().getFullYear()}, ai international ltd. all rights reserved
           </span>

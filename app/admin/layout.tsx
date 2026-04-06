@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase/client'
 import { AdminProjectsProvider } from './projects-context'
 
@@ -83,10 +84,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               {/* Logo */}
               <div className="px-5 py-5 border-b border-gray-100">
                 <Link href="/admin" className="block">
-                  <span className="text-lg font-semibold tracking-tight">
-                    ai<span className="text-[#C75B2B]">/</span>studio
-                  </span>
-                  <span className="block text-[10px] uppercase tracking-[0.2em] text-gray-400 mt-0.5">
+                  <Image
+                    src="/images/logo-header.png"
+                    alt="AI Studio"
+                    width={1743}
+                    height={417}
+                    className="w-[100px] h-auto"
+                    priority
+                  />
+                  <span className="block text-[10px] uppercase tracking-[0.2em] text-gray-400 mt-1">
                     CMS
                   </span>
                 </Link>
