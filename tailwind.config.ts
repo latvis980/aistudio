@@ -31,6 +31,7 @@ const config: Config = {
       spacing: {
         'sidebar': '200px',
         'content-px': '3rem',
+        'content-px-end': '5rem',
       },
       letterSpacing: {
         'wide-nav': '0.2em',
