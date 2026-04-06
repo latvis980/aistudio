@@ -174,11 +174,14 @@ export default function ProjectEditorPage() {
       {/* Quick toggles */}
       <div className="flex flex-wrap items-center gap-6 mb-6 p-4 bg-white border border-gray-200 rounded-lg">
         <label className="flex items-center gap-2 text-sm">
-          <Toggle checked={project.show_in_journal} onChange={(v) => updateLocal('show_in_journal', v)} />
+          <Toggle checked={project.show_in_journal} onChange={(v) => {
+            updateLocal('show_in_journal', v)
+            if (!v) updateLocal('is_featured', false)
+          }} />
           <span>Visible on site</span>
         </label>
         <label className="flex items-center gap-2 text-sm">
-          <Toggle checked={project.is_featured} onChange={(v) => updateLocal('is_featured', v)} />
+          <Toggle checked={project.is_featured} onChange={(v) => updateLocal('is_featured', v)} disabled={!project.show_in_journal} />
           <span>Featured</span>
         </label>
         <div className="flex items-center gap-2 text-sm">

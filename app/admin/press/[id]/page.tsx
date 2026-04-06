@@ -96,11 +96,14 @@ export default function PressEditorPage() {
       {/* Quick controls */}
       <div className="flex flex-wrap items-center gap-6 mb-6 p-4 bg-white border border-gray-200 rounded-lg">
         <label className="flex items-center gap-2 text-sm">
-          <Toggle checked={item.show_in_journal} onChange={(v) => updateLocal('show_in_journal', v)} />
+          <Toggle checked={item.show_in_journal} onChange={(v) => {
+            updateLocal('show_in_journal', v)
+            if (!v) updateLocal('is_featured', false)
+          }} />
           Visible
         </label>
         <label className="flex items-center gap-2 text-sm">
-          <Toggle checked={item.is_featured} onChange={(v) => updateLocal('is_featured', v)} />
+          <Toggle checked={item.is_featured} onChange={(v) => updateLocal('is_featured', v)} disabled={!item.show_in_journal} />
           Featured
         </label>
         <div className="flex items-center gap-2 text-sm">

@@ -135,14 +135,14 @@ export default function AdminProjectsPage() {
     const ids = Array.from(selected)
     const { error } = await supabase
       .from('projects')
-      .update({ show_in_journal: visible })
+      .update(visible ? { show_in_journal: visible } : { show_in_journal: false, is_featured: false })
       .in('id', ids)
 
     if (error) {
       setToast({ message: error.message, type: 'error' })
     } else {
       setProjects((prev) =>
-        prev.map((p) => (ids.includes(p.id) ? { ...p, show_in_journal: visible } : p))
+        prev.map((p) => (ids.includes(p.id) ? { ...p, show_in_journal: visible, ...(visible ? {} : { is_featured: false }) } : p))
       )
       setSelected(new Set())
       setToast({ message: `${ids.length} projects ${visible ? 'shown' : 'hidden'}`, type: 'success' })
@@ -291,7 +291,10 @@ export default function AdminProjectsPage() {
                   <td className="px-3 py-2.5">
                     <Toggle
                       checked={project.show_in_journal}
-                      onChange={(v) => updateField(project.id, 'show_in_journal', v)}
+                      onChange={(v) => {
+                        updateField(project.id, 'show_in_journal', v)
+                        if (!v && project.is_featured) updateField(project.id, 'is_featured', false)
+                      }}
                     />
                   </td>
 
@@ -350,6 +353,7 @@ export default function AdminProjectsPage() {
                     <Toggle
                       checked={project.is_featured}
                       onChange={(v) => updateField(project.id, 'is_featured', v)}
+                      disabled={!project.show_in_journal}
                     />
                   </td>
 

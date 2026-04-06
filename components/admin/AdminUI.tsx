@@ -7,20 +7,23 @@ import { supabase } from '@/lib/supabase/client'
 export function Toggle({
   checked,
   onChange,
+  disabled = false,
 }: {
   checked: boolean
   onChange: (v: boolean) => void
+  disabled?: boolean
 }) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
-      onClick={() => onChange(!checked)}
+      disabled={disabled}
+      onClick={() => !disabled && onChange(!checked)}
       className={`
         relative inline-flex h-5 w-9 shrink-0 items-center rounded-full
         transition-colors duration-150 focus:outline-none
-        ${checked ? 'bg-[#C75B2B]' : 'bg-gray-200'}
+        ${disabled ? 'bg-gray-100 cursor-not-allowed opacity-50' : checked ? 'bg-[#C75B2B]' : 'bg-gray-200'}
       `}
     >
       <span

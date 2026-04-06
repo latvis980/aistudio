@@ -131,7 +131,10 @@ export default function AdminPressPage() {
                   <td className="px-3 py-2.5">
                     <Toggle
                       checked={item.show_in_journal}
-                      onChange={(v) => updateField(item.id, 'show_in_journal', v)}
+                      onChange={(v) => {
+                        updateField(item.id, 'show_in_journal', v)
+                        if (!v && item.is_featured) updateField(item.id, 'is_featured', false)
+                      }}
                     />
                   </td>
 
@@ -168,6 +171,7 @@ export default function AdminPressPage() {
                     <Toggle
                       checked={item.is_featured}
                       onChange={(v) => updateField(item.id, 'is_featured', v)}
+                      disabled={!item.show_in_journal}
                     />
                   </td>
 
