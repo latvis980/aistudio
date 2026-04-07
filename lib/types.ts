@@ -30,6 +30,7 @@ export interface GalleryImage {
   caption_ar?: string | null
   caption_zh?: string | null
   caption_es?: string | null
+  is_hero?: boolean
 }
 
 export interface ProjectSpecs {
@@ -80,6 +81,7 @@ export interface Project {
   specs: ProjectSpecs
   design_team: string[] | null
   execution_team: string[] | null
+  vimeo_url: string | null
   latitude: number | null
   longitude: number | null
   created_at: string

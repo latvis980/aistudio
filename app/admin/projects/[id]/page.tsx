@@ -115,6 +115,7 @@ export default function ProjectEditorPage() {
         execution_team: project.execution_team,
         display_order: project.display_order,
         slug: project.slug,
+        vimeo_url: project.vimeo_url,
       })
       .eq('id', id)
 
@@ -244,6 +245,23 @@ export default function ProjectEditorPage() {
               onUploaded={(url) => updateLocal('cover_image', url)}
               slug={project.slug}
             />
+          </fieldset>
+
+          {/* Vimeo video */}
+          <fieldset className="p-4 bg-white border border-gray-200 rounded-lg">
+            <legend className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2">Vimeo Video</legend>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Vimeo URL</label>
+              <input
+                type="text"
+                value={project.vimeo_url || ''}
+                onChange={(e) => updateLocal('vimeo_url', e.target.value || null)}
+                placeholder="https://vimeo.com/123456789"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md bg-white
+                           focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]"
+              />
+              <p className="text-xs text-gray-400 mt-1">Video will appear at the end of the gallery</p>
+            </div>
           </fieldset>
 
           {/* Multilingual fields */}
@@ -474,6 +492,15 @@ function GalleryEditor({
     onChange(updated)
   }
 
+  const toggleHero = (index: number) => {
+    const updated = gallery.map((img, i) =>
+      i === index ? { ...img, is_hero: !img.is_hero } : img
+    )
+    onChange(updated)
+  }
+
+  const heroCount = gallery.filter((img) => img.is_hero).length
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -489,6 +516,11 @@ function GalleryEditor({
           />
         </label>
         <span className="text-xs text-gray-400">{gallery.length} images</span>
+        {heroCount > 0 && (
+          <span className={`text-xs ${heroCount > 6 ? 'text-orange-500' : 'text-gray-400'}`}>
+            · {heroCount} hero
+          </span>
+        )}
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -523,6 +555,17 @@ function GalleryEditor({
             <div className="absolute top-1.5 left-1.5 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded">
               {String(i + 1).padStart(2, '0')}
             </div>
+            <button
+              onClick={() => toggleHero(i)}
+              title={img.is_hero ? 'Remove from hero' : 'Add to hero slideshow'}
+              className={`absolute top-1.5 right-1.5 w-6 h-6 flex items-center justify-center rounded-full text-sm
+                ${img.is_hero
+                  ? 'bg-amber-400 text-white shadow'
+                  : 'bg-black/40 text-white/70 hover:bg-black/60 hover:text-white'
+                }`}
+            >
+              ★
+            </button>
           </div>
         ))}
       </div>

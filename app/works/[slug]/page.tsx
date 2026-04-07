@@ -11,6 +11,8 @@ import TagLabel from '@/components/ui/TagLabel'
 import BracketLink from '@/components/ui/BracketLink'
 import SpecsGrid from '@/components/ui/SpecsGrid'
 import Gallery from '@/components/ui/Gallery'
+import HeroSlideshow from '@/components/ui/HeroSlideshow'
+import VimeoEmbed from '@/components/ui/VimeoEmbed'
 
 interface Props {
   params: { slug: string }
@@ -102,19 +104,32 @@ export default async function ProjectPage({ params }: Props) {
 
       {location && <p className="text-body text-muted mb-8">{location}</p>}
 
-      {p.cover_image && (
-        <div className="mb-12">
-          <Image
-            src={p.cover_image}
-            alt={title}
-            width={1200}
-            height={700}
-            className="w-full h-auto"
-            sizes="(max-width: 1024px) 100vw, 900px"
-            priority
-          />
-        </div>
-      )}
+      {(() => {
+        const heroImages = (p.gallery || []).filter((img) => img.is_hero)
+        if (heroImages.length > 0) {
+          return (
+            <div className="mb-12">
+              <HeroSlideshow images={heroImages} title={title} />
+            </div>
+          )
+        }
+        if (p.cover_image) {
+          return (
+            <div className="mb-12">
+              <Image
+                src={p.cover_image}
+                alt={title}
+                width={1200}
+                height={700}
+                className="w-full h-auto"
+                sizes="(max-width: 1024px) 100vw, 900px"
+                priority
+              />
+            </div>
+          )
+        }
+        return null
+      })()}
 
       {(body || description) && (
         <section className="mb-12">
@@ -136,6 +151,12 @@ export default async function ProjectPage({ params }: Props) {
         projectTitle={title}
         lang={lang}
       />
+
+      {p.vimeo_url && (
+        <div className="mt-12">
+          <VimeoEmbed url={p.vimeo_url} />
+        </div>
+      )}
 
       <div className="flex justify-between items-center mt-16 pt-8 border-t border-border">
         {prevProject ? (
