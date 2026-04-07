@@ -106,6 +106,7 @@ export interface PressItem {
   description_es: string | null
   publication_name: string | null
   cover_image: string | null
+  favicon_url: string | null
   external_link: string | null
   project_id: string | null
   is_featured: boolean
