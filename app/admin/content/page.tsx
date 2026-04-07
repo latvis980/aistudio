@@ -42,6 +42,13 @@ const CONTENT_BLOCKS: {
     rows: 8,
   },
   {
+    key: 'adu_media',
+    label: 'Studio — a/d/u media',
+    description: 'a/d/u media section on the Studio page',
+    href: '/studio',
+    rows: 6,
+  },
+  {
     key: 'privacy_policy',
     label: 'Privacy Policy',
     description: 'Full privacy policy text',

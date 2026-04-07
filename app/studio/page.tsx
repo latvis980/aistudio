@@ -20,7 +20,7 @@ export default async function StudioPage() {
   const { data: content } = await supabase
     .from('site_content')
     .select('*')
-    .in('page_key', ['about', 'founder'])
+    .in('page_key', ['about', 'founder', 'adu_media'])
 
   const contentMap = (content || []).reduce<Record<string, SiteContent>>(
     (acc, item) => {
@@ -41,6 +41,7 @@ export default async function StudioPage() {
 
   const aboutText = contentMap.about ? getField(contentMap.about, 'content', lang) : ''
   const founderText = contentMap.founder ? getField(contentMap.founder, 'content', lang) : ''
+  const aduMediaText = contentMap.adu_media ? getField(contentMap.adu_media, 'content', lang) : ''
 
   return (
     <>
@@ -82,6 +83,22 @@ export default async function StudioPage() {
         <div className="flex-1">
           <div className="text-body text-ink/90 whitespace-pre-line max-w-[600px]">
             {founderText}
+          </div>
+        </div>
+      </section>
+
+      <div className="divider mb-12" />
+
+      <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
+        <div className="lg:w-[200px] shrink-0">
+          <h2 className="section-label">{t('adu_media', lang)}</h2>
+        </div>
+        <div className="flex-1">
+          <div className="text-body text-ink/90 whitespace-pre-line max-w-[600px]">
+            {aduMediaText}
+          </div>
+          <div className="mt-6">
+            <BracketLink href="https://adu.media" external>adu.media</BracketLink>
           </div>
         </div>
       </section>
