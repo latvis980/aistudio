@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
 import { GalleryImage } from '@/lib/types'
@@ -12,17 +12,7 @@ interface HeroSlideshowProps {
 
 export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
   const [current, setCurrent] = useState(0)
-  const [paused, setPaused] = useState(false)
-
-  const advance = useCallback(() => {
-    setCurrent((i) => (i + 1) % images.length)
-  }, [images.length])
-
-  useEffect(() => {
-    if (images.length <= 1 || paused) return
-    const id = setInterval(advance, 5000)
-    return () => clearInterval(id)
-  }, [images.length, paused, advance])
+  const touchStartX = useRef(0)
 
   if (images.length === 0) return null
 
@@ -40,13 +30,27 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
     )
   }
 
+  const prev = () => setCurrent((i) => (i - 1 + images.length) % images.length)
+  const next = () => setCurrent((i) => (i + 1) % images.length)
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const delta = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(delta) > 50) {
+      delta > 0 ? next() : prev()
+    }
+  }
+
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      <div className="relative overflow-hidden">
+    <div className="relative select-none">
+      <div
+        className="relative overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
@@ -63,9 +67,22 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
               className="w-full h-auto"
               sizes="(max-width: 1024px) 100vw, 900px"
               priority={current === 0}
+              draggable={false}
             />
           </motion.div>
         </AnimatePresence>
+
+        {/* Click zones */}
+        <button
+          onClick={prev}
+          aria-label="Previous image"
+          className="absolute inset-y-0 left-0 w-[40%] cursor-w-resize z-10"
+        />
+        <button
+          onClick={next}
+          aria-label="Next image"
+          className="absolute inset-y-0 right-0 w-[40%] cursor-e-resize z-10"
+        />
       </div>
 
       {/* Dots */}

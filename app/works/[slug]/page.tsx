@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { createServerClient } from '@/lib/supabase/server'
 import { getLangFromCookies } from '@/lib/utils'
 import { getField, t } from '@/lib/i18n'
-import { Project } from '@/lib/types'
+import { Project, GalleryImage } from '@/lib/types'
 import Breadcrumb from '@/components/layout/Breadcrumb'
 import TagLabel from '@/components/ui/TagLabel'
 import BracketLink from '@/components/ui/BracketLink'
@@ -105,30 +105,17 @@ export default async function ProjectPage({ params }: Props) {
       {location && <p className="text-body text-muted mb-8">{location}</p>}
 
       {(() => {
-        const heroImages = (p.gallery || []).filter((img) => img.is_hero)
-        if (heroImages.length > 0) {
-          return (
-            <div className="mb-12">
-              <HeroSlideshow images={heroImages} title={title} />
-            </div>
-          )
-        }
+        const heroImages: GalleryImage[] = []
         if (p.cover_image) {
-          return (
-            <div className="mb-12">
-              <Image
-                src={p.cover_image}
-                alt={title}
-                width={1200}
-                height={700}
-                className="w-full h-auto"
-                sizes="(max-width: 1024px) 100vw, 900px"
-                priority
-              />
-            </div>
-          )
+          heroImages.push({ url: p.cover_image })
         }
-        return null
+        heroImages.push(...(p.gallery || []).filter((img) => img.is_hero))
+        if (heroImages.length === 0) return null
+        return (
+          <div className="mb-12">
+            <HeroSlideshow images={heroImages} title={title} />
+          </div>
+        )
       })()}
 
       {(body || description) && (
