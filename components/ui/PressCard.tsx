@@ -31,7 +31,20 @@ export default function PressCard({ item, lang }: PressCardProps) {
       <div className="flex-1">
         <div className="flex items-center justify-between mb-2">
           {item.publication_name && (
-            <span className="text-body-sm text-muted">{item.publication_name}</span>
+            <div className="flex items-center gap-2">
+              {item.favicon_url && (
+                <Image
+                  src={item.favicon_url}
+                  alt=""
+                  width={16}
+                  height={16}
+                  className="rounded-sm"
+                />
+              )}
+              <span className="text-tag uppercase tracking-wide-tag text-ink/70">
+                {item.publication_name}
+              </span>
+            </div>
           )}
           <TagLabel>{t(item.category, lang)}</TagLabel>
         </div>

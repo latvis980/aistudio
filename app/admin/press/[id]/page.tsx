@@ -24,6 +24,7 @@ export default function PressEditorPage() {
   const [projects, setProjects] = useState<{ id: string; title_en: string; slug: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [fetchingFavicon, setFetchingFavicon] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   const load = useCallback(async () => {
@@ -54,7 +55,7 @@ export default function PressEditorPage() {
       description_ar: item.description_ar, description_zh: item.description_zh,
       description_es: item.description_es,
       category: item.category, publication_name: item.publication_name,
-      cover_image: item.cover_image, external_link: item.external_link,
+      cover_image: item.cover_image, favicon_url: item.favicon_url, external_link: item.external_link,
       project_id: item.project_id, is_featured: item.is_featured,
       show_in_journal: item.show_in_journal, date: item.date, slug: item.slug,
     }).eq('id', id)
@@ -78,6 +79,28 @@ export default function PressEditorPage() {
     setItem(updated as unknown as PressItem)
     setToast({ message: 'Translations filled — review and save', type: 'success' })
     setTimeout(() => setToast(null), 3000)
+  }
+
+  const handleFetchFavicon = async () => {
+    if (!item?.external_link) return
+    setFetchingFavicon(true)
+    try {
+      const res = await fetch('/api/favicon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: item.external_link }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed')
+      updateLocal('favicon_url', data.favicon_url)
+      setToast({ message: 'Favicon fetched', type: 'success' })
+      setTimeout(() => setToast(null), 2000)
+    } catch (err) {
+      setToast({ message: `Favicon failed: ${err instanceof Error ? err.message : 'Unknown error'}`, type: 'error' })
+      setTimeout(() => setToast(null), 3000)
+    } finally {
+      setFetchingFavicon(false)
+    }
   }
 
   if (loading || !item) return <div className="text-sm text-gray-400">Loading…</div>
@@ -135,6 +158,25 @@ export default function PressEditorPage() {
             <label className="block text-xs text-gray-500 mb-1">Slug</label>
             <input type="text" value={item.slug} onChange={(e) => updateLocal('slug', e.target.value)}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]" />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-xs text-gray-500 mb-1">Favicon</label>
+            <div className="flex items-center gap-3">
+              {item.favicon_url && (
+                <img src={item.favicon_url} alt="" width={24} height={24} className="rounded-sm" />
+              )}
+              <button
+                type="button"
+                onClick={handleFetchFavicon}
+                disabled={!item.external_link || fetchingFavicon}
+                className="px-3 py-1.5 text-xs border border-gray-200 rounded-md hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {fetchingFavicon ? 'Fetching…' : item.favicon_url ? 'Refresh Favicon' : 'Fetch Favicon'}
+              </button>
+              {!item.external_link && (
+                <span className="text-xs text-gray-400">Add an external link first</span>
+              )}
+            </div>
           </div>
         </div>
       </fieldset>
