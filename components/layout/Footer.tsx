@@ -61,7 +61,7 @@ export default function Footer({ lang }: FooterProps) {
         </div>
 
         {/* Right columns — sitemap */}
-        <div className="flex flex-wrap gap-x-16 gap-y-8 text-body-sm">
+        <div className="grid grid-cols-3 gap-x-8 lg:gap-x-16 gap-y-8 text-body-sm">
           {/* Works */}
           <div>
             <Link href="/works" className="text-nav uppercase tracking-wide-nav text-ink mb-3 block hover:text-accent transition-colors duration-300">

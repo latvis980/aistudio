@@ -47,12 +47,12 @@ export default function RootLayout({
         <Sidebar lang={lang} />
 
         {/* Language switcher — fixed top-right */}
-        <div className="fixed top-8 end-8 z-50">
+        <div className="hidden lg:block fixed top-8 end-8 z-50">
           <LanguageSwitcher currentLang={lang} />
         </div>
 
         {/* Main content area */}
-        <main className="content-area px-6 lg:ps-content-px lg:pe-content-px-end pt-8 lg:pt-12 pb-8 min-h-screen">
+        <main className="content-area px-6 lg:ps-content-px lg:pe-content-px-end pt-28 lg:pt-12 pb-8 min-h-screen">
           {children}
           <Footer lang={lang} />
         </main>

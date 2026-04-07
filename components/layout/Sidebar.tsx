@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Lang } from '@/lib/types'
 import { t } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher'
 
 const MotionLink = motion.create(Link)
 
@@ -65,23 +66,25 @@ export default function Sidebar({ lang }: SidebarProps) {
 
       {/* ── Mobile header ───────────────────────────── */}
       <header className="lg:hidden fixed top-0 start-0 end-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-border">
-        <div className="flex items-center justify-between px-5 h-14">
+        <div className="flex items-center justify-between px-5 h-20">
           <Link href="/" className="block">
             <Image
               src="/images/logo-header.png"
               alt="AI Studio"
               width={1743}
               height={417}
-              className="h-8 w-auto"
+              className="h-9 w-auto"
               priority
             />
           </Link>
 
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 -me-2"
-            aria-label="Toggle menu"
-          >
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher currentLang={lang} />
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="p-2 -me-2"
+              aria-label="Toggle menu"
+            >
             <div className="w-5 flex flex-col gap-1.5">
               <span
                 className={cn(
@@ -103,6 +106,7 @@ export default function Sidebar({ lang }: SidebarProps) {
               />
             </div>
           </button>
+          </div>
         </div>
 
         <AnimatePresence>
