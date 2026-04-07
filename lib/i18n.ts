@@ -75,6 +75,9 @@ const UI_LABELS: Record<string, Record<Lang, string>> = {
   founder: {
     en: 'Founder', ru: 'Основатель', ar: 'المؤسس', zh: '创始人', es: 'Fundador',
   },
+  adu_media: {
+    en: 'a/d/u media', ru: 'a/d/u медиа', ar: 'a/d/u ميديا', zh: 'a/d/u 媒体', es: 'a/d/u media',
+  },
   studio_news: {
     en: 'Studio News', ru: 'Новости студии', ar: 'أخبار الاستوديو', zh: '工作室新闻', es: 'Noticias del estudio',
   },
