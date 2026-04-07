@@ -9,6 +9,8 @@ import { Lang } from '@/lib/types'
 import { t } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
+const MotionLink = motion.create(Link)
+
 interface SidebarProps {
   lang: Lang
 }
@@ -44,16 +46,18 @@ export default function Sidebar({ lang }: SidebarProps) {
           {NAV_ITEMS.map(({ key, href }) => {
             const isActive = pathname === href || pathname.startsWith(href + '/')
             return (
-              <Link
+              <MotionLink
                 key={key}
                 href={href}
+                whileTap={{ scale: 0.96, opacity: 0.85 }}
+                transition={{ duration: 0.1, ease: 'easeOut' }}
                 className={cn(
-                  'text-nav uppercase tracking-wide-nav transition-colors duration-300',
+                  'text-nav uppercase tracking-wide-nav transition-colors duration-300 origin-left',
                   isActive ? 'text-ink' : 'text-muted hover:text-ink'
                 )}
               >
                 {t(key, lang)}
-              </Link>
+              </MotionLink>
             )
           })}
         </nav>
@@ -114,17 +118,19 @@ export default function Sidebar({ lang }: SidebarProps) {
                 {NAV_ITEMS.map(({ key, href }) => {
                   const isActive = pathname === href || pathname.startsWith(href + '/')
                   return (
-                    <Link
+                    <MotionLink
                       key={key}
                       href={href}
                       onClick={() => setMobileOpen(false)}
+                      whileTap={{ scale: 0.97, opacity: 0.85 }}
+                      transition={{ duration: 0.1, ease: 'easeOut' }}
                       className={cn(
-                        'text-nav uppercase tracking-wide-nav py-2 transition-colors duration-300',
+                        'text-nav uppercase tracking-wide-nav py-2 transition-colors duration-300 origin-left',
                         isActive ? 'text-ink' : 'text-muted hover:text-ink'
                       )}
                     >
                       {t(key, lang)}
-                    </Link>
+                    </MotionLink>
                   )
                 })}
               </div>
