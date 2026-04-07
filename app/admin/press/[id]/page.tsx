@@ -41,8 +41,7 @@ export default function PressEditorPage() {
   useEffect(() => { load() }, [load])
 
   const updateLocal = (field: string, value: unknown) => {
-    if (!item) return
-    setItem({ ...item, [field]: value } as PressItem)
+    setItem((prev) => prev ? { ...prev, [field]: value } as PressItem : prev)
   }
 
   const handleSave = async () => {
