@@ -40,19 +40,19 @@ export default function FeaturedProjects({ projects, lang }: FeaturedProjectsPro
             <Link
               key={project.id}
               href={`/works/${project.slug}`}
-              className="block shrink-0 w-[180px] lg:w-[220px] img-hover-scale group"
+              className="block shrink-0 w-[150px] lg:w-[190px] img-hover-scale group"
             >
               {(project.slide_image || project.cover_image) ? (
                 <Image
                   src={project.slide_image || project.cover_image!}
                   alt={title}
-                  width={220}
-                  height={160}
-                  className="w-full h-[130px] lg:h-[160px] object-cover"
-                  sizes="220px"
+                  width={190}
+                  height={140}
+                  className="w-full h-[110px] lg:h-[140px] object-cover"
+                  sizes="190px"
                 />
               ) : (
-                <div className="w-full h-[130px] lg:h-[160px] bg-border flex items-center justify-center">
+                <div className="w-full h-[110px] lg:h-[140px] bg-border flex items-center justify-center">
                   <span className="text-body-sm text-muted lowercase">{title}</span>
                 </div>
               )}

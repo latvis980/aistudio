@@ -9,7 +9,7 @@ interface HeroProps {
 
 export default function Hero({ tagline, description }: HeroProps) {
   return (
-    <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 pt-8 lg:pt-16 pb-16 lg:pb-24">
+    <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 pt-8 lg:pt-16 pb-24 lg:pb-32">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
