@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import BracketLink from '@/components/ui/BracketLink'
 import { NewsItem as NewsItemType, Lang } from '@/lib/types'
 import { getField, t } from '@/lib/i18n'
@@ -17,19 +18,25 @@ export default function NewsItemCard({ item, lang }: NewsItemProps) {
       <div className="flex flex-col md:flex-row gap-6">
         {item.cover_image && (
           <div className="md:w-[400px] shrink-0 img-hover-scale">
-            <Image
-              src={item.cover_image}
-              alt={title}
-              width={400}
-              height={280}
-              className="w-full h-auto object-cover"
-              sizes="(max-width: 768px) 100vw, 400px"
-            />
+            <Link href={`/news/${item.slug}`}>
+              <Image
+                src={item.cover_image}
+                alt={title}
+                width={400}
+                height={280}
+                className="w-full h-auto object-cover"
+                sizes="(max-width: 768px) 100vw, 400px"
+              />
+            </Link>
           </div>
         )}
 
         <div className="flex-1">
-          <h3 className="text-card-title lowercase mb-2">{title}</h3>
+          <h3 className="text-card-title lowercase mb-2">
+            <Link href={`/news/${item.slug}`} className="hover:text-accent transition-colors duration-300">
+              {title}
+            </Link>
+          </h3>
           {description && (
             <p className="text-body text-ink/80 mb-4">{description}</p>
           )}

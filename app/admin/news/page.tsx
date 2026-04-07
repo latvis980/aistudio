@@ -1,25 +1,20 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
-import { PressItem, PressCategory } from '@/lib/types'
-import { Toggle, InlineSelect, ProjectPicker, Toast } from '@/components/admin/AdminUI'
+import { NewsItem } from '@/lib/types'
+import { Toggle, ProjectPicker, Toast } from '@/components/admin/AdminUI'
 
-const CATEGORIES: { value: PressCategory; label: string }[] = [
-  { value: 'media', label: 'Media' },
-  { value: 'interview', label: 'Interview' },
-  { value: 'awards', label: 'Awards' },
-]
+type Filter = 'all' | 'unlinked' | 'hidden'
 
-type Filter = 'all' | 'unlinked' | 'featured' | PressCategory
-
-export default function AdminPressPage() {
+export default function AdminNewsPage() {
   const searchParams = useSearchParams()
   const filterParam = searchParams.get('filter') as Filter | null
+  const router = useRouter()
 
-  const [items, setItems] = useState<PressItem[]>([])
+  const [items, setItems] = useState<NewsItem[]>([])
   const [projects, setProjects] = useState<{ id: string; title_en: string; slug: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -27,11 +22,11 @@ export default function AdminPressPage() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   const load = useCallback(async () => {
-    const [{ data: pressData }, { data: projectData }] = await Promise.all([
-      supabase.from('press').select('*').order('date', { ascending: false }),
+    const [{ data: newsData }, { data: projectData }] = await Promise.all([
+      supabase.from('news').select('*').order('date', { ascending: false }),
       supabase.from('projects').select('id, title_en, slug').order('title_en'),
     ])
-    setItems(pressData || [])
+    setItems(newsData || [])
     setProjects(projectData || [])
     setLoading(false)
   }, [])
@@ -39,14 +34,29 @@ export default function AdminPressPage() {
   useEffect(() => { load() }, [load])
 
   const updateField = async (id: string, field: string, value: unknown) => {
-    const { error } = await supabase.from('press').update({ [field]: value }).eq('id', id)
+    const { error } = await supabase.from('news').update({ [field]: value }).eq('id', id)
     if (error) {
       setToast({ message: error.message, type: 'error' })
       return
     }
-    setItems((prev) => prev.map((p) => (p.id === id ? { ...p, [field]: value } : p)))
+    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, [field]: value } : n)))
     setToast({ message: 'Updated', type: 'success' })
     setTimeout(() => setToast(null), 2000)
+  }
+
+  const handleCreate = async () => {
+    const { data, error } = await supabase.from('news').insert({
+      title_en: 'Untitled',
+      slug: 'untitled-' + Date.now(),
+      show_in_journal: false,
+      source: '',
+      images: [],
+    }).select().single()
+    if (error) {
+      setToast({ message: `Create failed: ${error.message}`, type: 'error' })
+      return
+    }
+    router.push(`/admin/news/${data.id}`)
   }
 
   const filtered = items.filter((item) => {
@@ -54,27 +64,33 @@ export default function AdminPressPage() {
       const q = search.toLowerCase()
       if (
         !item.title_en.toLowerCase().includes(q) &&
-        !(item.publication_name || '').toLowerCase().includes(q) &&
+        !(item.source || '').toLowerCase().includes(q) &&
         !item.slug.toLowerCase().includes(q)
       ) return false
     }
     switch (filter) {
       case 'unlinked': return !item.project_id
-      case 'featured': return item.is_featured
+      case 'hidden': return !item.show_in_journal
       case 'all': return true
-      default: return item.category === filter
+      default: return true
     }
   })
 
-  if (loading) return <div className="text-sm text-gray-400">Loading press…</div>
+  if (loading) return <div className="text-sm text-gray-400">Loading news…</div>
 
   return (
     <div className="max-w-6xl">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold">Press</h1>
+          <h1 className="text-xl font-semibold">News</h1>
           <p className="text-sm text-gray-400 mt-0.5">{items.length} total · {filtered.length} shown</p>
         </div>
+        <button
+          onClick={handleCreate}
+          className="px-3 py-1.5 text-sm bg-[#1a1a1a] text-white rounded-md hover:bg-[#333] transition-colors"
+        >
+          + New
+        </button>
       </div>
 
       {/* Toolbar */}
@@ -83,7 +99,7 @@ export default function AdminPressPage() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search press…"
+          placeholder="Search news…"
           className="px-3 py-1.5 text-sm border border-gray-200 rounded-md bg-white w-64
                      focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]"
         />
@@ -91,8 +107,7 @@ export default function AdminPressPage() {
           {[
             { value: 'all' as Filter, label: 'All' },
             { value: 'unlinked' as Filter, label: 'Not linked' },
-            { value: 'featured' as Filter, label: 'Featured' },
-            ...CATEGORIES.map((c) => ({ value: c.value as Filter, label: c.label })),
+            { value: 'hidden' as Filter, label: 'Hidden' },
           ].map((f) => (
             <button
               key={f.value}
@@ -119,9 +134,7 @@ export default function AdminPressPage() {
               <tr className="border-b border-gray-100 bg-gray-50/50">
                 <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visible</th>
                 <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Article</th>
-                <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                 <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[200px]">Linked project</th>
-                <th className="px-3 py-2.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Featured</th>
                 <th className="w-10"></th>
               </tr>
             </thead>
@@ -131,32 +144,21 @@ export default function AdminPressPage() {
                   <td className="px-3 py-2.5">
                     <Toggle
                       checked={item.show_in_journal}
-                      onChange={(v) => {
-                        updateField(item.id, 'show_in_journal', v)
-                        if (!v && item.is_featured) updateField(item.id, 'is_featured', false)
-                      }}
+                      onChange={(v) => updateField(item.id, 'show_in_journal', v)}
                     />
                   </td>
 
                   <td className="px-3 py-2.5">
                     <Link
-                      href={`/admin/press/${item.id}`}
+                      href={`/admin/news/${item.id}`}
                       className="text-sm font-medium text-[#1a1a1a] hover:text-[#C75B2B] transition-colors"
                     >
                       {item.title_en}
                     </Link>
                     <div className="text-xs text-gray-400">
-                      {item.publication_name}
+                      {item.source}
                       {item.date && ` · ${item.date}`}
                     </div>
-                  </td>
-
-                  <td className="px-3 py-2.5">
-                    <InlineSelect
-                      value={item.category}
-                      options={CATEGORIES}
-                      onChange={(v) => updateField(item.id, 'category', v)}
-                    />
                   </td>
 
                   <td className="px-3 py-2.5">
@@ -168,16 +170,8 @@ export default function AdminPressPage() {
                   </td>
 
                   <td className="px-3 py-2.5">
-                    <Toggle
-                      checked={item.is_featured}
-                      onChange={(v) => updateField(item.id, 'is_featured', v)}
-                      disabled={!item.show_in_journal}
-                    />
-                  </td>
-
-                  <td className="px-3 py-2.5">
                     <Link
-                      href={`/admin/press/${item.id}`}
+                      href={`/admin/news/${item.id}`}
                       className="text-xs text-gray-400 hover:text-[#C75B2B] transition-colors"
                     >
                       Edit →
@@ -189,7 +183,7 @@ export default function AdminPressPage() {
           </table>
         </div>
         {filtered.length === 0 && (
-          <div className="px-6 py-12 text-center text-sm text-gray-400">No press items match this filter.</div>
+          <div className="px-6 py-12 text-center text-sm text-gray-400">No news items match this filter.</div>
         )}
       </div>
 

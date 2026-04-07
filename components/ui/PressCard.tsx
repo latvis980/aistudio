@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import TagLabel from '@/components/ui/TagLabel'
 import BracketLink from '@/components/ui/BracketLink'
 import { PressItem, Lang } from '@/lib/types'
@@ -17,14 +18,16 @@ export default function PressCard({ item, lang }: PressCardProps) {
     <article className="flex flex-col md:flex-row gap-6 py-8 border-b border-border">
       {item.cover_image && (
         <div className="md:w-[320px] shrink-0 img-hover-scale">
-          <Image
-            src={item.cover_image}
-            alt={title}
-            width={320}
-            height={220}
-            className="w-full h-auto object-cover"
-            sizes="(max-width: 768px) 100vw, 320px"
-          />
+          <Link href={`/press/${item.slug}`}>
+            <Image
+              src={item.cover_image}
+              alt={title}
+              width={320}
+              height={220}
+              className="w-full h-auto object-cover"
+              sizes="(max-width: 768px) 100vw, 320px"
+            />
+          </Link>
         </div>
       )}
 
@@ -49,7 +52,11 @@ export default function PressCard({ item, lang }: PressCardProps) {
           <TagLabel>{t(item.category, lang)}</TagLabel>
         </div>
 
-        <h3 className="text-card-title lowercase mb-2">{title}</h3>
+        <h3 className="text-card-title lowercase mb-2">
+          <Link href={`/press/${item.slug}`} className="hover:text-accent transition-colors duration-300">
+            {title}
+          </Link>
+        </h3>
 
         {description && (
           <p className="text-body text-ink/80 mb-4">{description}</p>

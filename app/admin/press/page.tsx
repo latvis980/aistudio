@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import { PressItem, PressCategory } from '@/lib/types'
@@ -18,6 +18,7 @@ type Filter = 'all' | 'unlinked' | 'featured' | PressCategory
 export default function AdminPressPage() {
   const searchParams = useSearchParams()
   const filterParam = searchParams.get('filter') as Filter | null
+  const router = useRouter()
 
   const [items, setItems] = useState<PressItem[]>([])
   const [projects, setProjects] = useState<{ id: string; title_en: string; slug: string }[]>([])
@@ -49,6 +50,20 @@ export default function AdminPressPage() {
     setTimeout(() => setToast(null), 2000)
   }
 
+  const handleCreate = async () => {
+    const { data, error } = await supabase.from('press').insert({
+      title_en: 'Untitled',
+      slug: 'untitled-' + Date.now(),
+      show_in_journal: false,
+      category: 'media',
+    }).select().single()
+    if (error) {
+      setToast({ message: `Create failed: ${error.message}`, type: 'error' })
+      return
+    }
+    router.push(`/admin/press/${data.id}`)
+  }
+
   const filtered = items.filter((item) => {
     if (search) {
       const q = search.toLowerCase()
@@ -75,6 +90,12 @@ export default function AdminPressPage() {
           <h1 className="text-xl font-semibold">Press</h1>
           <p className="text-sm text-gray-400 mt-0.5">{items.length} total · {filtered.length} shown</p>
         </div>
+        <button
+          onClick={handleCreate}
+          className="px-3 py-1.5 text-sm bg-[#1a1a1a] text-white rounded-md hover:bg-[#333] transition-colors"
+        >
+          + New
+        </button>
       </div>
 
       {/* Toolbar */}

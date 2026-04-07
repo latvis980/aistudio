@@ -14,9 +14,9 @@ interface JournalFeedItemProps {
 export default function JournalFeedItem({ item, lang }: JournalFeedItemProps) {
   const href =
     item.type === 'news'
-      ? `/news`
+      ? `/news/${item.slug}`
       : item.type === 'press'
-        ? `/press`
+        ? `/press/${item.slug}`
         : `/works/${item.slug}`
 
   return (
