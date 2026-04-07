@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
-import Image from 'next/image'
 import { createServerClient } from '@/lib/supabase/server'
 import { getLangFromCookies } from '@/lib/utils'
 import { getField, t } from '@/lib/i18n'

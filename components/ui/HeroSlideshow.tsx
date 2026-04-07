@@ -40,7 +40,7 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
   const handleTouchEnd = (e: React.TouchEvent) => {
     const delta = touchStartX.current - e.changedTouches[0].clientX
     if (Math.abs(delta) > 50) {
-      delta > 0 ? next() : prev()
+      if (delta > 0) { next() } else { prev() }
     }
   }
 
