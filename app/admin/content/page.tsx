@@ -67,7 +67,19 @@ function ContentBlock({
   initialData: SiteContent | null
   onSaved: (updated: SiteContent) => void
 }) {
-  const [item, setItem] = useState<SiteContent | null>(initialData)
+  const [item, setItem] = useState<SiteContent | null>(
+    initialData ?? {
+      id: '',
+      page_key: blockMeta.key,
+      content_en: null,
+      content_ru: null,
+      content_ar: null,
+      content_zh: null,
+      content_es: null,
+      updated_at: '',
+    }
+  )
+  const [isNew, setIsNew] = useState(!initialData)
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [expanded, setExpanded] = useState(!!initialData)
@@ -80,22 +92,30 @@ function ContentBlock({
   const handleSave = async () => {
     if (!item) return
     setSaving(true)
-    const { error } = await supabase
-      .from('site_content')
-      .update({
-        content_en: item.content_en,
-        content_ru: item.content_ru,
-        content_ar: item.content_ar,
-        content_zh: item.content_zh,
-        content_es: item.content_es,
-      })
-      .eq('id', item.id)
+
+    const payload = {
+      page_key: item.page_key,
+      content_en: item.content_en,
+      content_ru: item.content_ru,
+      content_ar: item.content_ar,
+      content_zh: item.content_zh,
+      content_es: item.content_es,
+    }
+
+    const result = isNew
+      ? await supabase.from('site_content').insert(payload).select().single()
+      : await supabase.from('site_content').update(payload).eq('id', item.id).select().single()
+
     setSaving(false)
-    if (error) {
-      setToast({ message: `Save failed: ${error.message}`, type: 'error' })
+
+    if (result.error) {
+      setToast({ message: `Save failed: ${result.error.message}`, type: 'error' })
     } else {
+      const saved = result.data as SiteContent
+      setItem(saved)
+      if (isNew) setIsNew(false)
       setToast({ message: 'Saved', type: 'success' })
-      onSaved(item)
+      onSaved(saved)
       setTimeout(() => setToast(null), 2000)
     }
   }
@@ -182,13 +202,6 @@ function ContentBlock({
           <div className="flex justify-end pt-1">
             <SaveButton onClick={handleSave} loading={saving} />
           </div>
-        </div>
-      )}
-
-      {/* Empty state — row exists in DB but nothing filled yet */}
-      {expanded && !item && (
-        <div className="border-t border-gray-100 px-5 py-6 text-sm text-gray-400">
-          This content block is not yet in the database.
         </div>
       )}
 
