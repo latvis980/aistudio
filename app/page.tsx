@@ -9,42 +9,51 @@ import FeaturedProjects from '@/components/home/FeaturedProjects'
 export default async function HomePage() {
   const cookieStore = cookies()
   const lang = getLangFromCookies(cookieStore)
-  const supabase = createServerClient()
 
-  // Fetch home page content
-  const { data: content } = await supabase
-    .from('site_content')
-    .select('*')
-    .in('page_key', ['home_tagline', 'home_description'])
+  let tagline = 'Contemporary architecture, through context'
+  let description = ''
+  let featuredItems: (Project & { slide_image: string | null })[] = []
 
-  const contentMap = (content || []).reduce<Record<string, SiteContent>>(
-    (acc, item) => {
-      acc[item.page_key] = item
-      return acc
-    },
-    {}
-  )
+  try {
+    const supabase = createServerClient()
 
-  const tagline = contentMap.home_tagline
-    ? getField(contentMap.home_tagline, 'content', lang)
-    : 'Contemporary architecture, through context'
+    // Fetch home page content
+    const { data: content } = await supabase
+      .from('site_content')
+      .select('*')
+      .in('page_key', ['home_tagline', 'home_description'])
 
-  const description = contentMap.home_description
-    ? getField(contentMap.home_description, 'content', lang)
-    : ''
+    const contentMap = (content || []).reduce<Record<string, SiteContent>>(
+      (acc, item) => {
+        acc[item.page_key] = item
+        return acc
+      },
+      {}
+    )
 
-  // Fetch homepage slides with linked projects
-  const { data: slides } = await supabase
-    .from('homepage_slides')
-    .select('image_url, display_order, projects(*)')
-    .order('display_order', { ascending: true })
-    .limit(6)
+    tagline = contentMap.home_tagline
+      ? getField(contentMap.home_tagline, 'content', lang)
+      : 'Contemporary architecture, through context'
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const featuredItems = (slides || []).map((s: any) => ({
-    ...(s.projects as Project),
-    slide_image: s.image_url as string | null,
-  }))
+    description = contentMap.home_description
+      ? getField(contentMap.home_description, 'content', lang)
+      : ''
+
+    // Fetch homepage slides with linked projects
+    const { data: slides } = await supabase
+      .from('homepage_slides')
+      .select('image_url, display_order, projects(*)')
+      .order('display_order', { ascending: true })
+      .limit(6)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    featuredItems = (slides || []).map((s: any) => ({
+      ...(s.projects as Project),
+      slide_image: s.image_url as string | null,
+    }))
+  } catch (err) {
+    console.error('[HomePage] Supabase error:', err)
+  }
 
   return (
     <>

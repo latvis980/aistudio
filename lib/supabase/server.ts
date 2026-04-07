@@ -6,8 +6,16 @@ import { createClient } from '@supabase/supabase-js'
  * Call this inside server components or route handlers.
  */
 export function createServerClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_KEY!
-  )
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  if (!url || !key) {
+    console.error(
+      '[Supabase] Missing env vars — NEXT_PUBLIC_SUPABASE_URL:',
+      !!url,
+      'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:',
+      !!key
+    )
+    throw new Error('Supabase environment variables are not configured')
+  }
+  return createClient(url, key)
 }
