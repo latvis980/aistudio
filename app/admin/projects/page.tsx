@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import { Project, Typology, Status } from '@/lib/types'
@@ -34,6 +34,7 @@ type Filter = 'all' | 'hidden' | 'featured' | 'nocover' | Typology | Status
 export default function AdminProjectsPage() {
   const searchParams = useSearchParams()
   const filterParam = searchParams.get('filter') as Filter | null
+  const router = useRouter()
 
   const { projects: cachedProjects, setProjects: cacheProjects } = useAdminProjects()
   const [projects, setProjectsLocal] = useState<Project[]>(cachedProjects || [])
@@ -87,6 +88,24 @@ export default function AdminProjectsPage() {
     )
     setToast({ message: 'Updated', type: 'success' })
     setTimeout(() => setToast(null), 2000)
+  }
+
+  const handleCreate = async () => {
+    const { data, error } = await supabase.from('projects').insert({
+      title_en: 'Untitled',
+      slug: 'untitled-' + Date.now(),
+      show_in_journal: false,
+      typology: 'residential',
+      status: 'concept',
+      is_featured: false,
+      gallery: [],
+      specs: {},
+    }).select().single()
+    if (error) {
+      setToast({ message: `Create failed: ${error.message}`, type: 'error' })
+      return
+    }
+    router.push(`/admin/projects/${data.id}`)
   }
 
   // ── Filtering ────────────────────────────────────
@@ -160,6 +179,12 @@ export default function AdminProjectsPage() {
           <h1 className="text-xl font-semibold">Projects</h1>
           <p className="text-sm text-gray-400 mt-0.5">{projects.length} total · {filtered.length} shown</p>
         </div>
+        <button
+          onClick={handleCreate}
+          className="px-3 py-1.5 text-sm bg-[#1a1a1a] text-white rounded-md hover:bg-[#333] transition-colors"
+        >
+          + New
+        </button>
       </div>
 
       {/* Toolbar */}

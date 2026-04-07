@@ -8,6 +8,7 @@ import { PressItem, PressCategory, LANGUAGES } from '@/lib/types'
 import {
   Toggle, InlineSelect, ProjectPicker, ImageUpload, TranslateButton, SaveButton, Toast,
 } from '@/components/admin/AdminUI'
+import { slugify } from '@/lib/utils'
 
 const CATEGORIES: { value: PressCategory; label: string }[] = [
   { value: 'media', label: 'Media' },
@@ -155,8 +156,18 @@ export default function PressEditorPage() {
           </div>
           <div>
             <label className="block text-xs text-gray-500 mb-1">Slug</label>
-            <input type="text" value={item.slug} onChange={(e) => updateLocal('slug', e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]" />
+            <div className="flex gap-2">
+              <input type="text" value={item.slug} onChange={(e) => updateLocal('slug', e.target.value)}
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]" />
+              <button
+                type="button"
+                onClick={() => updateLocal('slug', slugify(item.title_en))}
+                className="px-2 py-1.5 text-xs border border-gray-200 rounded-md hover:bg-gray-50"
+                title="Regenerate from title"
+              >
+                ↻
+              </button>
+            </div>
           </div>
           <div className="col-span-2">
             <label className="block text-xs text-gray-500 mb-1">Favicon</label>
