@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   manifest: '/site.webmanifest',
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
   openGraph: {
     type: 'website',
     siteName: 'AI Studio',

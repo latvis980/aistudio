@@ -1,6 +1,7 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "AI Studio",
+  "short_name": "AI Studio",
+  "start_url": "/",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
