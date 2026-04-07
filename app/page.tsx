@@ -40,6 +40,7 @@ export default async function HomePage() {
     .order('display_order', { ascending: true })
     .limit(6)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const featuredItems = (slides || []).map((s: any) => ({
     ...(s.projects as Project),
     slide_image: s.image_url as string | null,
