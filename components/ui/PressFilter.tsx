@@ -13,11 +13,11 @@ interface PressFilterProps {
   initialCategory?: string
 }
 
-const TABS = ['all', 'featured', 'media', 'interview', 'awards'] as const
+const TABS = ['featured', 'all', 'media', 'interview', 'awards'] as const
 const PAGE_SIZE = 15
 
 export default function PressFilter({ items, lang, initialCategory }: PressFilterProps) {
-  const [activeTab, setActiveTab] = useState(initialCategory || 'all')
+  const [activeTab, setActiveTab] = useState(initialCategory || 'featured')
   const [page, setPage] = useState(1)
 
   const filtered = useMemo(() => {

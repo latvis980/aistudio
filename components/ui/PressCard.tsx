@@ -65,12 +65,12 @@ export default function PressCard({ item, lang }: PressCardProps) {
         <div className="flex gap-4">
           {item.external_link && (
             <BracketLink href={item.external_link} external>
-              {t('read_more', lang)}
+              {t('read_full_article', lang)}
             </BracketLink>
           )}
           {item.project_id && (
             <BracketLink href={`/works`}>
-              {t('project', lang)}
+              {t('view_project', lang)}
             </BracketLink>
           )}
         </div>
