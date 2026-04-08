@@ -21,7 +21,7 @@ const STATUSES: Status[] = ['completed', 'ongoing', 'concept']
 const PAGE_SIZE = 15
 
 export default function WorksFilter({ projects, lang, initialTypology }: WorksFilterProps) {
-  const [activeFilter, setActiveFilter] = useState<string>(initialTypology || 'all')
+  const [activeFilter, setActiveFilter] = useState<string>(initialTypology || 'featured')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
 
@@ -82,8 +82,8 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
       <aside className="lg:w-[180px] shrink-0">
         <div className="flex flex-col gap-3 lg:sticky lg:top-8">
-          <FilterButton value="all" label={t('all', lang)} />
           <FilterButton value="featured" label={t('featured', lang)} />
+          <FilterButton value="all" label={t('all', lang)} />
 
           <div className="mt-4 mb-1">
             <span className="text-nav uppercase tracking-wide-nav text-ink">
@@ -92,6 +92,15 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
           </div>
           {TYPOLOGIES.map((typ) => (
             <FilterButton key={typ} value={typ} label={t(typ, lang)} />
+          ))}
+
+          <div className="mt-4 mb-1">
+            <span className="text-nav uppercase tracking-wide-nav text-ink">
+              {t('status_label', lang)}
+            </span>
+          </div>
+          {STATUSES.map((status) => (
+            <FilterButton key={status} value={status} label={t(status, lang)} />
           ))}
 
           <input
@@ -103,15 +112,6 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
                        placeholder:text-muted focus:border-ink focus:outline-none
                        transition-colors duration-300 pb-1 w-full mt-4"
           />
-
-          <div className="mt-4 mb-1">
-            <span className="text-nav uppercase tracking-wide-nav text-ink">
-              {t('status_label', lang)}
-            </span>
-          </div>
-          {STATUSES.map((status) => (
-            <FilterButton key={status} value={status} label={t(status, lang)} />
-          ))}
         </div>
       </aside>
 
