@@ -73,7 +73,7 @@ export default function Gallery({ images, projectTitle, lang }: GalleryProps) {
           if (i % 3 === 1) {
             const nextImage = images[i + 1]
             return (
-              <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <GalleryItem image={image} index={i} projectTitle={projectTitle} lang={lang} />
                 {nextImage && (
                   <GalleryItem image={nextImage} index={i + 1} projectTitle={projectTitle} lang={lang} />
