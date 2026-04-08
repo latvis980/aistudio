@@ -115,10 +115,12 @@ export default async function StudioPage() {
               <p className="text-body">{settingsMap.london_address || '79-89 Lots Road SW10 0RN, London, UK'}</p>
               <p className="text-body-sm text-muted mt-1">T {settingsMap.london_phone || '+44 207 971 1227'}</p>
             </div>
-            <div>
-              <p className="text-body">{settingsMap.moscow_address || "6 Novaya Ploshad' 109012 Moscow, Russia"}</p>
-              <p className="text-body-sm text-muted mt-1">T {settingsMap.moscow_phone || '+7 495 790 7776'}</p>
-            </div>
+            {(['ru', 'zh', 'ar'] as string[]).includes(lang) && (
+              <div>
+                <p className="text-body">{settingsMap.moscow_address || "6 Novaya Ploshad' 109012 Moscow, Russia"}</p>
+                <p className="text-body-sm text-muted mt-1">T {settingsMap.moscow_phone || '+7 495 790 7776'}</p>
+              </div>
+            )}
           </div>
           <div className="mt-6">
             <BracketLink href={`mailto:${settingsMap.email || 'office@aistudio.co.uk'}`}>

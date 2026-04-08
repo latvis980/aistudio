@@ -37,8 +37,22 @@ export default function LanguageSwitcher({ currentLang }: LanguageSwitcherProps)
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="text-nav uppercase tracking-wide-nav text-muted hover:text-ink transition-colors duration-300"
+        className="flex items-center gap-1.5 text-nav uppercase tracking-wide-nav text-muted hover:text-ink transition-colors duration-300"
       >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-4 h-4"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M2 12h20" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z" />
+        </svg>
         {current.code.toUpperCase()}
       </button>
 
