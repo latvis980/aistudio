@@ -106,6 +106,11 @@ export interface PressItem {
   description_ar: string | null
   description_zh: string | null
   description_es: string | null
+  body_en: string | null
+  body_ru: string | null
+  body_ar: string | null
+  body_zh: string | null
+  body_es: string | null
   publication_name: string | null
   cover_image: string | null
   favicon_url: string | null

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import { LANGUAGES } from '@/lib/types'
 
 // ─── Toggle ───────────────────────────────────────────────────────────────────
 export function Toggle({
@@ -207,16 +208,25 @@ export function TranslateButton({
   fields,
   onTranslated,
 }: {
-  fields: Record<string, string>
+  fields: Record<string, Record<string, string>>
   onTranslated: (translations: Record<string, Record<string, string>>) => void
 }) {
   const [loading, setLoading] = useState(false)
+  const [sourceLang, setSourceLang] = useState('en')
+
+  const targetLangs = LANGUAGES.filter((l) => l.code !== sourceLang)
+  const targetLabel = targetLangs.map((l) => l.code.toUpperCase()).join(' / ')
 
   const handleTranslate = async () => {
-    // Check there's at least one non-empty field
-    const hasContent = Object.values(fields).some((v) => v?.trim())
-    if (!hasContent) {
-      alert('Fill in at least one English field before translating.')
+    // Build fields payload from the selected source language
+    const payload: Record<string, string> = {}
+    for (const [field, langs] of Object.entries(fields)) {
+      const val = langs[sourceLang] || ''
+      if (val.trim()) payload[field] = val
+    }
+
+    if (Object.keys(payload).length === 0) {
+      alert(`Fill in at least one ${LANGUAGES.find((l) => l.code === sourceLang)?.label || sourceLang} field before translating.`)
       return
     }
 
@@ -225,7 +235,7 @@ export function TranslateButton({
       const res = await fetch('/api/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields }),
+        body: JSON.stringify({ fields: payload, source_lang: sourceLang }),
       })
 
       if (!res.ok) {
@@ -243,19 +253,30 @@ export function TranslateButton({
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleTranslate}
-      disabled={loading}
-      className="
-        flex items-center gap-2 px-3 py-1.5 text-xs border border-gray-200 rounded-md
-        bg-white hover:bg-gray-50 transition-colors disabled:opacity-50
-        text-gray-600 hover:text-[#1a1a1a]
-      "
-    >
-      <span className="text-[#C75B2B]">✦</span>
-      {loading ? 'Translating…' : 'Auto-translate to RU / AR / ZH / ES'}
-    </button>
+    <div className="flex items-center gap-2">
+      <select
+        value={sourceLang}
+        onChange={(e) => setSourceLang(e.target.value)}
+        className="px-2 py-1.5 text-xs border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]"
+      >
+        {LANGUAGES.map((l) => (
+          <option key={l.code} value={l.code}>{l.label}</option>
+        ))}
+      </select>
+      <button
+        type="button"
+        onClick={handleTranslate}
+        disabled={loading}
+        className="
+          flex items-center gap-2 px-3 py-1.5 text-xs border border-gray-200 rounded-md
+          bg-white hover:bg-gray-50 transition-colors disabled:opacity-50
+          text-gray-600 hover:text-[#1a1a1a]
+        "
+      >
+        <span className="text-[#C75B2B]">✦</span>
+        {loading ? 'Translating...' : `Auto-translate to ${targetLabel}`}
+      </button>
+    </div>
   )
 }
 

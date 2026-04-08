@@ -180,7 +180,9 @@ function ContentBlock({
 
           {/* Translate */}
           <TranslateButton
-            fields={{ content: item.content_en || '' }}
+            fields={{
+              content: { en: item.content_en || '', ru: item.content_ru || '', ar: item.content_ar || '', zh: item.content_zh || '', es: item.content_es || '' },
+            }}
             onTranslated={handleTranslated}
           />
 

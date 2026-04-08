@@ -8,18 +8,24 @@ function getDeepLUrl(apiKey: string): string {
   return `${base}/v2/translate`
 }
 
-// DeepL language codes for target languages
-const TARGET_LANGS = [
-  { code: 'ru', deepl: 'RU' },
-  { code: 'ar', deepl: 'AR' },
-  { code: 'zh', deepl: 'ZH-HANS' },
-  { code: 'es', deepl: 'ES' },
-] as const
+// Map internal language codes to DeepL codes
+const DEEPL_CODES: Record<string, string> = {
+  en: 'EN',
+  ru: 'RU',
+  ar: 'AR',
+  zh: 'ZH-HANS',
+  es: 'ES',
+}
+
+const ALL_LANGS = ['en', 'ru', 'ar', 'zh', 'es'] as const
 
 /**
  * POST /api/translate
- * Body: { fields: { title: "...", description: "...", body: "..." } }
+ * Body: { fields: { title: "...", description: "...", body: "..." }, source_lang?: "en" }
  * Returns: { translations: { title: { ru: "...", ar: "...", zh: "...", es: "..." }, ... } }
+ *
+ * source_lang defaults to "en". When a non-English source is used, English
+ * is included in the target languages and the source language is excluded.
  *
  * Requires DEEPL_API_KEY env var.
  * Auto-detects free vs paid endpoint based on key format.
@@ -33,11 +39,22 @@ export async function POST(request: NextRequest) {
   const deeplUrl = getDeepLUrl(apiKey)
 
   try {
-    const { fields } = await request.json()
+    const { fields, source_lang: srcLang = 'en' } = await request.json()
 
     if (!fields || typeof fields !== 'object') {
       return NextResponse.json({ error: 'Provide a fields object' }, { status: 400 })
     }
+
+    const sourceLang = (srcLang as string).toLowerCase()
+    const sourceDeepL = DEEPL_CODES[sourceLang]
+    if (!sourceDeepL) {
+      return NextResponse.json({ error: `Unsupported source language: ${srcLang}` }, { status: 400 })
+    }
+
+    // Target = all languages except the source
+    const targetLangs = ALL_LANGS
+      .filter((code) => code !== sourceLang)
+      .map((code) => ({ code, deepl: DEEPL_CODES[code] }))
 
     // Only translate non-empty fields
     const entries = Object.entries(fields as Record<string, string>)
@@ -52,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     // Translate to all target languages in parallel (one request per language)
     const results = await Promise.all(
-      TARGET_LANGS.map(async ({ code, deepl }) => {
+      targetLangs.map(async ({ code, deepl }) => {
         const res = await fetch(deeplUrl, {
           method: 'POST',
           headers: {
@@ -61,7 +78,7 @@ export async function POST(request: NextRequest) {
           },
           body: JSON.stringify({
             text: fieldTexts,
-            source_lang: 'EN',
+            source_lang: sourceDeepL,
             target_lang: deepl,
             preserve_formatting: true,
           }),

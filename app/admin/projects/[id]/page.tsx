@@ -261,10 +261,10 @@ export default function ProjectEditorPage() {
           {/* Translate button */}
           <TranslateButton
             fields={{
-              title: project.title_en,
-              location: project.location_en || '',
-              description: project.description_en || '',
-              body: project.body_en || '',
+              title: { en: project.title_en, ru: project.title_ru || '', ar: project.title_ar || '', zh: project.title_zh || '', es: project.title_es || '' },
+              location: { en: project.location_en || '', ru: project.location_ru || '', ar: project.location_ar || '', zh: project.location_zh || '', es: project.location_es || '' },
+              description: { en: project.description_en || '', ru: project.description_ru || '', ar: project.description_ar || '', zh: project.description_zh || '', es: project.description_es || '' },
+              body: { en: project.body_en || '', ru: project.body_ru || '', ar: project.body_ar || '', zh: project.body_zh || '', es: project.body_es || '' },
             }}
             onTranslated={handleTranslated}
           />
