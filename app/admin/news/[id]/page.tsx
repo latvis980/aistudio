@@ -223,9 +223,9 @@ export default function NewsEditorPage() {
       <div className="mb-4">
         <TranslateButton
           fields={{
-            title: item.title_en || '',
-            description: item.description_en || '',
-            body: item.body_en || '',
+            title: { en: item.title_en || '', ru: item.title_ru || '', ar: item.title_ar || '', zh: item.title_zh || '', es: item.title_es || '' },
+            description: { en: item.description_en || '', ru: item.description_ru || '', ar: item.description_ar || '', zh: item.description_zh || '', es: item.description_es || '' },
+            body: { en: item.body_en || '', ru: item.body_ru || '', ar: item.body_ar || '', zh: item.body_zh || '', es: item.body_es || '' },
           }}
           onTranslated={handleTranslated}
         />

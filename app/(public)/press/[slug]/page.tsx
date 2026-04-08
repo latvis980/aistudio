@@ -62,6 +62,7 @@ export default async function PressDetailPage({ params }: Props) {
   const item = data as PressItem
   const title = getField(item, 'title', lang)
   const description = getField(item, 'description', lang)
+  const body = getField(item, 'body', lang)
 
   // If linked to a project, fetch the project slug for linking
   let projectSlug: string | null = null
@@ -128,10 +129,10 @@ export default async function PressDetailPage({ params }: Props) {
         </div>
       )}
 
-      {description && (
+      {(body || description) && (
         <section className="mb-12">
           <div className="max-w-[700px] text-body text-ink/90 whitespace-pre-line">
-            {description}
+            {body || description}
           </div>
         </section>
       )}

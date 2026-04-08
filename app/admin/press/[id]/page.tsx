@@ -59,6 +59,9 @@ export default function PressEditorPage() {
       description_en: item.description_en, description_ru: item.description_ru,
       description_ar: item.description_ar, description_zh: item.description_zh,
       description_es: item.description_es,
+      body_en: item.body_en, body_ru: item.body_ru,
+      body_ar: item.body_ar, body_zh: item.body_zh,
+      body_es: item.body_es,
       category: item.category, publication_name: item.publication_name,
       cover_image: item.cover_image, favicon_url: item.favicon_url, external_link: item.external_link,
       project_id: item.project_id, is_featured: item.is_featured,
@@ -237,7 +240,11 @@ export default function PressEditorPage() {
       {/* Translate */}
       <div className="mb-4">
         <TranslateButton
-          fields={{ title: item.title_en, description: item.description_en || '' }}
+          fields={{
+            title: { en: item.title_en, ru: item.title_ru || '', ar: item.title_ar || '', zh: item.title_zh || '', es: item.title_es || '' },
+            description: { en: item.description_en || '', ru: item.description_ru || '', ar: item.description_ar || '', zh: item.description_zh || '', es: item.description_es || '' },
+            body: { en: item.body_en || '', ru: item.body_ru || '', ar: item.body_ar || '', zh: item.body_zh || '', es: item.body_es || '' },
+          }}
           onTranslated={handleTranslated}
         />
       </div>
@@ -259,6 +266,13 @@ export default function PressEditorPage() {
               onChange={(e) => updateLocal(`description_${code}`, e.target.value)}
               dir={code === 'ar' ? 'rtl' : 'ltr'} rows={3}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md resize-y focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]" />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">Body (article excerpt)</label>
+            <textarea value={(item as unknown as Record<string, unknown>)[`body_${code}`] as string || ''}
+              onChange={(e) => updateLocal(`body_${code}`, e.target.value)}
+              dir={code === 'ar' ? 'rtl' : 'ltr'} rows={6}
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md resize-y font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]" />
           </div>
         </fieldset>
       ))}
