@@ -8,8 +8,8 @@ import Breadcrumb from '@/components/layout/Breadcrumb'
 import NewsList from '@/components/ui/NewsList'
 
 export const metadata: Metadata = {
-  title: 'News',
-  description: 'Latest news and updates from AI Studio.',
+  title: 'Studio News',
+  description: 'Latest studio news and updates from AI Studio.',
 }
 
 export default async function NewsPage() {
@@ -24,8 +24,8 @@ export default async function NewsPage() {
 
   return (
     <>
-      <Breadcrumb crumbs={[{ label: t('news', lang) }]} lang={lang} />
-      <h1 className="page-title mb-8">{t('news', lang)}</h1>
+      <Breadcrumb crumbs={[{ label: t('studio_news', lang) }]} lang={lang} />
+      <h1 className="page-title mb-8">{t('studio_news', lang)}</h1>
       <NewsList items={(items as NewsItemType[]) || []} lang={lang} />
     </>
   )

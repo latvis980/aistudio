@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase/client'
 
 // ─── Toggle ───────────────────────────────────────────────────────────────────
 export function Toggle({
@@ -139,20 +138,28 @@ export function ImageUpload({
     setUploading(true)
 
     const ext = file.name.split('.').pop()?.toLowerCase().replace('jpeg', 'jpg') || 'jpg'
-    const filename = `${slug}/cover.${ext}`
+    const path = `${slug}/cover.${ext}`
 
-    const { error } = await supabase.storage
-      .from(bucket)
-      .upload(filename, file, { upsert: true })
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('bucket', bucket)
+    formData.append('path', path)
 
-    if (error) {
-      alert(`Upload failed: ${error.message}`)
-      setUploading(false)
-      return
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      const data = await res.json()
+
+      if (!res.ok) {
+        alert(`Upload failed: ${data.error || 'Unknown error'}`)
+        setUploading(false)
+        return
+      }
+
+      onUploaded(data.publicUrl)
+    } catch {
+      alert('Upload failed: network error')
     }
 
-    const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filename)
-    onUploaded(publicUrl)
     setUploading(false)
     // Reset the input so the same file can be re-selected after replace
     e.target.value = ''
