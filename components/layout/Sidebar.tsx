@@ -37,7 +37,7 @@ export default function Sidebar({ lang }: SidebarProps) {
             alt="AI Studio — Architecture · Design · Urbanism"
             width={1743}
             height={417}
-            className="w-[140px] h-auto"
+            className="w-[126px] h-auto"
             priority
           />
         </Link>
@@ -73,7 +73,7 @@ export default function Sidebar({ lang }: SidebarProps) {
               alt="AI Studio"
               width={1743}
               height={417}
-              className="h-9 w-auto"
+              className="h-8 w-auto"
               priority
             />
           </Link>

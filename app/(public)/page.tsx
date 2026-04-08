@@ -12,6 +12,8 @@ export default async function HomePage() {
 
   let tagline = 'Contemporary architecture, through context'
   let description = ''
+  let quote = ''
+  let quoteAuthor = ''
   let featuredItems: (Project & { slide_image: string | null })[] = []
 
   try {
@@ -21,7 +23,7 @@ export default async function HomePage() {
     const { data: content } = await supabase
       .from('site_content')
       .select('*')
-      .in('page_key', ['home_tagline', 'home_description'])
+      .in('page_key', ['home_tagline', 'home_description', 'home_quote', 'home_quote_author'])
 
     const contentMap = (content || []).reduce<Record<string, SiteContent>>(
       (acc, item) => {
@@ -37,6 +39,14 @@ export default async function HomePage() {
 
     description = contentMap.home_description
       ? getField(contentMap.home_description, 'content', lang)
+      : ''
+
+    quote = contentMap.home_quote
+      ? getField(contentMap.home_quote, 'content', lang)
+      : ''
+
+    quoteAuthor = contentMap.home_quote_author
+      ? getField(contentMap.home_quote_author, 'content', lang)
       : ''
 
     // Fetch homepage slides with linked projects
@@ -57,7 +67,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero tagline={tagline} description={description} />
+      <Hero tagline={tagline} description={description} quote={quote} quoteAuthor={quoteAuthor} />
       <FeaturedProjects
         projects={featuredItems}
         lang={lang}
