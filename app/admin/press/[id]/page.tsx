@@ -6,9 +6,10 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import { PressItem, PressCategory, LANGUAGES } from '@/lib/types'
 import {
-  Toggle, InlineSelect, ProjectPicker, ImageUpload, TranslateButton, SaveButton, Toast,
+  Toggle, InlineSelect, ProjectPicker, ImageUpload, TranslateButton, SaveButton, Toast, ConfirmDialog,
 } from '@/components/admin/AdminUI'
 import { slugify } from '@/lib/utils'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 
 const CATEGORIES: { value: PressCategory; label: string }[] = [
   { value: 'media', label: 'Media' },
@@ -27,6 +28,9 @@ export default function PressEditorPage() {
   const [saving, setSaving] = useState(false)
   const [fetchingFavicon, setFetchingFavicon] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const { isDirty, resetInitialData } = useUnsavedChanges(item)
 
   const load = useCallback(async () => {
     const [{ data: pressData }, { data: projectData }] = await Promise.all([
@@ -35,9 +39,10 @@ export default function PressEditorPage() {
     ])
     if (!pressData) { router.push('/admin/press'); return }
     setItem(pressData as PressItem)
+    resetInitialData(pressData as PressItem)
     setProjects(projectData || [])
     setLoading(false)
-  }, [id, router])
+  }, [id, router, resetInitialData])
 
   useEffect(() => { load() }, [load])
 
@@ -63,8 +68,21 @@ export default function PressEditorPage() {
     if (error) {
       setToast({ message: `Save failed: ${error.message}`, type: 'error' })
     } else {
+      resetInitialData(item)
       setToast({ message: 'Press item saved', type: 'success' })
       setTimeout(() => setToast(null), 2000)
+    }
+  }
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    const { error } = await supabase.from('press').delete().eq('id', id)
+    setDeleting(false)
+    if (error) {
+      setToast({ message: `Delete failed: ${error.message}`, type: 'error' })
+      setShowDeleteConfirm(false)
+    } else {
+      router.push('/admin/press')
     }
   }
 
@@ -113,18 +131,30 @@ export default function PressEditorPage() {
           <h1 className="text-xl font-semibold">{item.title_en}</h1>
           <p className="text-sm text-gray-400">/{item.slug}</p>
         </div>
-        <SaveButton onClick={handleSave} loading={saving} />
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setShowDeleteConfirm(true)}
+            className="px-3 py-2 text-sm text-red-600 border border-red-200 rounded-md hover:bg-red-50 transition-colors"
+          >
+            Delete
+          </button>
+          <SaveButton onClick={handleSave} loading={saving} isDirty={isDirty} />
+        </div>
       </div>
 
       {/* Quick controls */}
       <div className="flex flex-wrap items-center gap-6 mb-6 p-4 bg-white border border-gray-200 rounded-lg">
-        <label className="flex items-center gap-2 text-sm">
-          <Toggle checked={item.show_in_journal} onChange={(v) => {
-            updateLocal('show_in_journal', v)
-            if (!v) updateLocal('is_featured', false)
-          }} />
-          Visible
-        </label>
+        <div>
+          <label className="flex items-center gap-2 text-sm">
+            <Toggle checked={item.show_in_journal} onChange={(v) => {
+              updateLocal('show_in_journal', v)
+              if (!v) updateLocal('is_featured', false)
+            }} />
+            Visible
+          </label>
+          <p className="text-[11px] text-gray-400 mt-1 ml-11">Shows this article in the Journal feed</p>
+        </div>
         <label className="flex items-center gap-2 text-sm">
           <Toggle checked={item.is_featured} onChange={(v) => updateLocal('is_featured', v)} disabled={!item.show_in_journal} />
           Featured
@@ -168,6 +198,7 @@ export default function PressEditorPage() {
                 ↻
               </button>
             </div>
+            <p className="text-[11px] text-gray-400 mt-1">URL path for this article. Click ↻ to regenerate from title</p>
           </div>
           <div className="col-span-2">
             <label className="block text-xs text-gray-500 mb-1">Favicon</label>
@@ -233,9 +264,17 @@ export default function PressEditorPage() {
       ))}
 
       <div className="sticky bottom-4 mt-8 flex justify-end">
-        <SaveButton onClick={handleSave} loading={saving} />
+        <SaveButton onClick={handleSave} loading={saving} isDirty={isDirty} />
       </div>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        title="Delete press item"
+        message={`Are you sure you want to delete "${item.title_en}"? This action cannot be undone.`}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+        loading={deleting}
+      />
     </div>
   )
 }
