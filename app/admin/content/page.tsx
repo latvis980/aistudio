@@ -28,6 +28,20 @@ const CONTENT_BLOCKS: {
     rows: 4,
   },
   {
+    key: 'home_quote',
+    label: 'Home — Quote',
+    description: 'Quote displayed beneath the description on the homepage',
+    href: '/',
+    rows: 4,
+  },
+  {
+    key: 'home_quote_author',
+    label: 'Home — Quote Author',
+    description: 'Author attribution for the homepage quote',
+    href: '/',
+    rows: 2,
+  },
+  {
     key: 'about',
     label: 'Studio — About',
     description: 'Main studio description on the Studio page',
