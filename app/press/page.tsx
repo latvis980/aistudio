@@ -27,7 +27,7 @@ export default async function PressPage({
     .order('date', { ascending: false })
 
   return (
-    <>
+    <div className="lg:max-w-[80%]">
       <Breadcrumb crumbs={[{ label: t('press', lang) }]} lang={lang} />
       <h1 className="page-title mb-8">{t('press', lang)}</h1>
       <PressFilter
@@ -35,6 +35,6 @@ export default async function PressPage({
         lang={lang}
         initialCategory={searchParams.category}
       />
-    </>
+    </div>
   )
 }

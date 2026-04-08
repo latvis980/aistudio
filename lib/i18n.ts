@@ -51,8 +51,14 @@ const UI_LABELS: Record<string, Record<Lang, string>> = {
   read_more: {
     en: 'Read More', ru: 'Подробнее', ar: 'اقرأ المزيد', zh: '阅读更多', es: 'Leer más',
   },
+  read_full_article: {
+    en: 'Read Full Article', ru: 'Читать статью', ar: 'اقرأ المقال كاملاً', zh: '阅读全文', es: 'Leer artículo completo',
+  },
   project: {
     en: 'Project', ru: 'Проект', ar: 'مشروع', zh: '项目', es: 'Proyecto',
+  },
+  view_project: {
+    en: 'View Project', ru: 'Смотреть проект', ar: 'عرض المشروع', zh: '查看项目', es: 'Ver proyecto',
   },
   previous: {
     en: 'Previous', ru: 'Предыдущий', ar: 'السابق', zh: '上一个', es: 'Anterior',
