@@ -46,7 +46,8 @@
 
   /* Tag labels: RESIDENTIAL, COMPLETED, MEDIA */
   .tag-label {
-    @apply text-tag uppercase tracking-wide-tag text-muted;
+    @apply text-tag uppercase tracking-wide-tag text-muted
+           hover:text-ink transition-colors duration-300 cursor-pointer;
   }
 
   /* Content area right of sidebar */

@@ -43,14 +43,19 @@ export default function FeaturedProjects({ projects, lang }: FeaturedProjectsPro
               className="block shrink-0 w-[150px] lg:w-[190px] img-hover-scale group"
             >
               {(project.slide_image || project.cover_image) ? (
-                <Image
-                  src={project.slide_image || project.cover_image!}
-                  alt={title}
-                  width={190}
-                  height={140}
-                  className="w-full h-[110px] lg:h-[140px] object-cover"
-                  sizes="190px"
-                />
+                <div className="relative">
+                  <Image
+                    src={project.slide_image || project.cover_image!}
+                    alt={title}
+                    width={190}
+                    height={140}
+                    className="w-full h-[110px] lg:h-[140px] object-cover"
+                    sizes="190px"
+                  />
+                  <div className="absolute inset-0 bg-ink/50 flex items-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="text-cream text-body-sm lowercase leading-tight">{title}</span>
+                  </div>
+                </div>
               ) : (
                 <div className="w-full h-[110px] lg:h-[140px] bg-border flex items-center justify-center">
                   <span className="text-body-sm text-muted lowercase">{title}</span>

@@ -70,7 +70,7 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
         onClick={() => changeFilter(value)}
         className={cn(
           'text-tag uppercase tracking-wide-tag transition-colors duration-300 text-start',
-          isActive ? 'text-ink font-medium' : 'text-muted hover:text-ink'
+          isActive ? 'text-ink font-medium hover:text-accent' : 'text-muted hover:text-ink'
         )}
       >
         {label}

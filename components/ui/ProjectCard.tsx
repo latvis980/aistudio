@@ -31,7 +31,7 @@ export default function ProjectCard({ project, lang }: ProjectCardProps) {
         )}
 
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
-          <h2 className="text-card-title lowercase">{title}</h2>
+          <h2 className="text-card-title lowercase hover:text-accent transition-colors duration-300">{title}</h2>
           <div className="flex gap-3 shrink-0">
             <TagLabel>{t(project.typology, lang)}</TagLabel>
             <TagLabel>{t(project.status, lang)}</TagLabel>

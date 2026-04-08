@@ -43,7 +43,7 @@ export default function PressFilter({ items, lang, initialCategory }: PressFilte
             onClick={() => changeTab(tab)}
             className={cn(
               'text-nav uppercase tracking-wide-nav transition-colors duration-300',
-              activeTab === tab ? 'text-ink' : 'text-muted hover:text-ink'
+              activeTab === tab ? 'text-ink hover:text-accent' : 'text-muted hover:text-ink'
             )}
           >
             {t(tab === 'interview' ? 'interviews' : tab, lang)}
