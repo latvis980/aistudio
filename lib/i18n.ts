@@ -81,6 +81,9 @@ const UI_LABELS: Record<string, Record<Lang, string>> = {
   studio_news: {
     en: 'Studio News', ru: 'Новости студии', ar: 'أخبار الاستوديو', zh: '工作室新闻', es: 'Noticias del estudio',
   },
+  load_more: {
+    en: 'Load More', ru: 'Загрузить ещё', ar: 'تحميل المزيد', zh: '加载更多', es: 'Cargar más',
+  },
   project_info: {
     en: 'Project Info', ru: 'Информация о проекте', ar: 'معلومات المشروع', zh: '项目信息', es: 'Información del proyecto',
   },

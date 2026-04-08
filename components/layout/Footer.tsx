@@ -108,7 +108,7 @@ export default function Footer({ lang }: FooterProps) {
             <div className="flex flex-col gap-1.5">
               {[
                 { key: 'about', href: '/studio#about' },
-                { key: 'news', href: '/news' },
+                { key: 'studio_news', href: '/news' },
                 { key: 'get_in_touch', href: '/studio#get-in-touch' },
               ].map(({ key, href }) => (
                 <Link

@@ -67,7 +67,7 @@ export default async function NewsDetailPage({ params }: Props) {
     <>
       <Breadcrumb
         crumbs={[
-          { label: t('news', lang), href: '/news' },
+          { label: t('studio_news', lang), href: '/news' },
           { label: title },
         ]}
         lang={lang}
@@ -115,7 +115,7 @@ export default async function NewsDetailPage({ params }: Props) {
 
       <div className="mt-16 pt-8 border-t border-border">
         <BracketLink href="/news">
-          {t('news', lang)}
+          {t('studio_news', lang)}
         </BracketLink>
       </div>
     </>

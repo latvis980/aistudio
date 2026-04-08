@@ -470,22 +470,26 @@ function GalleryEditor({
       const file = files[i]
       const idx = String(newImages.length + 1).padStart(2, '0')
       const ext = file.name.split('.').pop()?.toLowerCase().replace('jpeg', 'jpg') || 'jpg'
-      const filename = `${slug}/${idx}.${ext}`
+      const path = `${slug}/${idx}.${ext}`
 
-      const { error } = await supabase.storage
-        .from('project-images')
-        .upload(filename, file, { upsert: true })
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('bucket', 'project-images')
+      formData.append('path', path)
 
-      if (error) {
-        alert(`Failed to upload ${file.name}: ${error.message}`)
-        continue
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: formData })
+        const data = await res.json()
+
+        if (!res.ok) {
+          alert(`Failed to upload ${file.name}: ${data.error || 'Unknown error'}`)
+          continue
+        }
+
+        newImages.push({ url: data.publicUrl })
+      } catch {
+        alert(`Failed to upload ${file.name}: network error`)
       }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('project-images')
-        .getPublicUrl(filename)
-
-      newImages.push({ url: publicUrl })
     }
 
     onChange(newImages)

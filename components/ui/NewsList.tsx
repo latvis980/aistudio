@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import NewsItemCard from '@/components/ui/NewsItem'
 import { NewsItem, Lang } from '@/lib/types'
-import { cn } from '@/lib/utils'
+import { t } from '@/lib/i18n'
 
 interface NewsListProps {
   items: NewsItem[]
@@ -13,37 +13,25 @@ interface NewsListProps {
 const PAGE_SIZE = 15
 
 export default function NewsList({ items, lang }: NewsListProps) {
-  const [page, setPage] = useState(1)
-
-  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE))
-  const paginated = items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  const visible = items.slice(0, visibleCount)
+  const hasMore = visibleCount < items.length
 
   return (
     <>
       <div>
-        {paginated.map((item) => (
+        {visible.map((item) => (
           <NewsItemCard key={item.id} item={item} lang={lang} />
         ))}
       </div>
 
-      {totalPages > 1 && (
-        <div className="flex items-center gap-6 mt-12 pt-8 border-t border-border">
+      {hasMore && (
+        <div className="mt-12 pt-8 border-t border-border">
           <button
-            onClick={() => { setPage((p) => p - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-            disabled={page === 1}
-            className={cn('bracket-link', page === 1 && 'opacity-30 cursor-not-allowed pointer-events-none')}
+            onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+            className="bracket-link"
           >
-            ←
-          </button>
-          <span className="text-nav text-muted tabular-nums">
-            {page} / {totalPages}
-          </span>
-          <button
-            onClick={() => { setPage((p) => p + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-            disabled={page === totalPages}
-            className={cn('bracket-link', page === totalPages && 'opacity-30 cursor-not-allowed pointer-events-none')}
-          >
-            →
+            {t('load_more', lang)}
           </button>
         </div>
       )}
