@@ -5,6 +5,7 @@ import { createServerClient } from '@/lib/supabase/server'
 import { getLangFromCookies } from '@/lib/utils'
 import { getField, t } from '@/lib/i18n'
 import { Project, GalleryImage } from '@/lib/types'
+import Link from 'next/link'
 import Breadcrumb from '@/components/layout/Breadcrumb'
 import TagLabel from '@/components/ui/TagLabel'
 import BracketLink from '@/components/ui/BracketLink'
@@ -95,8 +96,12 @@ export default async function ProjectPage({ params }: Props) {
       />
 
       <div className="flex gap-3 mb-3">
-        <TagLabel>{t(p.typology, lang)}</TagLabel>
-        <TagLabel>{t(p.status, lang)}</TagLabel>
+        <Link href={`/works?typology=${p.typology}`}>
+          <TagLabel>{t(p.typology, lang)}</TagLabel>
+        </Link>
+        <Link href={`/works?typology=${p.status}`}>
+          <TagLabel>{t(p.status, lang)}</TagLabel>
+        </Link>
       </div>
 
       <h1 className="page-title mb-2">{title}</h1>
