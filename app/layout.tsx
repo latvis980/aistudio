@@ -4,6 +4,7 @@ import { Metadata } from 'next'
 import Sidebar from '@/components/layout/Sidebar'
 import Footer from '@/components/layout/Footer'
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher'
+import CookieBanner from '@/components/layout/CookieBanner'
 import { getLangFromCookies } from '@/lib/utils'
 import { isRTL } from '@/lib/i18n'
 
@@ -56,6 +57,7 @@ export default function RootLayout({
           {children}
           <Footer lang={lang} />
         </main>
+        <CookieBanner lang={lang} />
       </body>
     </html>
   )

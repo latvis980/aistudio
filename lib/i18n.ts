@@ -153,6 +153,16 @@ const UI_LABELS: Record<string, Record<Lang, string>> = {
   address_and_phone: {
     en: 'Address and Phone', ru: 'Адрес и телефон', ar: 'العنوان والهاتف', zh: '地址与电话', es: 'Dirección y teléfono',
   },
+  cookie_banner_text: {
+    en: 'This site uses cookies to enhance your experience.',
+    ru: 'Этот сайт использует файлы cookie для улучшения работы.',
+    ar: 'يستخدم هذا الموقع ملفات تعريف الارتباط لتحسين تجربتك.',
+    zh: '本网站使用Cookie以提升您的体验。',
+    es: 'Este sitio utiliza cookies para mejorar su experiencia.',
+  },
+  cookie_banner_accept: {
+    en: 'Accept', ru: 'Принять', ar: 'قبول', zh: '接受', es: 'Aceptar',
+  },
 }
 
 /**
