@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { HomepageSlide } from '@/lib/types'
-import { ProjectPicker, ImageUpload, Toast } from '@/components/admin/AdminUI'
+import { ProjectPicker, ImageUpload, Toast, ConfirmDialog } from '@/components/admin/AdminUI'
 
 interface SlideRow extends HomepageSlide {
   projects?: { id: string; title_en: string; slug: string } | null
@@ -16,6 +16,8 @@ export default function HomepageAdmin() {
   const [projects, setProjects] = useState<{ id: string; title_en: string; slug: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [slideToRemove, setSlideToRemove] = useState<string | null>(null)
+  const [removing, setRemoving] = useState(false)
 
   const load = useCallback(async () => {
     const [{ data: s }, { data: p }] = await Promise.all([
@@ -56,19 +58,25 @@ export default function HomepageAdmin() {
   }
 
   // ── Remove slide ─────────────────────────────────────
-  const removeSlide = async (id: string) => {
-    const { error } = await supabase.from('homepage_slides').delete().eq('id', id)
+  const confirmRemoveSlide = async () => {
+    if (!slideToRemove) return
+    setRemoving(true)
+    const { error } = await supabase.from('homepage_slides').delete().eq('id', slideToRemove)
     if (error) {
       setToast({ message: `Failed to remove: ${error.message}`, type: 'error' })
+      setRemoving(false)
+      setSlideToRemove(null)
       return
     }
     // Re-number remaining slides
-    const remaining = slides.filter((s) => s.id !== id)
+    const remaining = slides.filter((s) => s.id !== slideToRemove)
     for (let i = 0; i < remaining.length; i++) {
       if (remaining[i].display_order !== i) {
         await supabase.from('homepage_slides').update({ display_order: i }).eq('id', remaining[i].id)
       }
     }
+    setRemoving(false)
+    setSlideToRemove(null)
     setToast({ message: 'Slide removed', type: 'success' })
     load()
   }
@@ -211,7 +219,7 @@ export default function HomepageAdmin() {
 
                 {/* Remove */}
                 <button
-                  onClick={() => removeSlide(slide.id)}
+                  onClick={() => setSlideToRemove(slide.id)}
                   className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
                 >
                   Remove
@@ -240,6 +248,15 @@ export default function HomepageAdmin() {
           onClose={() => setToast(null)}
         />
       )}
+      <ConfirmDialog
+        open={!!slideToRemove}
+        title="Remove slide"
+        message="Are you sure you want to remove this slide from the homepage?"
+        confirmLabel="Remove"
+        onConfirm={confirmRemoveSlide}
+        onCancel={() => setSlideToRemove(null)}
+        loading={removing}
+      />
     </div>
   )
 }

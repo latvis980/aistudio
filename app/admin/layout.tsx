@@ -48,19 +48,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // Login page gets no shell
   if (pathname === '/admin/login') {
     return (
-      <html lang="en">
-        <body className="bg-[#fafafa] text-[#1a1a1a] font-sans">{children}</body>
-      </html>
+      <div className="bg-[#fafafa] text-[#1a1a1a] font-sans min-h-screen">{children}</div>
     )
   }
 
   if (loading) {
     return (
-      <html lang="en">
-        <body className="bg-[#fafafa] flex items-center justify-center min-h-screen">
-          <div className="text-sm text-gray-400">Loading…</div>
-        </body>
-      </html>
+      <div className="bg-[#fafafa] flex items-center justify-center min-h-screen">
+        <div className="text-sm text-gray-400">Loading…</div>
+      </div>
     )
   }
 
@@ -70,9 +66,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <html lang="en">
-      <body className="bg-[#fafafa] text-[#1a1a1a]">
-        <div className="flex min-h-screen relative z-10">
+    <div className="bg-[#fafafa] text-[#1a1a1a] font-sans">
+      <div className="flex min-h-screen relative z-10">
 
           {/* ── Sidebar ─────────────────────────── */}
           <aside className={`
@@ -178,7 +173,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </main>
           </div>
         </div>
-      </body>
-    </html>
+      </div>
   )
 }

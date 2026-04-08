@@ -6,9 +6,10 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import { NewsItem, LANGUAGES } from '@/lib/types'
 import {
-  Toggle, ProjectPicker, ImageUpload, TranslateButton, SaveButton, Toast,
+  Toggle, ProjectPicker, ImageUpload, TranslateButton, SaveButton, Toast, ConfirmDialog,
 } from '@/components/admin/AdminUI'
 import { slugify } from '@/lib/utils'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 
 export default function NewsEditorPage() {
   const router = useRouter()
@@ -20,6 +21,9 @@ export default function NewsEditorPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const { isDirty, resetInitialData } = useUnsavedChanges(item)
 
   const load = useCallback(async () => {
     const [{ data: newsData }, { data: projectData }] = await Promise.all([
@@ -28,9 +32,10 @@ export default function NewsEditorPage() {
     ])
     if (!newsData) { router.push('/admin/news'); return }
     setItem(newsData as NewsItem)
+    resetInitialData(newsData as NewsItem)
     setProjects(projectData || [])
     setLoading(false)
-  }, [id, router])
+  }, [id, router, resetInitialData])
 
   useEffect(() => { load() }, [load])
 
@@ -70,8 +75,21 @@ export default function NewsEditorPage() {
     if (error) {
       setToast({ message: `Save failed: ${error.message}`, type: 'error' })
     } else {
+      resetInitialData(item)
       setToast({ message: 'News item saved', type: 'success' })
       setTimeout(() => setToast(null), 2000)
+    }
+  }
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    const { error } = await supabase.from('news').delete().eq('id', id)
+    setDeleting(false)
+    if (error) {
+      setToast({ message: `Delete failed: ${error.message}`, type: 'error' })
+      setShowDeleteConfirm(false)
+    } else {
+      router.push('/admin/news')
     }
   }
 
@@ -101,15 +119,27 @@ export default function NewsEditorPage() {
           <h1 className="text-xl font-semibold">{item.title_en}</h1>
           <p className="text-sm text-gray-400">/{item.slug}</p>
         </div>
-        <SaveButton onClick={handleSave} loading={saving} />
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setShowDeleteConfirm(true)}
+            className="px-3 py-2 text-sm text-red-600 border border-red-200 rounded-md hover:bg-red-50 transition-colors"
+          >
+            Delete
+          </button>
+          <SaveButton onClick={handleSave} loading={saving} isDirty={isDirty} />
+        </div>
       </div>
 
       {/* Quick controls */}
       <div className="flex flex-wrap items-center gap-6 mb-6 p-4 bg-white border border-gray-200 rounded-lg">
-        <label className="flex items-center gap-2 text-sm">
-          <Toggle checked={item.show_in_journal} onChange={(v) => updateLocal('show_in_journal', v)} />
-          Visible
-        </label>
+        <div>
+          <label className="flex items-center gap-2 text-sm">
+            <Toggle checked={item.show_in_journal} onChange={(v) => updateLocal('show_in_journal', v)} />
+            Visible
+          </label>
+          <p className="text-[11px] text-gray-400 mt-1 ml-11">Shows this item in the Journal feed</p>
+        </div>
       </div>
 
       {/* Metadata */}
@@ -162,6 +192,7 @@ export default function NewsEditorPage() {
                 ↻
               </button>
             </div>
+            <p className="text-[11px] text-gray-400 mt-1">URL path for this news item. Click ↻ to regenerate from title</p>
           </div>
         </div>
       </fieldset>
@@ -240,10 +271,18 @@ export default function NewsEditorPage() {
       ))}
 
       <div className="sticky bottom-4 mt-8 flex justify-end">
-        <SaveButton onClick={handleSave} loading={saving} />
+        <SaveButton onClick={handleSave} loading={saving} isDirty={isDirty} />
       </div>
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        title="Delete news item"
+        message={`Are you sure you want to delete "${item.title_en}"? This action cannot be undone.`}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+        loading={deleting}
+      />
     </div>
   )
 }

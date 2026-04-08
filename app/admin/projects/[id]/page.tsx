@@ -6,9 +6,10 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 import { Project, Typology, Status, LANGUAGES, GalleryImage } from '@/lib/types'
 import {
-  Toggle, InlineSelect, ImageUpload, TranslateButton, SaveButton, Toast,
+  Toggle, InlineSelect, ImageUpload, TranslateButton, SaveButton, Toast, ConfirmDialog,
 } from '@/components/admin/AdminUI'
 import { slugify } from '@/lib/utils'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 
 const TYPOLOGIES: { value: Typology; label: string }[] = [
   { value: 'residential', label: 'Residential' },
@@ -44,6 +45,9 @@ export default function ProjectEditorPage() {
   const [saving, setSaving] = useState(false)
   const [tab, setTab] = useState<Tab>('content')
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const { isDirty, resetInitialData } = useUnsavedChanges(project)
 
   const loadProject = useCallback(async () => {
     const { data, error } = await supabase
@@ -58,8 +62,9 @@ export default function ProjectEditorPage() {
       return
     }
     setProject(data as Project)
+    resetInitialData(data as Project)
     setLoading(false)
-  }, [id, router])
+  }, [id, router, resetInitialData])
 
   useEffect(() => { loadProject() }, [loadProject])
 
@@ -125,8 +130,22 @@ export default function ProjectEditorPage() {
     if (error) {
       setToast({ message: `Save failed: ${error.message}`, type: 'error' })
     } else {
+      resetInitialData(project)
       setToast({ message: 'Project saved', type: 'success' })
       setTimeout(() => setToast(null), 2000)
+    }
+  }
+
+  // ── Delete ───────────────────────────────────────
+  const handleDelete = async () => {
+    setDeleting(true)
+    const { error } = await supabase.from('projects').delete().eq('id', id)
+    setDeleting(false)
+    if (error) {
+      setToast({ message: `Delete failed: ${error.message}`, type: 'error' })
+      setShowDeleteConfirm(false)
+    } else {
+      router.push('/admin/projects')
     }
   }
 
@@ -169,23 +188,36 @@ export default function ProjectEditorPage() {
           >
             ↗ View
           </Link>
-          <SaveButton onClick={handleSave} loading={saving} />
+          <button
+            type="button"
+            onClick={() => setShowDeleteConfirm(true)}
+            className="px-3 py-2 text-sm text-red-600 border border-red-200 rounded-md hover:bg-red-50 transition-colors"
+          >
+            Delete
+          </button>
+          <SaveButton onClick={handleSave} loading={saving} isDirty={isDirty} />
         </div>
       </div>
 
       {/* Quick toggles */}
       <div className="flex flex-wrap items-center gap-6 mb-6 p-4 bg-white border border-gray-200 rounded-lg">
-        <label className="flex items-center gap-2 text-sm">
-          <Toggle checked={project.show_in_journal} onChange={(v) => {
-            updateLocal('show_in_journal', v)
-            if (!v) updateLocal('is_featured', false)
-          }} />
-          <span>Visible on site</span>
-        </label>
-        <label className="flex items-center gap-2 text-sm">
-          <Toggle checked={project.is_featured} onChange={(v) => updateLocal('is_featured', v)} disabled={!project.show_in_journal} />
-          <span>Featured</span>
-        </label>
+        <div>
+          <label className="flex items-center gap-2 text-sm">
+            <Toggle checked={project.show_in_journal} onChange={(v) => {
+              updateLocal('show_in_journal', v)
+              if (!v) updateLocal('is_featured', false)
+            }} />
+            <span>Visible on site</span>
+          </label>
+          <p className="text-[11px] text-gray-400 mt-1 ml-11">Shows this project in the Journal feed</p>
+        </div>
+        <div>
+          <label className="flex items-center gap-2 text-sm">
+            <Toggle checked={project.is_featured} onChange={(v) => updateLocal('is_featured', v)} disabled={!project.show_in_journal} />
+            <span>Featured</span>
+          </label>
+          <p className="text-[11px] text-gray-400 mt-1 ml-11">Pins to the top of the Journal feed</p>
+        </div>
         <div className="flex items-center gap-2 text-sm">
           <span className="text-gray-500">Typology:</span>
           <InlineSelect
@@ -397,6 +429,7 @@ export default function ProjectEditorPage() {
                     ↻
                   </button>
                 </div>
+                <p className="text-[11px] text-gray-400 mt-1">URL path for this project. Click ↻ to regenerate from title</p>
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">Display order</label>
@@ -407,6 +440,7 @@ export default function ProjectEditorPage() {
                   className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md bg-white
                              focus:outline-none focus:ring-1 focus:ring-[#C75B2B]/30 focus:border-[#C75B2B]"
                 />
+                <p className="text-[11px] text-gray-400 mt-1">Lower numbers appear first in the Works grid</p>
               </div>
             </div>
           </fieldset>
@@ -443,6 +477,14 @@ export default function ProjectEditorPage() {
       </div>
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        title="Delete project"
+        message={`Are you sure you want to delete "${project.title_en}"? This action cannot be undone.`}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+        loading={deleting}
+      />
     </div>
   )
 }
@@ -537,6 +579,7 @@ function GalleryEditor({
           </span>
         )}
       </div>
+      <p className="text-[11px] text-gray-400">Click ★ on images to add them to the hero slideshow (max 6 recommended). Use arrows to reorder.</p>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {gallery.map((img, i) => (
