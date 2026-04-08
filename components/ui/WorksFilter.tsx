@@ -94,6 +94,16 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
             <FilterButton key={typ} value={typ} label={t(typ, lang)} />
           ))}
 
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => changeSearch(e.target.value)}
+            placeholder={t('search', lang)}
+            className="bg-transparent border-b border-muted text-body-sm text-ink
+                       placeholder:text-muted focus:border-ink focus:outline-none
+                       transition-colors duration-300 pb-1 w-full mt-4"
+          />
+
           <div className="mt-4 mb-1">
             <span className="text-nav uppercase tracking-wide-nav text-ink">
               {t('status_label', lang)}
@@ -105,19 +115,7 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
         </div>
       </aside>
 
-      <div className="flex-1">
-        <div className="flex justify-end mb-8">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => changeSearch(e.target.value)}
-            placeholder={t('search', lang)}
-            className="bg-transparent border-b border-muted text-body-sm text-ink
-                       placeholder:text-muted focus:border-ink focus:outline-none
-                       transition-colors duration-300 pb-1 w-[180px]"
-          />
-        </div>
-
+      <div className="flex-1 max-w-[700px]">
         <div className="flex flex-col gap-16">
           <AnimatePresence mode="popLayout">
             {paginated.map((project) => (
