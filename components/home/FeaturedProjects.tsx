@@ -28,11 +28,12 @@ export default function FeaturedProjects({ projects, lang }: FeaturedProjectsPro
         {t('selected_projects', lang)}
       </motion.p>
 
+      {/* Mobile: vertical stack */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.35 }}
-        className="flex flex-col gap-6 mb-8"
+        className="flex flex-col gap-6 mb-8 lg:hidden"
       >
         {projects.map((project) => {
           const title = getField(project, 'title', lang)
@@ -40,7 +41,7 @@ export default function FeaturedProjects({ projects, lang }: FeaturedProjectsPro
             <Link
               key={project.id}
               href={`/works/${project.slug}`}
-              className="block w-full max-w-[700px] img-hover-scale group"
+              className="block w-full img-hover-scale group"
             >
               {(project.slide_image || project.cover_image) ? (
                 <div className="relative">
@@ -50,14 +51,53 @@ export default function FeaturedProjects({ projects, lang }: FeaturedProjectsPro
                     width={700}
                     height={470}
                     className="w-full h-auto object-cover"
-                    sizes="(max-width: 768px) 100vw, 700px"
+                    sizes="100vw"
                   />
-                  <div className="absolute inset-0 bg-ink/50 flex items-end p-4 lg:p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-ink/50 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <span className="text-cream text-body lowercase leading-tight">{title}</span>
                   </div>
                 </div>
               ) : (
                 <div className="w-full aspect-[700/470] bg-border flex items-center justify-center">
+                  <span className="text-body-sm text-muted lowercase">{title}</span>
+                </div>
+              )}
+            </Link>
+          )
+        })}
+      </motion.div>
+
+      {/* Desktop: horizontal slideshow */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.35 }}
+        className="hidden lg:flex gap-2 mb-8 overflow-x-auto"
+      >
+        {projects.map((project) => {
+          const title = getField(project, 'title', lang)
+          return (
+            <Link
+              key={project.id}
+              href={`/works/${project.slug}`}
+              className="block shrink-0 w-[190px] img-hover-scale group"
+            >
+              {(project.slide_image || project.cover_image) ? (
+                <div className="relative">
+                  <Image
+                    src={project.slide_image || project.cover_image!}
+                    alt={title}
+                    width={190}
+                    height={140}
+                    className="w-full h-[140px] object-cover"
+                    sizes="190px"
+                  />
+                  <div className="absolute inset-0 bg-ink/50 flex items-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="text-cream text-body-sm lowercase leading-tight">{title}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full h-[140px] bg-border flex items-center justify-center">
                   <span className="text-body-sm text-muted lowercase">{title}</span>
                 </div>
               )}
