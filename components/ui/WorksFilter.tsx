@@ -23,7 +23,7 @@ const PAGE_SIZE = 15
 export default function WorksFilter({ projects, lang, initialTypology }: WorksFilterProps) {
   const [activeFilter, setActiveFilter] = useState<string>(initialTypology || 'featured')
   const [search, setSearch] = useState('')
-  const [page, setPage] = useState(1)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
   const filtered = useMemo(() => {
     let result = projects
@@ -49,18 +49,17 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
     return result
   }, [projects, activeFilter, search, lang])
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const visible = filtered.slice(0, visibleCount)
+  const hasMore = visibleCount < filtered.length
 
   function changeFilter(value: string) {
     setActiveFilter(value)
-    setPage(1)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    setVisibleCount(PAGE_SIZE)
   }
 
   function changeSearch(value: string) {
     setSearch(value)
-    setPage(1)
+    setVisibleCount(PAGE_SIZE)
   }
 
   function FilterButton({ value, label }: { value: string; label: string }) {
@@ -118,7 +117,7 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
       <div className="flex-1 max-w-[700px]">
         <div className="flex flex-col gap-16">
           <AnimatePresence mode="popLayout">
-            {paginated.map((project) => (
+            {visible.map((project) => (
               <motion.div
                 key={project.id}
                 layout
@@ -139,24 +138,13 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
           )}
         </div>
 
-        {totalPages > 1 && (
-          <div className="flex items-center gap-6 mt-12 pt-8 border-t border-border">
+        {hasMore && (
+          <div className="mt-12 pt-8 border-t border-border">
             <button
-              onClick={() => { setPage((p) => p - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-              disabled={page === 1}
-              className={cn('bracket-link', page === 1 && 'opacity-30 cursor-not-allowed pointer-events-none')}
+              onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+              className="bracket-link"
             >
-              ←
-            </button>
-            <span className="text-nav text-muted tabular-nums">
-              {page} / {totalPages}
-            </span>
-            <button
-              onClick={() => { setPage((p) => p + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-              disabled={page === totalPages}
-              className={cn('bracket-link', page === totalPages && 'opacity-30 cursor-not-allowed pointer-events-none')}
-            >
-              →
+              {t('load_more', lang)}
             </button>
           </div>
         )}
