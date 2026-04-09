@@ -10,6 +10,10 @@ import PressFilter from '@/components/ui/PressFilter'
 export const metadata: Metadata = {
   title: 'Press',
   description: 'AI Studio in the press — media coverage, interviews, and awards.',
+  openGraph: {
+    title: 'Press — AI Studio',
+    description: 'AI Studio in the press — media coverage, interviews, and awards.',
+  },
 }
 
 export default async function PressPage({

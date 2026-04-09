@@ -10,6 +10,10 @@ import NewsList from '@/components/ui/NewsList'
 export const metadata: Metadata = {
   title: 'Studio News',
   description: 'Latest studio news and updates from AI Studio.',
+  openGraph: {
+    title: 'Studio News — AI Studio',
+    description: 'Latest studio news and updates from AI Studio.',
+  },
 }
 
 export default async function NewsPage() {

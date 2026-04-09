@@ -10,6 +10,10 @@ import BracketLink from '@/components/ui/BracketLink'
 export const metadata: Metadata = {
   title: 'Studio',
   description: 'About AI Studio — international architecture, design and urbanism practice.',
+  openGraph: {
+    title: 'Studio — AI Studio',
+    description: 'About AI Studio — international architecture, design and urbanism practice.',
+  },
 }
 
 export default async function StudioPage() {
