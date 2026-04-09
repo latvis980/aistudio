@@ -26,6 +26,9 @@ export const metadata: Metadata = {
     siteName: 'AI Studio',
     locale: 'en_GB',
   },
+  twitter: {
+    card: 'summary_large_image',
+  },
 }
 
 export default function RootLayout({

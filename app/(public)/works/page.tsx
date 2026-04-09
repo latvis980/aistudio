@@ -10,6 +10,10 @@ import WorksFilter from '@/components/ui/WorksFilter'
 export const metadata: Metadata = {
   title: 'Works',
   description: 'Architecture, design and urbanism projects by AI Studio.',
+  openGraph: {
+    title: 'Works — AI Studio',
+    description: 'Architecture, design and urbanism projects by AI Studio.',
+  },
 }
 
 export default async function WorksPage({

@@ -10,6 +10,10 @@ import JournalFeed from './JournalFeed'
 export const metadata: Metadata = {
   title: 'Journal',
   description: 'Latest updates from AI Studio — news, press coverage, and new projects.',
+  openGraph: {
+    title: 'Journal — AI Studio',
+    description: 'Latest updates from AI Studio — news, press coverage, and new projects.',
+  },
 }
 
 export default async function JournalPage() {
