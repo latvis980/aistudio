@@ -115,20 +115,6 @@ export default async function PressDetailPage({ params }: Props) {
 
       <h1 className="page-title mb-8">{title}</h1>
 
-      {item.cover_image && (
-        <div className="mb-12">
-          <Image
-            src={item.cover_image}
-            alt={title}
-            width={1200}
-            height={800}
-            className="w-full h-auto object-cover"
-            sizes="(max-width: 768px) 100vw, 1200px"
-            priority
-          />
-        </div>
-      )}
-
       {(body || description) && (
         <section className="mb-12">
           <div className="max-w-[700px] text-body text-ink/90 whitespace-pre-line">
@@ -140,7 +126,7 @@ export default async function PressDetailPage({ params }: Props) {
       <div className="flex gap-4 mt-8">
         {item.external_link && (
           <BracketLink href={item.external_link} external>
-            {t('read_more', lang)}
+            {t('read_full_article', lang)}
           </BracketLink>
         )}
         {projectSlug && (
