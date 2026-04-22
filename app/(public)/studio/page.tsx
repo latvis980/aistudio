@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { cookies } from 'next/headers'
 import { Metadata } from 'next'
 import { createServerClient } from '@/lib/supabase/server'
@@ -101,6 +102,13 @@ export default async function StudioPage() {
       <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
         <div className="lg:w-[200px] shrink-0">
           <h2 className="section-label">{t('adu_media', lang)}</h2>
+          <Image
+            src="/images/logo-footer.png"
+            alt="a/d/u media"
+            width={540}
+            height={540}
+            className="w-12 h-12 rounded-sm mt-3"
+          />
         </div>
         <div className="flex-1">
           <div className="text-body text-ink/90 whitespace-pre-line max-w-[600px]">
