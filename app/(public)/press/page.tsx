@@ -30,14 +30,29 @@ export default async function PressPage({
     .select('*')
     .order('date', { ascending: false })
 
+  const pressItems = (items as PressItem[]) || []
+
+  const projectIds = [...new Set(
+    pressItems.map((i) => i.project_id).filter((id): id is string => id !== null)
+  )]
+  let projectSlugs: Record<string, string> = {}
+  if (projectIds.length > 0) {
+    const { data: projs } = await supabase
+      .from('projects')
+      .select('id, slug')
+      .in('id', projectIds)
+    if (projs) projectSlugs = Object.fromEntries(projs.map((p) => [p.id, p.slug]))
+  }
+
   return (
     <div className="lg:max-w-[80%]">
       <Breadcrumb crumbs={[{ label: t('press', lang) }]} lang={lang} />
       <h1 className="page-title mb-8">{t('press', lang)}</h1>
       <PressFilter
-        items={(items as PressItem[]) || []}
+        items={pressItems}
         lang={lang}
         initialCategory={searchParams.category}
+        projectSlugs={projectSlugs}
       />
     </div>
   )
