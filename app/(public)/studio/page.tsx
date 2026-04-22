@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Studio — AI Studio',
     description: 'About AI Studio — international architecture, design and urbanism practice.',
+    images: ['/aistudio.jpg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/aistudio.jpg'],
   },
 }
 
@@ -133,6 +138,20 @@ export default async function StudioPage() {
           </div>
         </div>
       </section>
+
+      <div className="mt-12">
+        <p className="text-body-sm text-muted mb-4">ai studio london</p>
+        <div className="aspect-video">
+          <iframe
+            src="https://www.youtube.com/embed/LlIDUAICjCE"
+            className="w-full h-full"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+            title="ai studio london"
+          />
+        </div>
+      </div>
     </>
   )
 }
