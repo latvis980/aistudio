@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/navigation'
 import { Lang, LANGUAGES } from '@/lib/types'
@@ -8,6 +9,16 @@ import { cn } from '@/lib/utils'
 
 interface LanguageSwitcherProps {
   currentLang: Lang
+}
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.05 } },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
 }
 
 export default function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
@@ -56,24 +67,33 @@ export default function LanguageSwitcher({ currentLang }: LanguageSwitcherProps)
         {current.code.toUpperCase()}
       </button>
 
-      {open && (
-        <div className="absolute top-full mt-2 end-0 bg-cream border border-border rounded-sm py-1 min-w-[120px] shadow-sm z-50">
-          {LANGUAGES.map((lang) => (
-            <button
-              key={lang.code}
-              onClick={() => switchLang(lang.code)}
-              className={cn(
-                'block w-full text-start px-4 py-1.5 text-body-sm transition-colors duration-200',
-                lang.code === currentLang
-                  ? 'text-ink font-medium'
-                  : 'text-muted hover:text-ink'
-              )}
-            >
-              {lang.label}
-            </button>
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="absolute top-full mt-2 end-0 flex flex-col items-end z-50"
+          >
+            {LANGUAGES.map((lang) => (
+              <motion.div key={lang.code} variants={itemVariants}>
+                <button
+                  onClick={() => switchLang(lang.code)}
+                  className={cn(
+                    'py-2 px-1 text-nav uppercase tracking-wide-nav transition-colors duration-200',
+                    lang.code === currentLang
+                      ? 'text-ink'
+                      : 'text-muted hover:text-ink'
+                  )}
+                >
+                  {lang.label}
+                </button>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

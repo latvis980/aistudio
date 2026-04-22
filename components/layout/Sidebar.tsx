@@ -5,10 +5,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Lang } from '@/lib/types'
+import { setCookie } from 'cookies-next'
+import { useRouter } from 'next/navigation'
+import { Lang, LANGUAGES } from '@/lib/types'
 import { t } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
-import LanguageSwitcher from '@/components/layout/LanguageSwitcher'
 
 const MotionLink = motion.create(Link)
 
@@ -24,7 +25,14 @@ const NAV_ITEMS = [
 
 export default function Sidebar({ lang }: SidebarProps) {
   const pathname = usePathname()
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const router = useRouter()
+  const [activeMenu, setActiveMenu] = useState<'burger' | 'lang' | null>(null)
+
+  function switchLang(code: Lang) {
+    setCookie('lang', code, { maxAge: 60 * 60 * 24 * 365 })
+    setActiveMenu(null)
+    router.refresh()
+  }
 
   return (
     <>
@@ -79,69 +87,122 @@ export default function Sidebar({ lang }: SidebarProps) {
           </Link>
 
           <div className="flex items-center gap-4">
-            <LanguageSwitcher currentLang={lang} />
+            {/* Language trigger */}
             <button
-              onClick={() => setMobileOpen(!mobileOpen)}
+              onClick={() => setActiveMenu(prev => prev === 'lang' ? null : 'lang')}
+              className={cn(
+                'flex items-center gap-1.5 text-nav uppercase tracking-wide-nav transition-colors duration-300',
+                activeMenu === 'lang' ? 'text-ink' : 'text-muted hover:text-ink'
+              )}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-4 h-4"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20" />
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z" />
+              </svg>
+              {lang.toUpperCase()}
+            </button>
+
+            {/* Burger trigger */}
+            <button
+              onClick={() => setActiveMenu(prev => prev === 'burger' ? null : 'burger')}
               className="p-2 -me-2"
               aria-label="Toggle menu"
             >
-            <div className="w-5 flex flex-col gap-1.5">
-              <span
-                className={cn(
-                  'block h-[1.5px] bg-ink transition-transform duration-300 origin-center',
-                  mobileOpen && 'rotate-45 translate-y-[4.5px]'
-                )}
-              />
-              <span
-                className={cn(
-                  'block h-[1.5px] bg-ink transition-opacity duration-300',
-                  mobileOpen && 'opacity-0'
-                )}
-              />
-              <span
-                className={cn(
-                  'block h-[1.5px] bg-ink transition-transform duration-300 origin-center',
-                  mobileOpen && '-rotate-45 -translate-y-[4.5px]'
-                )}
-              />
-            </div>
-          </button>
+              <div className="w-5 flex flex-col gap-1.5">
+                <span
+                  className={cn(
+                    'block h-[1.5px] bg-ink transition-transform duration-300 origin-center',
+                    activeMenu === 'burger' && 'rotate-45 translate-y-[7.5px]'
+                  )}
+                />
+                <span
+                  className={cn(
+                    'block h-[1.5px] bg-ink transition-opacity duration-300',
+                    activeMenu === 'burger' && 'opacity-0'
+                  )}
+                />
+                <span
+                  className={cn(
+                    'block h-[1.5px] bg-ink transition-transform duration-300 origin-center',
+                    activeMenu === 'burger' && '-rotate-45 -translate-y-[7.5px]'
+                  )}
+                />
+              </div>
+            </button>
           </div>
         </div>
-
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.nav
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="overflow-hidden border-t border-border"
-            >
-              <div className="flex flex-col gap-1 px-5 py-4">
-                {NAV_ITEMS.map(({ key, href }) => {
-                  const isActive = pathname === href || pathname.startsWith(href + '/')
-                  return (
-                    <MotionLink
-                      key={key}
-                      href={href}
-                      onClick={() => setMobileOpen(false)}
-                      whileTap={{ scale: 0.97, opacity: 0.85 }}
-                      transition={{ duration: 0.1, ease: 'easeOut' }}
-                      className={cn(
-                        'text-nav uppercase tracking-wide-nav py-2 transition-colors duration-300 origin-left',
-                        isActive ? 'text-ink' : 'text-muted hover:text-ink'
-                      )}
-                    >
-                      {t(key, lang)}
-                    </MotionLink>
-                  )
-                })}
-              </div>
-            </motion.nav>
-          )}
-        </AnimatePresence>
       </header>
+
+      {/* ── Mobile full-screen overlays ─────────────── */}
+      <AnimatePresence>
+        {activeMenu === 'burger' && (
+          <motion.div
+            key="burger-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="lg:hidden fixed inset-0 z-40 bg-cream/85"
+          >
+            <nav className="pt-24 px-5 flex flex-col gap-2">
+              {NAV_ITEMS.map(({ key, href }) => {
+                const isActive = pathname === href || pathname.startsWith(href + '/')
+                return (
+                  <MotionLink
+                    key={key}
+                    href={href}
+                    onClick={() => setActiveMenu(null)}
+                    whileTap={{ scale: 0.97, opacity: 0.85 }}
+                    transition={{ duration: 0.1, ease: 'easeOut' }}
+                    className={cn(
+                      'text-nav uppercase tracking-wide-nav py-2 transition-colors duration-300 origin-left',
+                      isActive ? 'text-ink' : 'text-muted hover:text-ink'
+                    )}
+                  >
+                    {t(key, lang)}
+                  </MotionLink>
+                )
+              })}
+            </nav>
+          </motion.div>
+        )}
+
+        {activeMenu === 'lang' && (
+          <motion.div
+            key="lang-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="lg:hidden fixed inset-0 z-40 bg-cream/85"
+          >
+            <div className="pt-24 px-5 flex flex-col items-end gap-2">
+              {LANGUAGES.map((language) => (
+                <button
+                  key={language.code}
+                  onClick={() => switchLang(language.code)}
+                  className={cn(
+                    'py-2 px-1 text-nav uppercase tracking-wide-nav transition-colors duration-200',
+                    language.code === lang ? 'text-ink' : 'text-muted hover:text-ink'
+                  )}
+                >
+                  {language.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
