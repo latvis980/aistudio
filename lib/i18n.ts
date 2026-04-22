@@ -99,9 +99,6 @@ const UI_LABELS: Record<string, Record<Lang, string>> = {
   cookie_policy: {
     en: 'Cookie Policy', ru: 'Политика cookie', ar: 'سياسة ملفات تعريف الارتباط', zh: 'Cookie政策', es: 'Política de cookies',
   },
-  website_development: {
-    en: 'Website Development', ru: 'Разработка сайта', ar: 'تطوير الموقع', zh: '网站开发', es: 'Desarrollo web',
-  },
   typology: {
     en: 'Typology', ru: 'Типология', ar: 'التصنيف', zh: '类型', es: 'Tipología',
   },
