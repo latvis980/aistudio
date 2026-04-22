@@ -142,6 +142,8 @@ export interface NewsItem {
   body_zh: string | null
   body_es: string | null
   cover_image: string | null
+  thumbnail_image: string | null
+  thumbnail_vertical: boolean
   images: { url: string }[]
   external_link: string | null
   project_id: string | null
