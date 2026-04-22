@@ -23,7 +23,7 @@ export default function Footer({ lang }: FooterProps) {
             office@aistudio.co.uk
           </a>
           <div className="flex flex-col gap-1">
-            <BracketLink href="https://linkedin.com/" external>
+            <BracketLink href="https://www.linkedin.com/company/aistudioprofile/" external>
               LinkedIn
             </BracketLink>
             <BracketLink href="https://t.me/a_d_u_media" external>
@@ -42,7 +42,7 @@ export default function Footer({ lang }: FooterProps) {
           </a>
           <span className="text-muted">|</span>
           <a
-            href="https://linkedin.com/"
+            href="https://www.linkedin.com/company/aistudioprofile/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted hover:text-ink transition-colors duration-300"
