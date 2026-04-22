@@ -8,19 +8,20 @@ import { getField, t } from '@/lib/i18n'
 interface PressCardProps {
   item: PressItem
   lang: Lang
+  projectSlugs?: Record<string, string>
 }
 
-export default function PressCard({ item, lang }: PressCardProps) {
+export default function PressCard({ item, lang, projectSlugs }: PressCardProps) {
   const title = getField(item, 'title', lang)
   const description = getField(item, 'description', lang)
 
   return (
     <article className="flex flex-col md:flex-row gap-6 py-8 border-b border-border">
-      {item.cover_image && (
+      {(item.thumbnail_image || item.cover_image) && (
         <div className="md:w-[320px] shrink-0 img-hover-scale">
           <Link href={`/press/${item.slug}`}>
             <Image
-              src={item.cover_image}
+              src={item.thumbnail_image || item.cover_image!}
               alt={title}
               width={320}
               height={220}
@@ -69,7 +70,7 @@ export default function PressCard({ item, lang }: PressCardProps) {
             </BracketLink>
           )}
           {item.project_id && (
-            <BracketLink href={`/works`}>
+            <BracketLink href={projectSlugs?.[item.project_id] ? `/works/${projectSlugs[item.project_id]}` : '/works'}>
               {t('view_project', lang)}
             </BracketLink>
           )}

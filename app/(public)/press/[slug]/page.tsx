@@ -119,7 +119,7 @@ export default async function PressDetailPage({ params }: Props) {
         <p className="text-body-sm text-muted mb-2">{formatDate(item.date, lang)}</p>
       )}
 
-      <h1 className="page-title mb-8">{title}</h1>
+      <h1 className="text-[1.5rem] lg:text-page-title lowercase font-light text-ink leading-[1.1] mb-8">{title}</h1>
 
       {(body || description) && (
         <section className="mb-12">

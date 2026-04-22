@@ -63,7 +63,7 @@ export default function PressEditorPage() {
       body_ar: item.body_ar, body_zh: item.body_zh,
       body_es: item.body_es,
       category: item.category, publication_name: item.publication_name,
-      cover_image: item.cover_image, favicon_url: item.favicon_url, external_link: item.external_link,
+      cover_image: item.cover_image, thumbnail_image: item.thumbnail_image, favicon_url: item.favicon_url, external_link: item.external_link,
       project_id: item.project_id, is_featured: item.is_featured,
       show_in_journal: item.show_in_journal, date: item.date, slug: item.slug,
     }).eq('id', id)
@@ -235,6 +235,20 @@ export default function PressEditorPage() {
       <fieldset className="p-4 bg-white border border-gray-200 rounded-lg mb-6">
         <legend className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2">Cover Image</legend>
         <ImageUpload bucket="press-images" currentUrl={item.cover_image} onUploaded={(url) => updateLocal('cover_image', url)} slug={item.slug} />
+      </fieldset>
+
+      {/* Thumbnail image */}
+      <fieldset className="p-4 bg-white border border-gray-200 rounded-lg mb-6">
+        <legend className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2">Thumbnail Image</legend>
+        <p className="text-xs text-gray-400 mb-3">
+          Optional. Used on the press list page. If blank, falls back to the Cover Image.
+        </p>
+        <ImageUpload
+          bucket="press-images"
+          currentUrl={item.thumbnail_image}
+          onUploaded={(url) => updateLocal('thumbnail_image', url)}
+          slug={`${item.slug}-thumb`}
+        />
       </fieldset>
 
       {/* Translate */}

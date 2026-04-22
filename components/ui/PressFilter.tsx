@@ -11,12 +11,13 @@ interface PressFilterProps {
   items: PressItem[]
   lang: Lang
   initialCategory?: string
+  projectSlugs?: Record<string, string>
 }
 
 const TABS = ['featured', 'all', 'media', 'interview', 'awards'] as const
 const PAGE_SIZE = 15
 
-export default function PressFilter({ items, lang, initialCategory }: PressFilterProps) {
+export default function PressFilter({ items, lang, initialCategory, projectSlugs }: PressFilterProps) {
   const [activeTab, setActiveTab] = useState(initialCategory || 'featured')
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
@@ -62,7 +63,7 @@ export default function PressFilter({ items, lang, initialCategory }: PressFilte
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
             >
-              <PressCard item={item} lang={lang} />
+              <PressCard item={item} lang={lang} projectSlugs={projectSlugs} />
             </motion.div>
           ))}
         </AnimatePresence>
