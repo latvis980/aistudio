@@ -64,6 +64,8 @@ export default function NewsEditorPage() {
       body_zh: item.body_zh,
       body_es: item.body_es,
       cover_image: item.cover_image,
+      thumbnail_image: item.thumbnail_image,
+      thumbnail_vertical: item.thumbnail_vertical,
       external_link: item.external_link,
       project_id: item.project_id,
       source: item.source,
@@ -217,6 +219,27 @@ export default function NewsEditorPage() {
           onUploaded={(url) => updateLocal('cover_image', url)}
           slug={item.slug}
         />
+      </fieldset>
+
+      {/* Thumbnail image */}
+      <fieldset className="p-4 bg-white border border-gray-200 rounded-lg mb-6">
+        <legend className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2">Thumbnail Image</legend>
+        <p className="text-xs text-gray-400 mb-3">
+          Optional. Used on the news list page (320×110). If blank, falls back to the Cover Image.
+        </p>
+        <ImageUpload
+          bucket="news-images"
+          currentUrl={item.thumbnail_image}
+          onUploaded={(url) => updateLocal('thumbnail_image', url)}
+          slug={`${item.slug}-thumb`}
+        />
+        <label className="flex items-center gap-2 text-sm mt-4 cursor-pointer">
+          <Toggle
+            checked={item.thumbnail_vertical}
+            onChange={(v) => updateLocal('thumbnail_vertical', v)}
+          />
+          Vertical (portrait) image — rotate 90° to fit thumbnail frame
+        </label>
       </fieldset>
 
       {/* Translate */}

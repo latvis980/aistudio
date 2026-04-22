@@ -57,7 +57,8 @@
 
   /* Page title: "works", "press", "news" */
   .page-title {
-    @apply text-page-title lowercase font-light text-ink;
+    @apply text-[2rem] lg:text-page-title lowercase font-light text-ink;
+    line-height: 1.1;
   }
 
   /* Section label: "about", "founder", "project info" */
