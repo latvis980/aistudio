@@ -150,13 +150,13 @@ export default async function StudioPage() {
       <div className="mt-12">
         <p className="text-body-sm text-muted mb-4">ai studio london</p>
         <div className="aspect-video">
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/LlIDUAICjCE?autoplay=1&mute=1&controls=0&rel=0&iv_load_policy=3&modestbranding=1"
-            className="w-full h-full"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-            loading="lazy"
-            title="ai studio london"
+          <video
+            src="/aistudio.mp4"
+            className="w-full h-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
           />
         </div>
       </div>
