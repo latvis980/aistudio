@@ -13,11 +13,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Studio — AI Studio',
     description: 'About AI Studio — international architecture, design and urbanism practice.',
-    images: ['/aistudio.jpg'],
+    images: ['/aistudio.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/aistudio.jpg'],
+    images: ['/aistudio.png'],
   },
 }
 
