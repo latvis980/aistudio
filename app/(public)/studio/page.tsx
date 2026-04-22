@@ -4,8 +4,10 @@ import { createServerClient } from '@/lib/supabase/server'
 import { getLangFromCookies } from '@/lib/utils'
 import { getField, t } from '@/lib/i18n'
 import { SiteContent } from '@/lib/types'
+import Image from 'next/image'
 import Breadcrumb from '@/components/layout/Breadcrumb'
 import BracketLink from '@/components/ui/BracketLink'
+import VimeoEmbed from '@/components/ui/VimeoEmbed'
 
 export const metadata: Metadata = {
   title: 'Studio',
@@ -13,6 +15,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Studio — AI Studio',
     description: 'About AI Studio — international architecture, design and urbanism practice.',
+    images: ['/aistudio.jpg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/aistudio.jpg'],
   },
 }
 
@@ -133,6 +140,25 @@ export default async function StudioPage() {
           </div>
         </div>
       </section>
+
+      <div className="mt-12">
+        <p className="text-body-sm text-muted mb-4">ai studio london</p>
+
+        <div className="hidden md:block">
+          <VimeoEmbed url="https://vimeo.com/000000000" />
+        </div>
+
+        <div className="block md:hidden">
+          <Image
+            src="/aistudio.jpg"
+            alt="ai studio london"
+            width={1200}
+            height={700}
+            className="w-full h-auto"
+            sizes="100vw"
+          />
+        </div>
+      </div>
     </>
   )
 }
