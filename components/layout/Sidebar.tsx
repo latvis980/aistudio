@@ -58,7 +58,7 @@ export default function Sidebar({ lang }: SidebarProps) {
               <MotionLink
                 key={key}
                 href={href}
-                whileTap={{ scale: 0.96, opacity: 0.85 }}
+                whileTap={{ scale: 0.96, opacity: 0.97 }}
                 transition={{ duration: 0.1, ease: 'easeOut' }}
                 className={cn(
                   'text-nav uppercase tracking-wide-nav transition-colors duration-300 origin-left',
@@ -152,7 +152,7 @@ export default function Sidebar({ lang }: SidebarProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="lg:hidden fixed inset-0 z-40 bg-cream/85"
+            className="lg:hidden fixed inset-0 z-40 bg-cream/97"
           >
             <nav className="pt-24 px-5 flex flex-col gap-2">
               {NAV_ITEMS.map(({ key, href }) => {
@@ -162,7 +162,7 @@ export default function Sidebar({ lang }: SidebarProps) {
                     key={key}
                     href={href}
                     onClick={() => setActiveMenu(null)}
-                    whileTap={{ scale: 0.97, opacity: 0.85 }}
+                    whileTap={{ scale: 0.97, opacity: 0.97 }}
                     transition={{ duration: 0.1, ease: 'easeOut' }}
                     className={cn(
                       'text-nav uppercase tracking-wide-nav py-2 transition-colors duration-300 origin-left',
@@ -184,7 +184,7 @@ export default function Sidebar({ lang }: SidebarProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="lg:hidden fixed inset-0 z-40 bg-cream/85"
+            className="lg:hidden fixed inset-0 z-40 bg-cream/97"
           >
             <div className="pt-24 px-5 flex flex-col items-end gap-2">
               {LANGUAGES.map((language) => (
