@@ -4,6 +4,7 @@ import { Metadata } from 'next'
 import { createServerClient } from '@/lib/supabase/server'
 import { getLangFromCookies } from '@/lib/utils'
 import { getField, t } from '@/lib/i18n'
+import { translateText } from '@/lib/translateText'
 import { SiteContent } from '@/lib/types'
 import Breadcrumb from '@/components/layout/Breadcrumb'
 import BracketLink from '@/components/ui/BracketLink'
@@ -49,6 +50,12 @@ export default async function StudioPage() {
     },
     {}
   )
+
+  const rawMoscowAddress = settingsMap.moscow_address || "6 Novaya Ploshad' 109012 Moscow, Russia"
+  const moscowAddress =
+    lang === 'ar' || lang === 'zh'
+      ? await translateText(rawMoscowAddress, lang)
+      : rawMoscowAddress
 
   const aboutText = contentMap.about ? getField(contentMap.about, 'content', lang) : ''
   const founderText = contentMap.founder ? getField(contentMap.founder, 'content', lang) : ''
@@ -144,7 +151,7 @@ export default async function StudioPage() {
               </div>
               {(['ru', 'zh', 'ar'] as string[]).includes(lang) && (
                 <div>
-                  <p className="text-body">{settingsMap.moscow_address || "6 Novaya Ploshad' 109012 Moscow, Russia"}</p>
+                  <p className="text-body">{moscowAddress}</p>
                   <p className="text-body-sm text-muted mt-1">T {settingsMap.moscow_phone || '+7 495 790 7776'}</p>
                 </div>
               )}
