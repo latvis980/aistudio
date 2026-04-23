@@ -11,7 +11,7 @@ interface HeroProps {
 
 export default function Hero({ tagline, description, quote, quoteAuthor }: HeroProps) {
   return (
-    <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 pt-8 lg:pt-16 pb-48 lg:pb-64">
+    <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 pt-8 lg:pt-16 pb-8 lg:pb-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -32,13 +32,13 @@ export default function Hero({ tagline, description, quote, quoteAuthor }: HeroP
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}
-        className="lg:w-1/2 lg:pt-4"
+        className="lg:w-1/2 lg:pt-20"
       >
         <h2 className="text-base font-medium mb-4">{tagline}</h2>
         <p className="text-body-sm text-muted">{description}</p>
 
         {quote && (
-          <blockquote className="mt-8 border-s-2 border-muted/40 ps-5 py-1">
+          <blockquote className="mt-8 py-1">
             <p className="text-body-sm italic text-muted/80 leading-relaxed">
               &ldquo;{quote}&rdquo;
             </p>

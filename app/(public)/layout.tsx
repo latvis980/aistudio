@@ -26,7 +26,7 @@ export default function PublicLayout({
       </div>
 
       {/* Main content area */}
-      <main className="content-area px-6 lg:ps-content-px lg:pe-content-px-end pt-28 lg:pt-12 pb-8 min-h-screen">
+      <main className="content-area px-6 lg:ps-content-px lg:pe-sidebar pt-28 lg:pt-12 pb-8 min-h-screen">
         {children}
         <Footer lang={lang} />
       </main>

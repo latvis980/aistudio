@@ -6,6 +6,7 @@ import { t } from '@/lib/i18n'
 import { PressItem } from '@/lib/types'
 import Breadcrumb from '@/components/layout/Breadcrumb'
 import PressFilter from '@/components/ui/PressFilter'
+import AnimatedEntry from '@/components/ui/AnimatedEntry'
 
 export const metadata: Metadata = {
   title: 'Press',
@@ -47,13 +48,17 @@ export default async function PressPage({
   return (
     <div className="lg:max-w-[80%]">
       <Breadcrumb crumbs={[{ label: t('press', lang) }]} lang={lang} />
-      <h1 className="page-title mb-8">{t('press', lang)}</h1>
-      <PressFilter
-        items={pressItems}
-        lang={lang}
-        initialCategory={searchParams.category}
-        projectSlugs={projectSlugs}
-      />
+      <AnimatedEntry>
+        <h1 className="page-title mb-8">{t('press', lang)}</h1>
+      </AnimatedEntry>
+      <AnimatedEntry delay={0.15}>
+        <PressFilter
+          items={pressItems}
+          lang={lang}
+          initialCategory={searchParams.category}
+          projectSlugs={projectSlugs}
+        />
+      </AnimatedEntry>
     </div>
   )
 }

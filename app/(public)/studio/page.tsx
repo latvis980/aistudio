@@ -7,6 +7,7 @@ import { getField, t } from '@/lib/i18n'
 import { SiteContent } from '@/lib/types'
 import Breadcrumb from '@/components/layout/Breadcrumb'
 import BracketLink from '@/components/ui/BracketLink'
+import AnimatedEntry from '@/components/ui/AnimatedEntry'
 
 export const metadata: Metadata = {
   title: 'Studio',
@@ -57,109 +58,119 @@ export default async function StudioPage() {
     <>
       <Breadcrumb crumbs={[{ label: t('about', lang) }]} lang={lang} />
 
-      <div className="mb-12">
-        <h1 className="text-[2.5rem] lg:text-[3rem] font-light leading-[1.1]">
-          ai studio
-        </h1>
-        <div className="text-[1.4rem] lg:text-[1.8rem] font-light text-muted leading-[1.3] mt-1">
-          <div>architecture</div>
-          <div>design</div>
-          <div>urbanism</div>
-        </div>
-      </div>
-
-      <div className="divider mb-12" />
-
-      <section id="about" className="scroll-mt-24 flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
-        <div className="lg:w-[200px] shrink-0">
-          <h2 className="section-label">{t('about', lang)}</h2>
-        </div>
-        <div className="flex-1">
-          <div className="text-body text-ink/90 whitespace-pre-line max-w-[600px]">
-            {aboutText}
-          </div>
-          <div className="mt-6">
-            <BracketLink href="/news">{t('studio_news', lang)}</BracketLink>
+      <AnimatedEntry>
+        <div className="mb-12">
+          <h1 className="text-[4rem] lg:text-[5.4rem] font-light leading-[1.1]">
+            ai studio
+          </h1>
+          <div className="text-[2.3rem] lg:text-[3.1rem] font-light text-muted leading-[1.3] mt-1">
+            <div>architecture</div>
+            <div>design</div>
+            <div>urbanism</div>
           </div>
         </div>
-      </section>
+      </AnimatedEntry>
 
-      <div className="divider mb-12" />
+      <AnimatedEntry delay={0.1}>
+        <div className="divider mb-12" />
 
-      <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
-        <div className="lg:w-[200px] shrink-0">
-          <h2 className="section-label">{t('founder', lang)}</h2>
-        </div>
-        <div className="flex-1">
-          <div className="text-body text-ink/90 whitespace-pre-line max-w-[600px]">
-            {founderText}
+        <section id="about" className="scroll-mt-24 flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
+          <div className="lg:w-[200px] shrink-0">
+            <h2 className="section-label">{t('about', lang)}</h2>
           </div>
-        </div>
-      </section>
-
-      <div className="divider mb-12" />
-
-      <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
-        <div className="lg:w-[200px] shrink-0">
-          <h2 className="section-label">{t('adu_media', lang)}</h2>
-          <Image
-            src="/images/logo-footer.png"
-            alt="a/d/u media"
-            width={540}
-            height={540}
-            className="w-12 h-12 rounded-sm mt-3"
-          />
-        </div>
-        <div className="flex-1">
-          <div className="text-body text-ink/90 whitespace-pre-line max-w-[600px]">
-            {aduMediaText}
-          </div>
-          <div className="mt-6">
-            <BracketLink href="https://adu.media" external>adu.media</BracketLink>
-          </div>
-        </div>
-      </section>
-
-      <div className="divider mb-12" />
-
-      <section id="get-in-touch" className="flex flex-col lg:flex-row gap-8 lg:gap-16 scroll-mt-24">
-        <div className="lg:w-[200px] shrink-0">
-          <h2 className="section-label">{t('get_in_touch', lang)}</h2>
-        </div>
-        <div className="flex-1">
-          <div className="flex flex-col sm:flex-row gap-12">
-            <div>
-              <p className="text-body">{settingsMap.london_address || '79-89 Lots Road SW10 0RN, London, UK'}</p>
-              <p className="text-body-sm text-muted mt-1">T {settingsMap.london_phone || '+44 207 971 1227'}</p>
+          <div className="flex-1">
+            <div className="text-body text-ink/90 whitespace-pre-line max-w-[600px]">
+              {aboutText}
             </div>
-            {(['ru', 'zh', 'ar'] as string[]).includes(lang) && (
-              <div>
-                <p className="text-body">{settingsMap.moscow_address || "6 Novaya Ploshad' 109012 Moscow, Russia"}</p>
-                <p className="text-body-sm text-muted mt-1">T {settingsMap.moscow_phone || '+7 495 790 7776'}</p>
-              </div>
-            )}
+            <div className="mt-6">
+              <BracketLink href="/news">{t('studio_news', lang)}</BracketLink>
+            </div>
           </div>
-          <div className="mt-6">
-            <BracketLink href={`mailto:${settingsMap.email || 'office@aistudio.co.uk'}`}>
-              {(settingsMap.email || 'office@aistudio.co.uk').toUpperCase()}
-            </BracketLink>
-          </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedEntry>
 
-      <div className="mt-12">
-        <p className="text-body-sm text-muted mb-4">ai studio london</p>
-        <div className="aspect-video">
-          <video
-            src="/aistudio.mp4"
-            className="w-full h-full object-cover"
-            autoPlay
-            muted
-            loop
-            playsInline
-          />
+      <AnimatedEntry delay={0.2}>
+        <div className="divider mb-12" />
+
+        <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
+          <div className="lg:w-[200px] shrink-0">
+            <h2 className="section-label">{t('founder', lang)}</h2>
+          </div>
+          <div className="flex-1">
+            <div className="text-body text-ink/90 whitespace-pre-line max-w-[600px]">
+              {founderText}
+            </div>
+          </div>
+        </section>
+      </AnimatedEntry>
+
+      <AnimatedEntry delay={0.3}>
+        <div className="divider mb-12" />
+
+        <section className="flex flex-col lg:flex-row gap-8 lg:gap-16 mb-12">
+          <div className="lg:w-[200px] shrink-0">
+            <h2 className="section-label">{t('adu_media', lang)}</h2>
+            <Image
+              src="/images/logo-footer.png"
+              alt="a/d/u media"
+              width={540}
+              height={540}
+              className="w-12 h-12 rounded-sm mt-3"
+            />
+          </div>
+          <div className="flex-1">
+            <div className="text-body text-ink/90 whitespace-pre-line max-w-[600px]">
+              {aduMediaText}
+            </div>
+            <div className="mt-6">
+              <BracketLink href="https://adu.media" external>adu.media</BracketLink>
+            </div>
+          </div>
+        </section>
+      </AnimatedEntry>
+
+      <AnimatedEntry delay={0.4}>
+        <div className="divider mb-12" />
+
+        <section id="get-in-touch" className="flex flex-col lg:flex-row gap-8 lg:gap-16 scroll-mt-24">
+          <div className="lg:w-[200px] shrink-0">
+            <h2 className="section-label">{t('get_in_touch', lang)}</h2>
+          </div>
+          <div className="flex-1">
+            <div className="flex flex-col sm:flex-row gap-12">
+              <div>
+                <p className="text-body">{settingsMap.london_address || '79-89 Lots Road SW10 0RN, London, UK'}</p>
+                <p className="text-body-sm text-muted mt-1">T {settingsMap.london_phone || '+44 207 971 1227'}</p>
+              </div>
+              {(['ru', 'zh', 'ar'] as string[]).includes(lang) && (
+                <div>
+                  <p className="text-body">{settingsMap.moscow_address || "6 Novaya Ploshad' 109012 Moscow, Russia"}</p>
+                  <p className="text-body-sm text-muted mt-1">T {settingsMap.moscow_phone || '+7 495 790 7776'}</p>
+                </div>
+              )}
+            </div>
+            <div className="mt-6">
+              <BracketLink href={`mailto:${settingsMap.email || 'office@aistudio.co.uk'}`}>
+                {(settingsMap.email || 'office@aistudio.co.uk').toUpperCase()}
+              </BracketLink>
+            </div>
+          </div>
+        </section>
+
+        <div className="mt-12">
+          <p className="text-body-sm text-muted mb-4">ai studio london</p>
+          <div className="aspect-video">
+            <video
+              src="/aistudio.mp4"
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          </div>
         </div>
-      </div>
+      </AnimatedEntry>
     </>
   )
 }
