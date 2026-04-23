@@ -153,9 +153,6 @@ export default function Footer({ lang }: FooterProps) {
           >
             {t('cookie_policy', lang)}
           </Link>
-          <span className="text-tag uppercase tracking-wide-tag text-muted">
-            {t('website_development', lang)}
-          </span>
         </div>
       </div>
     </footer>
