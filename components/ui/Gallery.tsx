@@ -141,146 +141,151 @@ function Lightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 backdrop-blur-2xl bg-black/75 flex flex-col items-center justify-center"
-      onClick={onClose}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      className="fixed inset-0 z-50 backdrop-blur-2xl bg-black/75 flex flex-col"
     >
-      {/* Counter — top-left */}
-      <div className="absolute top-5 left-5 text-white/60 text-xs tracking-widest uppercase select-none">
-        {current + 1} / {images.length}
+      {/* Top bar — counter left, close right; sits above image area */}
+      <div className="relative z-30 flex-none h-14 px-5 flex items-center justify-between w-full">
+        <span className="text-white/60 text-xs tracking-widest uppercase select-none">
+          {current + 1} / {images.length}
+        </span>
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            className="w-4 h-4 text-white/80"
+          >
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
       </div>
 
-      {/* Close — top-right, circular */}
-      <button
+      {/* Image area — click zones are confined here, never reaching the top bar */}
+      <div
+        className="relative flex-1 flex items-center justify-center overflow-hidden"
         onClick={onClose}
-        aria-label="Close"
-        className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          strokeLinecap="round"
-          className="w-4 h-4 text-white/80"
-        >
-          <path d="M18 6 6 18M6 6l12 12" />
-        </svg>
-      </button>
-
-      {/* Image with direction-aware slide */}
-      <AnimatePresence mode="wait" custom={dirRef.current}>
-        <motion.div
-          key={current}
-          custom={dirRef.current}
-          variants={slideVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={slideTransition}
-          className="relative flex items-center justify-center w-full h-full px-16"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Image
-            src={images[current].url}
-            alt={caption}
-            width={1800}
-            height={1200}
-            className="max-h-[80vh] max-w-[90vw] w-auto h-auto object-contain"
-            sizes="90vw"
-            priority
-          />
-
-          {/* Click zones inside image area */}
-          {images.length > 1 && (
-            <>
-              <button
-                onClick={(e) => { e.stopPropagation(); prev() }}
-                aria-label="Previous image"
-                className="absolute inset-y-0 left-0 w-[40%] cursor-w-resize z-10"
-              />
-              <button
-                onClick={(e) => { e.stopPropagation(); next() }}
-                aria-label="Next image"
-                className="absolute inset-y-0 right-0 w-[40%] cursor-e-resize z-10"
-              />
-            </>
-          )}
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Dot indicators */}
-      {images.length > 1 && (
-        <div className="absolute bottom-16 flex gap-2 select-none">
-          {images.map((_, i) => (
-            <button
-              key={i}
-              onClick={(e) => {
-                e.stopPropagation()
-                dirRef.current = i > current ? 1 : -1
-                setCurrent(i)
-              }}
-              aria-label={`Go to image ${i + 1}`}
-              className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                i === current ? 'bg-white/80' : 'bg-white/30 hover:bg-white/50'
-              }`}
+        {/* Image with direction-aware slide */}
+        <AnimatePresence mode="wait" custom={dirRef.current}>
+          <motion.div
+            key={current}
+            custom={dirRef.current}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={slideTransition}
+            className="relative flex items-center justify-center w-full h-full px-16"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={images[current].url}
+              alt={caption}
+              width={1800}
+              height={1200}
+              className="max-h-[80vh] max-w-[90vw] w-auto h-auto object-contain"
+              sizes="90vw"
+              priority
             />
-          ))}
-        </div>
-      )}
 
-      {/* Caption */}
-      {caption && (
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pb-8 text-white/50 text-xs tracking-wide select-none whitespace-nowrap">
-          {caption}
-        </div>
-      )}
+            {/* Click zones inside image area */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); prev() }}
+                  aria-label="Previous image"
+                  className="absolute inset-y-0 left-0 w-[40%] cursor-w-resize z-10"
+                />
+                <button
+                  onClick={(e) => { e.stopPropagation(); next() }}
+                  aria-label="Next image"
+                  className="absolute inset-y-0 right-0 w-[40%] cursor-e-resize z-10"
+                />
+              </>
+            )}
+          </motion.div>
+        </AnimatePresence>
 
-      {/* Prev arrow — circular, left */}
-      {images.length > 1 && (
-        <button
-          onClick={(e) => { e.stopPropagation(); prev() }}
-          aria-label="Previous image"
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-20"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-5 h-5 text-white/80"
+        {/* Dot indicators */}
+        {images.length > 1 && (
+          <div className="absolute bottom-4 flex gap-2 select-none">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  dirRef.current = i > current ? 1 : -1
+                  setCurrent(i)
+                }}
+                aria-label={`Go to image ${i + 1}`}
+                className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                  i === current ? 'bg-white/80' : 'bg-white/30 hover:bg-white/50'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Caption */}
+        {caption && (
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pb-8 text-white/50 text-xs tracking-wide select-none whitespace-nowrap">
+            {caption}
+          </div>
+        )}
+
+        {/* Prev arrow — circular, left */}
+        {images.length > 1 && (
+          <button
+            onClick={(e) => { e.stopPropagation(); prev() }}
+            aria-label="Previous image"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-20"
           >
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
-      )}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-5 h-5 text-white/80"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+        )}
 
-      {/* Next arrow — circular, right */}
-      {images.length > 1 && (
-        <button
-          onClick={(e) => { e.stopPropagation(); next() }}
-          aria-label="Next image"
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-20"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-5 h-5 text-white/80"
+        {/* Next arrow — circular, right */}
+        {images.length > 1 && (
+          <button
+            onClick={(e) => { e.stopPropagation(); next() }}
+            aria-label="Next image"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-20"
           >
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </button>
-      )}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-5 h-5 text-white/80"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        )}
+      </div>
     </motion.div>
   )
 }
