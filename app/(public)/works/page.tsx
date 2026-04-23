@@ -6,6 +6,7 @@ import { t } from '@/lib/i18n'
 import { Project } from '@/lib/types'
 import Breadcrumb from '@/components/layout/Breadcrumb'
 import WorksFilter from '@/components/ui/WorksFilter'
+import AnimatedEntry from '@/components/ui/AnimatedEntry'
 
 export const metadata: Metadata = {
   title: 'Works',
@@ -33,12 +34,16 @@ export default async function WorksPage({
   return (
     <>
       <Breadcrumb crumbs={[{ label: t('works', lang) }]} lang={lang} />
-      <h1 className="page-title mb-8">{t('works', lang)}</h1>
-      <WorksFilter
-        projects={(projects as Project[]) || []}
-        lang={lang}
-        initialTypology={searchParams.typology}
-      />
+      <AnimatedEntry>
+        <h1 className="page-title mb-8">{t('works', lang)}</h1>
+      </AnimatedEntry>
+      <AnimatedEntry delay={0.15}>
+        <WorksFilter
+          projects={(projects as Project[]) || []}
+          lang={lang}
+          initialTypology={searchParams.typology}
+        />
+      </AnimatedEntry>
     </>
   )
 }

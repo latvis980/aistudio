@@ -6,6 +6,7 @@ import { getField, t } from '@/lib/i18n'
 import { JournalItem } from '@/lib/types'
 import Breadcrumb from '@/components/layout/Breadcrumb'
 import JournalFeed from './JournalFeed'
+import AnimatedEntry from '@/components/ui/AnimatedEntry'
 
 export const metadata: Metadata = {
   title: 'Journal',
@@ -85,8 +86,12 @@ export default async function JournalPage() {
   return (
     <>
       <Breadcrumb crumbs={[{ label: t('journal', lang) }]} lang={lang} />
-      <h1 className="page-title mb-8">{t('journal', lang)}</h1>
-      <JournalFeed items={feed} lang={lang} />
+      <AnimatedEntry>
+        <h1 className="page-title mb-8">{t('journal', lang)}</h1>
+      </AnimatedEntry>
+      <AnimatedEntry delay={0.15}>
+        <JournalFeed items={feed} lang={lang} />
+      </AnimatedEntry>
     </>
   )
 }

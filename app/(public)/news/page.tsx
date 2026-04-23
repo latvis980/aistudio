@@ -6,6 +6,7 @@ import { t } from '@/lib/i18n'
 import { NewsItem as NewsItemType } from '@/lib/types'
 import Breadcrumb from '@/components/layout/Breadcrumb'
 import NewsList from '@/components/ui/NewsList'
+import AnimatedEntry from '@/components/ui/AnimatedEntry'
 
 export const metadata: Metadata = {
   title: 'Studio News',
@@ -29,8 +30,12 @@ export default async function NewsPage() {
   return (
     <>
       <Breadcrumb crumbs={[{ label: t('studio_news', lang) }]} lang={lang} />
-      <h1 className="page-title mb-8">{t('studio_news', lang)}</h1>
-      <NewsList items={(items as NewsItemType[]) || []} lang={lang} />
+      <AnimatedEntry>
+        <h1 className="page-title mb-8">{t('studio_news', lang)}</h1>
+      </AnimatedEntry>
+      <AnimatedEntry delay={0.15}>
+        <NewsList items={(items as NewsItemType[]) || []} lang={lang} />
+      </AnimatedEntry>
     </>
   )
 }
