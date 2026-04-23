@@ -152,7 +152,7 @@ export default function Sidebar({ lang }: SidebarProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="lg:hidden fixed inset-0 z-40 bg-cream/97"
+            className="lg:hidden fixed inset-0 z-40 bg-cream/95"
           >
             <nav className="pt-24 px-5 flex flex-col gap-2">
               {NAV_ITEMS.map(({ key, href }) => {
@@ -184,7 +184,7 @@ export default function Sidebar({ lang }: SidebarProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="lg:hidden fixed inset-0 z-40 bg-cream/97"
+            className="lg:hidden fixed inset-0 z-40 bg-cream/95"
           >
             <div className="pt-24 px-5 flex flex-col items-end gap-2">
               {LANGUAGES.map((language) => (

@@ -74,7 +74,7 @@ export default function LanguageSwitcher({ currentLang }: LanguageSwitcherProps)
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="absolute top-full mt-2 end-0 flex flex-col items-end z-50"
+            className="absolute top-full mt-2 end-0 flex flex-col items-end z-50 bg-cream/95 backdrop-blur-sm rounded-md shadow-sm p-1"
           >
             {LANGUAGES.map((lang) => (
               <motion.div key={lang.code} variants={itemVariants}>
