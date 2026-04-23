@@ -24,7 +24,7 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
         width={1200}
         height={700}
         className="w-full h-auto"
-        sizes="(max-width: 1024px) 100vw, 900px"
+        sizes="(max-width: 1024px) 75vw, 675px"
         priority
       />
     )
@@ -65,7 +65,7 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
               width={1200}
               height={700}
               className="w-full h-auto"
-              sizes="(max-width: 1024px) 100vw, 900px"
+              sizes="(max-width: 1024px) 75vw, 675px"
               priority={current === 0}
               draggable={false}
             />
