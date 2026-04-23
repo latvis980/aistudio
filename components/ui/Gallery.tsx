@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { motion, useInView, AnimatePresence, type Variants } from 'framer-motion'
 import { GalleryImage, Lang } from '@/lib/types'
 import { getField } from '@/lib/i18n'
 
@@ -53,6 +53,29 @@ function GalleryThumb({
   )
 }
 
+const slideVariants: Variants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? 80 : -80,
+    opacity: 0,
+    scale: 0.98,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? -80 : 80,
+    opacity: 0,
+    scale: 0.98,
+  }),
+}
+
+const slideTransition = {
+  duration: 0.35,
+  ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
+}
+
 function Lightbox({
   images,
   startIndex,
@@ -67,9 +90,24 @@ function Lightbox({
   onClose: () => void
 }) {
   const [current, setCurrent] = useState(startIndex)
+  const dirRef = useRef<number>(0)
+  const touchStartX = useRef<number>(0)
 
-  const prev = useCallback(() => setCurrent((i) => (i - 1 + images.length) % images.length), [images.length])
-  const next = useCallback(() => setCurrent((i) => (i + 1) % images.length), [images.length])
+  const prev = useCallback(() => {
+    dirRef.current = -1
+    setCurrent((i) => (i - 1 + images.length) % images.length)
+  }, [images.length])
+
+  const next = useCallback(() => {
+    dirRef.current = 1
+    setCurrent((i) => (i + 1) % images.length)
+  }, [images.length])
+
+  useEffect(() => {
+    const saved = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = saved }
+  }, [])
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -81,6 +119,18 @@ function Lightbox({
     return () => window.removeEventListener('keydown', handleKey)
   }, [onClose, prev, next])
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const delta = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(delta) > 50) {
+      if (delta > 0) next()
+      else prev()
+    }
+  }
+
   const caption = images[current].caption_en
     ? getField(images[current], 'caption', lang)
     : `${projectTitle} — ${current + 1}`
@@ -91,32 +141,46 @@ function Lightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 bg-black/92 flex flex-col items-center justify-center"
+      className="fixed inset-0 z-50 backdrop-blur-2xl bg-black/75 flex flex-col items-center justify-center"
       onClick={onClose}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
-      {/* Counter */}
-      <div className="absolute top-5 left-1/2 -translate-x-1/2 text-white/60 text-xs tracking-widest uppercase select-none">
+      {/* Counter — top-left */}
+      <div className="absolute top-5 left-5 text-white/60 text-xs tracking-widest uppercase select-none">
         {current + 1} / {images.length}
       </div>
 
-      {/* Close */}
+      {/* Close — top-right, circular */}
       <button
         onClick={onClose}
         aria-label="Close"
-        className="absolute top-4 right-5 text-white/60 hover:text-white text-2xl leading-none transition-colors"
+        className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
       >
-        ×
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          strokeLinecap="round"
+          className="w-4 h-4 text-white/80"
+        >
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
       </button>
 
-      {/* Image */}
-      <AnimatePresence mode="wait">
+      {/* Image with direction-aware slide */}
+      <AnimatePresence mode="wait" custom={dirRef.current}>
         <motion.div
           key={current}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          className="flex items-center justify-center w-full h-full px-16"
+          custom={dirRef.current}
+          variants={slideVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={slideTransition}
+          className="relative flex items-center justify-center w-full h-full px-16"
           onClick={(e) => e.stopPropagation()}
         >
           <Image
@@ -124,39 +188,97 @@ function Lightbox({
             alt={caption}
             width={1800}
             height={1200}
-            className="max-h-[85vh] max-w-[90vw] w-auto h-auto object-contain"
+            className="max-h-[80vh] max-w-[90vw] w-auto h-auto object-contain"
             sizes="90vw"
             priority
           />
+
+          {/* Click zones inside image area */}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prev() }}
+                aria-label="Previous image"
+                className="absolute inset-y-0 left-0 w-[40%] cursor-w-resize z-10"
+              />
+              <button
+                onClick={(e) => { e.stopPropagation(); next() }}
+                aria-label="Next image"
+                className="absolute inset-y-0 right-0 w-[40%] cursor-e-resize z-10"
+              />
+            </>
+          )}
         </motion.div>
       </AnimatePresence>
 
+      {/* Dot indicators */}
+      {images.length > 1 && (
+        <div className="absolute bottom-16 flex gap-2 select-none">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={(e) => {
+                e.stopPropagation()
+                dirRef.current = i > current ? 1 : -1
+                setCurrent(i)
+              }}
+              aria-label={`Go to image ${i + 1}`}
+              className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                i === current ? 'bg-white/80' : 'bg-white/30 hover:bg-white/50'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
       {/* Caption */}
       {caption && (
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/50 text-xs tracking-wide select-none whitespace-nowrap">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pb-8 text-white/50 text-xs tracking-wide select-none whitespace-nowrap">
           {caption}
         </div>
       )}
 
-      {/* Prev arrow */}
+      {/* Prev arrow — circular, left */}
       {images.length > 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); prev() }}
           aria-label="Previous image"
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white text-3xl leading-none transition-colors px-2 py-4"
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-20"
         >
-          ‹
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="w-5 h-5 text-white/80"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
         </button>
       )}
 
-      {/* Next arrow */}
+      {/* Next arrow — circular, right */}
       {images.length > 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); next() }}
           aria-label="Next image"
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white text-3xl leading-none transition-colors px-2 py-4"
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-20"
         >
-          ›
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="w-5 h-5 text-white/80"
+          >
+            <path d="M9 18l6-6-6-6" />
+          </svg>
         </button>
       )}
     </motion.div>
@@ -176,17 +298,19 @@ export default function Gallery({ images, projectTitle, lang }: GalleryProps) {
 
   return (
     <>
-      <div className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-2">
-        {images.map((image, i) => (
-          <GalleryThumb
-            key={i}
-            image={image}
-            index={i}
-            projectTitle={projectTitle}
-            lang={lang}
-            onClick={() => openLightbox(i)}
-          />
-        ))}
+      <div className="mt-16 max-w-[66.667%]">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+          {images.map((image, i) => (
+            <GalleryThumb
+              key={i}
+              image={image}
+              index={i}
+              projectTitle={projectTitle}
+              lang={lang}
+              onClick={() => openLightbox(i)}
+            />
+          ))}
+        </div>
       </div>
 
       <AnimatePresence>
