@@ -1,6 +1,6 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import TagLabel from '@/components/ui/TagLabel'
+import CoverImage from '@/components/ui/CoverImage'
 import { Project, Lang } from '@/lib/types'
 import { getField, t } from '@/lib/i18n'
 
@@ -19,24 +19,16 @@ export default function ProjectCard({ project, lang }: ProjectCardProps) {
       <Link href={`/works/${project.slug}`} className="block">
         {project.cover_image && (
           <div className="img-hover-scale mb-4">
-            <Image
-              src={project.cover_image}
-              alt={title}
-              width={800}
-              height={500}
-              className="w-full h-auto object-cover"
-              sizes="(max-width: 768px) 100vw, 700px"
-            />
+            <CoverImage src={project.cover_image} alt={title} />
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
-          <h2 className="text-card-title lowercase hover:text-accent transition-colors duration-300">{title}</h2>
-          <div className="flex gap-3 shrink-0">
-            <TagLabel>{t(project.typology, lang)}</TagLabel>
-            <TagLabel>{t(project.status, lang)}</TagLabel>
-          </div>
+        <div className="flex gap-3 mb-1">
+          <TagLabel plain>{t(project.typology, lang)}</TagLabel>
+          <TagLabel plain>{t(project.status, lang)}</TagLabel>
         </div>
+
+        <h2 className="text-card-title lowercase hover:text-accent transition-colors duration-300 mb-2">{title}</h2>
 
         {location && (
           <p className="text-body-sm text-muted mb-3">{location}</p>

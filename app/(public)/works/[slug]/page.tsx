@@ -103,10 +103,10 @@ export default async function ProjectPage({ params }: Props) {
 
       <div className="flex gap-3 mb-3">
         <Link href={`/works?typology=${p.typology}`}>
-          <TagLabel>{t(p.typology, lang)}</TagLabel>
+          <TagLabel plain>{t(p.typology, lang)}</TagLabel>
         </Link>
         <Link href={`/works?typology=${p.status}`}>
-          <TagLabel>{t(p.status, lang)}</TagLabel>
+          <TagLabel plain>{t(p.status, lang)}</TagLabel>
         </Link>
       </div>
 
@@ -122,7 +122,7 @@ export default async function ProjectPage({ params }: Props) {
         heroImages.push(...(p.gallery || []).filter((img) => img.is_hero))
         if (heroImages.length === 0) return null
         return (
-          <div className="mb-12">
+          <div className="mb-12 max-w-[75%]">
             <HeroSlideshow images={heroImages} title={title} />
           </div>
         )
