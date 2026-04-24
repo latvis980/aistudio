@@ -12,19 +12,21 @@ export default function CoverImage({ src, alt }: CoverImageProps) {
   const [isPortrait, setIsPortrait] = useState<boolean | null>(null)
 
   return (
-    <div className={isPortrait === true ? 'max-w-[66.667%]' : ''}>
-      <Image
-        src={src}
-        alt={alt}
-        width={800}
-        height={500}
-        className="w-full h-auto object-cover"
-        sizes="(max-width: 768px) 100vw, 700px"
-        onLoad={(e) => {
-          const img = e.currentTarget
-          setIsPortrait(img.naturalHeight > img.naturalWidth)
-        }}
-      />
-    </div>
+    <Image
+      src={src}
+      alt={alt}
+      width={0}
+      height={0}
+      sizes="700px"
+      style={
+        isPortrait
+          ? { height: '700px', width: 'auto' }
+          : { width: '700px', height: 'auto' }
+      }
+      onLoad={(e) => {
+        const img = e.currentTarget
+        setIsPortrait(img.naturalHeight >= img.naturalWidth)
+      }}
+    />
   )
 }

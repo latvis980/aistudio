@@ -90,6 +90,7 @@ function Lightbox({
   onClose: () => void
 }) {
   const [current, setCurrent] = useState(startIndex)
+  const [isPortrait, setIsPortrait] = useState<boolean | null>(null)
   const dirRef = useRef<number>(0)
   const touchStartX = useRef<number>(0)
 
@@ -118,6 +119,10 @@ function Lightbox({
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [onClose, prev, next])
+
+  useEffect(() => {
+    setIsPortrait(null)
+  }, [current])
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
@@ -190,10 +195,18 @@ function Lightbox({
             <Image
               src={images[current].url}
               alt={caption}
-              width={1800}
-              height={1200}
-              className="max-h-[80vh] max-w-[90vw] w-auto h-auto object-contain"
-              sizes="90vw"
+              width={0}
+              height={0}
+              sizes="700px"
+              style={
+                isPortrait
+                  ? { height: '700px', width: 'auto' }
+                  : { width: '700px', height: 'auto' }
+              }
+              onLoad={(e) => {
+                const img = e.currentTarget
+                setIsPortrait(img.naturalHeight >= img.naturalWidth)
+              }}
               priority
             />
 
