@@ -120,7 +120,7 @@ export default async function StudioPage() {
           <div className="lg:w-[200px] shrink-0">
             <h2 className="section-label">{t('adu_media', lang)}</h2>
             <Image
-              src="/images/logo-footer.png"
+              src="/images/logo-adu.png"
               alt="a/d/u media"
               width={540}
               height={540}
