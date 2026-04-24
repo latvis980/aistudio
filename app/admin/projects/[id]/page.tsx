@@ -451,6 +451,7 @@ export default function ProjectEditorPage() {
       {tab === 'gallery' && (
         <GalleryEditor
           gallery={project.gallery || []}
+          coverImage={project.cover_image}
           slug={project.slug}
           onChange={(gallery) => updateLocal('gallery', gallery)}
         />
@@ -492,14 +493,27 @@ export default function ProjectEditorPage() {
 // ─── Gallery Sub-component ───────────────────────────
 function GalleryEditor({
   gallery,
+  coverImage,
   slug,
   onChange,
 }: {
   gallery: GalleryImage[]
+  coverImage?: string | null
   slug: string
   onChange: (g: GalleryImage[]) => void
 }) {
   const [uploading, setUploading] = useState(false)
+  const [orientations, setOrientations] = useState<Record<number, 'vertical' | 'horizontal'>>({})
+  const [coverOrientation, setCoverOrientation] = useState<'vertical' | 'horizontal' | null>(null)
+
+  useEffect(() => {
+    if (!coverImage) { setCoverOrientation(null); return }
+    const img = document.createElement('img')
+    img.onload = () => {
+      setCoverOrientation(img.naturalHeight >= img.naturalWidth ? 'vertical' : 'horizontal')
+    }
+    img.src = coverImage
+  }, [coverImage])
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -558,6 +572,29 @@ function GalleryEditor({
 
   const heroCount = gallery.filter((img) => img.is_hero).length
 
+  // Compute slideshow slide numbers: cover image is always slide 1,
+  // gallery hero images follow in order.
+  let nextSlidePos = 2
+  const heroSlidePositions: Record<number, number> = {}
+  gallery.forEach((img, i) => {
+    if (img.is_hero) {
+      heroSlidePositions[i] = nextSlidePos++
+    }
+  })
+
+  // Warnings: compare cover orientation against gallery hero orientations
+  const heroGalleryOrientations = gallery
+    .map((img, i) => (img.is_hero ? orientations[i] : undefined))
+    .filter((o): o is 'vertical' | 'horizontal' => !!o)
+
+  const hasVerticalHeroes = heroGalleryOrientations.includes('vertical')
+  const hasHorizontalHeroes = heroGalleryOrientations.includes('horizontal')
+
+  // Vertical cover + horizontal hero images → letter-box warning
+  const showLetterboxWarning = coverOrientation === 'vertical' && hasHorizontalHeroes
+  // Horizontal cover + vertical hero images → clip warning
+  const showClipWarning = coverOrientation === 'horizontal' && hasVerticalHeroes
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -579,13 +616,49 @@ function GalleryEditor({
           </span>
         )}
       </div>
-      <p className="text-[11px] text-gray-400">Click ★ on images to add them to the hero slideshow (max 6 recommended). Use arrows to reorder.</p>
+
+      <p className="text-[11px] text-gray-400">
+        Click ★ on images to add them to the hero slideshow (max 6 recommended). Use arrows to reorder.
+        The cover image (Content tab) is always slide 1 and sets the slideshow height.
+      </p>
+
+      {/* Slideshow height guidelines */}
+      <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-600 space-y-1.5">
+        <p className="font-medium text-gray-700">Slideshow height rules</p>
+        <p className="text-gray-500">The height is always determined by the cover image:</p>
+        <ul className="space-y-1 pl-2 text-gray-600">
+          <li>· <span className="font-medium">Vertical cover, all vertical:</span> all images display at 700 px — no issues.</li>
+          <li>· <span className="font-medium">Vertical cover + horizontal hero images:</span> horizontal images will be padded with equal empty space above and below to fill the 700 px height.</li>
+          <li>· <span className="font-medium">Horizontal cover + vertical hero images:</span> slideshow height = cover&apos;s height; vertical images are centred and will not appear at full height.</li>
+        </ul>
+      </div>
+
+      {/* Dynamic warnings — only shown when orientation mismatch is detected */}
+      {showLetterboxWarning && (
+        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-[11px] text-amber-800">
+          <span className="font-medium">Notice:</span> The cover image is vertical (700 px tall). This slideshow also contains horizontal hero image(s). Horizontal images will appear with equal empty space above and below them to fill the 700 px frame.
+        </div>
+      )}
+      {showClipWarning && (
+        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-[11px] text-amber-800">
+          <span className="font-medium">Notice:</span> The cover image is horizontal, so the slideshow height is less than 700 px. Vertical hero image(s) in this slideshow will be centred within the frame and will not appear at full height.
+        </div>
+      )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {gallery.map((img, i) => (
           <div key={i} className="group relative bg-gray-100 rounded overflow-hidden aspect-[3/2]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={img.url} alt="" className="w-full h-full object-cover" />
+            <img
+              src={img.url}
+              alt=""
+              className="w-full h-full object-cover"
+              onLoad={(e) => {
+                const el = e.currentTarget
+                const portrait = el.naturalHeight >= el.naturalWidth
+                setOrientations((prev) => ({ ...prev, [i]: portrait ? 'vertical' : 'horizontal' }))
+              }}
+            />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
               {i > 0 && (
                 <button
@@ -610,9 +683,13 @@ function GalleryEditor({
                 </button>
               )}
             </div>
+
+            {/* Position number */}
             <div className="absolute top-1.5 left-1.5 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded">
               {String(i + 1).padStart(2, '0')}
             </div>
+
+            {/* Hero star toggle */}
             <button
               onClick={() => toggleHero(i)}
               title={img.is_hero ? 'Remove from hero' : 'Add to hero slideshow'}
@@ -624,6 +701,20 @@ function GalleryEditor({
             >
               ★
             </button>
+
+            {/* Orientation badge — helps spot mixed orientations at a glance */}
+            {orientations[i] && (
+              <div className="absolute bottom-1.5 left-1.5 bg-black/40 text-white text-[9px] px-1 py-0.5 rounded leading-none">
+                {orientations[i] === 'vertical' ? '↕ V' : '↔ H'}
+              </div>
+            )}
+
+            {/* Slideshow slide number — shown on hero images */}
+            {img.is_hero && heroSlidePositions[i] && (
+              <div className="absolute bottom-1.5 right-1.5 bg-amber-400 text-white text-[9px] px-1.5 py-0.5 rounded font-medium leading-none">
+                Slide {heroSlidePositions[i]}
+              </div>
+            )}
           </div>
         ))}
       </div>
