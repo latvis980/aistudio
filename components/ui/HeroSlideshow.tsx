@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
 import { GalleryImage } from '@/lib/types'
@@ -10,6 +10,39 @@ interface HeroSlideshowProps {
   title: string
 }
 
+function SlideshowImage({
+  src,
+  alt,
+  priority,
+}: {
+  src: string
+  alt: string
+  priority?: boolean
+}) {
+  const [isPortrait, setIsPortrait] = useState<boolean | null>(null)
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={0}
+      height={0}
+      sizes="700px"
+      style={
+        isPortrait
+          ? { height: '700px', width: 'auto' }
+          : { width: '700px', height: 'auto' }
+      }
+      onLoad={(e) => {
+        const img = e.currentTarget
+        setIsPortrait(img.naturalHeight >= img.naturalWidth)
+      }}
+      priority={priority}
+      draggable={false}
+    />
+  )
+}
+
 export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
   const [current, setCurrent] = useState(0)
   const touchStartX = useRef(0)
@@ -17,17 +50,7 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
   if (images.length === 0) return null
 
   if (images.length === 1) {
-    return (
-      <Image
-        src={images[0].url}
-        alt={title}
-        width={1200}
-        height={700}
-        className="w-full h-auto"
-        sizes="(max-width: 1024px) 75vw, 675px"
-        priority
-      />
-    )
+    return <SlideshowImage src={images[0].url} alt={title} priority />
   }
 
   const prev = () => setCurrent((i) => (i - 1 + images.length) % images.length)
@@ -59,15 +82,10 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <Image
+            <SlideshowImage
               src={images[current].url}
               alt={`${title} — ${current + 1}`}
-              width={1200}
-              height={700}
-              className="w-full h-auto"
-              sizes="(max-width: 1024px) 75vw, 675px"
               priority={current === 0}
-              draggable={false}
             />
           </motion.div>
         </AnimatePresence>
