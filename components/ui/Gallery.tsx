@@ -47,7 +47,7 @@ function GalleryThumb({
         width={400}
         height={300}
         className="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-[1.04]"
-        sizes="(max-width: 768px) 50vw, 33vw"
+        sizes="(max-width: 768px) 100vw, 33vw"
       />
     </motion.div>
   )
@@ -304,7 +304,7 @@ export default function Gallery({ images, projectTitle, lang }: GalleryProps) {
   return (
     <>
       <div className="mt-16 max-w-[66.667%]">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           {images.map((image, i) => (
             <GalleryThumb
               key={i}
