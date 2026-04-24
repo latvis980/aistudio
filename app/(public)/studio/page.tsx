@@ -53,6 +53,19 @@ export default async function StudioPage() {
     {}
   )
 
+  // ── Per-language phone resolution ──────────────────────────────────────────
+  // Priority: language-specific key → catch-all key → hardcoded fallback
+  const londonPhone =
+    settingsMap[`london_phone_${lang}`] ||
+    settingsMap.london_phone ||
+    '+44 207 971 1227'
+
+  const moscowPhone =
+    settingsMap[`moscow_phone_${lang}`] ||
+    settingsMap.moscow_phone ||
+    '+7 495 790 7776'
+  // ───────────────────────────────────────────────────────────────────────────
+
   const rawMoscowAddress = settingsMap.moscow_address || "6 Novaya Ploshad' 109012 Moscow, Russia"
   const moscowAddress =
     lang === 'ar' || lang === 'zh'
@@ -147,14 +160,19 @@ export default async function StudioPage() {
           </div>
           <div className="flex-1">
             <div className="flex flex-col sm:flex-row gap-12">
+              {/* London office — always shown */}
               <div>
-                <p className="text-body">{settingsMap.london_address || '79-89 Lots Road SW10 0RN, London, UK'}</p>
-                <p className="text-body-sm text-muted mt-1">T {settingsMap.london_phone || '+44 207 971 1227'}</p>
+                <p className="text-body">
+                  {settingsMap.london_address || '79-89 Lots Road SW10 0RN, London, UK'}
+                </p>
+                <p className="text-body-sm text-muted mt-1">T {londonPhone}</p>
               </div>
+
+              {/* Moscow / regional office — shown for RU, ZH, AR */}
               {(['ru', 'zh', 'ar'] as string[]).includes(lang) && (
                 <div>
                   <p className="text-body">{moscowAddress}</p>
-                  <p className="text-body-sm text-muted mt-1">T {settingsMap.moscow_phone || '+7 495 790 7776'}</p>
+                  <p className="text-body-sm text-muted mt-1">T {moscowPhone}</p>
                 </div>
               )}
             </div>
