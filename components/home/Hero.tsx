@@ -32,7 +32,7 @@ export default function Hero({ tagline, description, quote, quoteAuthor }: HeroP
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}
-        className="lg:w-1/2 lg:pt-20"
+        className="lg:w-1/2 lg:pt-[6.19rem]"
       >
         <h2 className="text-base font-medium mb-4">{tagline}</h2>
         <p className="text-body-sm text-muted">{description}</p>
