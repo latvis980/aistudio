@@ -1,5 +1,7 @@
 'use client'
 
+// components/home/Hero.tsx
+
 import { motion } from 'framer-motion'
 
 interface HeroProps {

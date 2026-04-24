@@ -1,3 +1,5 @@
+// app/api/translate/route.ts
+
 import { NextRequest, NextResponse } from 'next/server'
 
 // Auto-detect endpoint: free keys end with ":fx", paid keys don't

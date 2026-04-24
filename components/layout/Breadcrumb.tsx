@@ -1,3 +1,5 @@
+// components/layout/Breadcrumb.tsx
+
 import BracketLink from '@/components/ui/BracketLink'
 import { Lang } from '@/lib/types'
 import { t } from '@/lib/i18n'

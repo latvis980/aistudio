@@ -1,5 +1,7 @@
 'use client'
 
+// components/home/FeaturedProjects.tsx
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'

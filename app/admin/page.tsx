@@ -1,5 +1,7 @@
 'use client'
 
+// app/admin/page.tsx
+
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'

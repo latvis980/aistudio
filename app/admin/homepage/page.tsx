@@ -1,5 +1,7 @@
 'use client'
 
+// app/admin/homepage/page.tsx
+
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { HomepageSlide } from '@/lib/types'

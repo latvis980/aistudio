@@ -1,3 +1,5 @@
+// app/(public)/journal/page.tsx
+
 import { cookies } from 'next/headers'
 import { Metadata } from 'next'
 import { createServerClient } from '@/lib/supabase/server'

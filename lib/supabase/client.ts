@@ -1,3 +1,5 @@
+// lib/supabase/client.ts
+
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 let _supabase: SupabaseClient | null = null

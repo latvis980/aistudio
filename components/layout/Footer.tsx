@@ -1,3 +1,5 @@
+// components/layout/Footer.tsx
+
 import Link from 'next/link'
 import Image from 'next/image'
 import BracketLink from '@/components/ui/BracketLink'

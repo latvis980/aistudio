@@ -1,3 +1,5 @@
+// app/api/upload/route.ts
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 

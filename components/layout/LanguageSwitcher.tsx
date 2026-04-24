@@ -1,5 +1,7 @@
 'use client'
 
+// components/layout/LanguageSwitcher.tsx
+
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { setCookie } from 'cookies-next'

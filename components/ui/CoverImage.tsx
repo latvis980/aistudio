@@ -1,5 +1,7 @@
 'use client'
 
+// components/ui/CoverImage.tsx
+
 import { useState } from 'react'
 import Image from 'next/image'
 

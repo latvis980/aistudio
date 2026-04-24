@@ -1,5 +1,7 @@
 'use client'
 
+// components/layout/CookieBanner.tsx
+
 import { useState, useEffect } from 'react'
 import { getCookie, setCookie } from 'cookies-next'
 import Link from 'next/link'

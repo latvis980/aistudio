@@ -1,3 +1,5 @@
+// components/ui/NewsItem.tsx
+
 import Image from 'next/image'
 import Link from 'next/link'
 import BracketLink from '@/components/ui/BracketLink'

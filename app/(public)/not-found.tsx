@@ -1,3 +1,5 @@
+// app/(public)/not-found.tsx
+
 import BracketLink from '@/components/ui/BracketLink'
 
 export default function NotFound() {

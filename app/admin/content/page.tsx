@@ -1,5 +1,7 @@
 'use client'
 
+// app/admin/content/page.tsx
+
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { SiteContent, LANGUAGES } from '@/lib/types'

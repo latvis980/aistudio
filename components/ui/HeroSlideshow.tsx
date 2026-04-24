@@ -1,5 +1,7 @@
 'use client'
 
+// components/ui/HeroSlideshow.tsx
+
 import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'

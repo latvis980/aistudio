@@ -1,3 +1,5 @@
+// lib/types.ts
+
 // ─── Language ────────────────────────────────────────
 export type Lang = 'en' | 'ru' | 'ar' | 'zh' | 'es'
 

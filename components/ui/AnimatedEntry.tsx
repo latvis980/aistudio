@@ -1,5 +1,7 @@
 'use client'
 
+// components/ui/AnimatedEntry.tsx
+
 import { motion } from 'framer-motion'
 import { ReactNode } from 'react'
 

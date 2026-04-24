@@ -1,3 +1,5 @@
+// components/ui/SpecsGrid.tsx
+
 import { ProjectSpecs } from '@/lib/types'
 
 interface SpecsGridProps {

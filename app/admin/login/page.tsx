@@ -1,5 +1,7 @@
 'use client'
 
+// app/admin/login/page.tsx
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'

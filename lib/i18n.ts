@@ -1,3 +1,5 @@
+// lib/i18n.ts
+
 import { Lang } from './types'
 
 /**

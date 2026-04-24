@@ -1,5 +1,7 @@
 'use client'
 
+// components/ui/Gallery.tsx
+
 import { useRef, useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { motion, useInView, AnimatePresence, type Variants } from 'framer-motion'

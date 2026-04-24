@@ -1,3 +1,5 @@
+// components/ui/TagLabel.tsx
+
 import { cn } from '@/lib/utils'
 
 interface TagLabelProps {

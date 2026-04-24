@@ -1,3 +1,5 @@
+// components/ui/JournalFeedItem.tsx
+
 import Image from 'next/image'
 import Link from 'next/link'
 import TagLabel from '@/components/ui/TagLabel'

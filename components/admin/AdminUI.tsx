@@ -1,5 +1,7 @@
 'use client'
 
+// components/admin/AdminUI.tsx
+
 import { useEffect, useState, useCallback } from 'react'
 import { LANGUAGES } from '@/lib/types'
 

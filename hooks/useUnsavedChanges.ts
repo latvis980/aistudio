@@ -1,5 +1,7 @@
 'use client'
 
+// hooks/useUnsavedChanges.ts
+
 import { useEffect, useState, useCallback } from 'react'
 
 export function useUnsavedChanges<T>(currentData: T | null) {

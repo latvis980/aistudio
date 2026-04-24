@@ -1,3 +1,5 @@
+// app/(public)/studio/page.tsx
+
 import Image from 'next/image'
 import { cookies } from 'next/headers'
 import { Metadata } from 'next'

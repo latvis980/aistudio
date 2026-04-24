@@ -1,3 +1,5 @@
+// app/(public)/works/[slug]/page.tsx
+
 import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'

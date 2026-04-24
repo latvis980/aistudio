@@ -1,5 +1,7 @@
 'use client'
 
+// app/(public)/journal/JournalFeed.tsx
+
 import { useState } from 'react'
 import { JournalItem, Lang } from '@/lib/types'
 import JournalFeedItem from '@/components/ui/JournalFeedItem'

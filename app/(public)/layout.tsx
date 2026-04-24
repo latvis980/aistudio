@@ -1,3 +1,5 @@
+// app/(public)/layout.tsx
+
 import { cookies } from 'next/headers'
 import Sidebar from '@/components/layout/Sidebar'
 import Footer from '@/components/layout/Footer'

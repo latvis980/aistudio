@@ -1,5 +1,7 @@
 'use client'
 
+// components/ui/NewsList.tsx
+
 import { useState } from 'react'
 import NewsItemCard from '@/components/ui/NewsItem'
 import { NewsItem, Lang } from '@/lib/types'

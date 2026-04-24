@@ -1,3 +1,5 @@
+// app/opengraph-image.tsx
+
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'

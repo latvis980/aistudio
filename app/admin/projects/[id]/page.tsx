@@ -1,5 +1,7 @@
 'use client'
 
+// app/admin/projects/[id]/page.tsx
+
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'

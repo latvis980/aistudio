@@ -1,3 +1,5 @@
+// lib/translateText.ts
+
 const DEEPL_CODES: Record<string, string> = { ar: 'AR', zh: 'ZH-HANS' }
 
 function getDeepLUrl(apiKey: string) {

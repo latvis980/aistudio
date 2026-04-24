@@ -1,3 +1,5 @@
+// app/layout.tsx
+
 import './globals.css'
 import { cookies } from 'next/headers'
 import { Metadata } from 'next'
