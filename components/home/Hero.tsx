@@ -1,6 +1,3 @@
-Hero · TSX
-Copy
-
 'use client'
 
 // components/home/Hero.tsx
