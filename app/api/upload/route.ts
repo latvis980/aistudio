@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import sharp from 'sharp'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 const ALLOWED_BUCKETS = ['news-images', 'press-images', 'homepage-images', 'project-images']
-const RESIZABLE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/tiff']
-const MAX_DIMENSION = 700
 
 /**
  * POST /api/upload
@@ -32,23 +29,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const arrayBuffer = await file.arrayBuffer()
-    let uploadData: Buffer | ArrayBuffer = arrayBuffer
-    const contentType = file.type || 'application/octet-stream'
-
-    if (RESIZABLE_TYPES.includes(contentType)) {
-      uploadData = await sharp(Buffer.from(arrayBuffer))
-        .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: 'inside' })
-        .toBuffer()
-    }
-
+    const buffer = await file.arrayBuffer()
     const supabase = createAdminClient()
 
     const { error: uploadError } = await supabase.storage
       .from(bucket)
-      .upload(path, uploadData, {
+      .upload(path, buffer, {
         upsert: true,
-        contentType,
+        contentType: file.type || 'application/octet-stream',
       })
 
     if (uploadError) {
