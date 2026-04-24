@@ -234,6 +234,9 @@ export default function PressEditorPage() {
       {/* Cover image */}
       <fieldset className="p-4 bg-white border border-gray-200 rounded-lg mb-6">
         <legend className="text-xs font-medium text-gray-500 uppercase tracking-wider px-2">Cover Image</legend>
+        <p className="text-xs text-gray-400 mb-3">
+          Displayed on the individual article page.
+        </p>
         <ImageUpload bucket="press-images" currentUrl={item.cover_image} onUploaded={(url) => updateLocal('cover_image', url)} slug={item.slug} />
       </fieldset>
 
