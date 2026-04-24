@@ -37,7 +37,7 @@ export default function ProjectCard({ project, lang }: ProjectCardProps) {
         )}
 
         {description && (
-          <p className="text-body text-ink/80 max-w-[600px]">{description}</p>
+          <p className="text-body text-ink/80">{description}</p>
         )}
       </Link>
     </article>
