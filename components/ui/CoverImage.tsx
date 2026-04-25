@@ -2,33 +2,24 @@
 
 // components/ui/CoverImage.tsx
 
-import { useState } from 'react'
 import Image from 'next/image'
 
 interface CoverImageProps {
   src: string
   alt: string
+  aspectRatio?: string
 }
 
-export default function CoverImage({ src, alt }: CoverImageProps) {
-  const [isPortrait, setIsPortrait] = useState<boolean | null>(null)
-
+export default function CoverImage({ src, alt, aspectRatio = '3/2' }: CoverImageProps) {
   return (
-    <Image
-      src={src}
-      alt={alt}
-      width={0}
-      height={0}
-      sizes="700px"
-      style={
-        isPortrait
-          ? { height: '700px', width: 'auto' }
-          : { width: '700px', height: 'auto' }
-      }
-      onLoad={(e) => {
-        const img = e.currentTarget
-        setIsPortrait(img.naturalHeight >= img.naturalWidth)
-      }}
-    />
+    <div style={{ aspectRatio }} className="relative w-full max-w-[700px] overflow-hidden">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(max-width: 768px) 100vw, 700px"
+        className="object-cover"
+      />
+    </div>
   )
 }
