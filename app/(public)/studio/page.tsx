@@ -53,6 +53,19 @@ export default async function StudioPage() {
     {}
   )
 
+  // ── Per-language phone resolution ──────────────────────────────────────────
+  // Priority: language-specific key → catch-all key → hardcoded fallback
+  const londonPhone =
+    settingsMap[`london_phone_${lang}`] ||
+    settingsMap.london_phone ||
+    '+44 207 971 1227'
+
+  const moscowPhone =
+    settingsMap[`moscow_phone_${lang}`] ||
+    settingsMap.moscow_phone ||
+    '+7 495 790 7776'
+  // ───────────────────────────────────────────────────────────────────────────
+
   const rawMoscowAddress = settingsMap.moscow_address || "6 Novaya Ploshad' 109012 Moscow, Russia"
   const moscowAddress =
     lang === 'ar' || lang === 'zh'
