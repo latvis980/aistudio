@@ -209,6 +209,7 @@ export default function PressEditorPage() {
             <label className="block text-xs text-gray-500 mb-1">Favicon</label>
             <div className="flex items-center gap-3">
               {item.favicon_url && (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img src={item.favicon_url} alt="" width={24} height={24} className="rounded-sm" />
               )}
               <button

@@ -81,11 +81,9 @@ const CONTENT_BLOCKS: {
 ]
 
 // ─── Phone settings metadata ──────────────────────────────────────────────────
-// Each entry maps to a group of settings keys: e.g. london_phone_en, london_phone_ru …
-// The "hint" explains when this number is shown.
 const PHONE_SETTINGS: {
-  prefix: string          // e.g. "london_phone"
-  label: string           // shown in UI
+  prefix: string
+  label: string
   description: string
   hint: string
 }[] = [
@@ -99,7 +97,7 @@ const PHONE_SETTINGS: {
     prefix: 'moscow_phone',
     label: 'Regional Office — Phone',
     description: 'Phone number shown alongside the regional address (RU / ZH / AR only)',
-    hint: 'Only shown when the visitor\'s language is Russian, Chinese, or Arabic. Set the number that makes most sense for each region.',
+    hint: 'Only shown when the visitor language is Russian, Chinese, or Arabic. Set the number that makes most sense for each region.',
   },
 ]
 
@@ -257,10 +255,9 @@ function ContentBlock({
 }
 
 // ─── Phone settings editor ─────────────────────────────────────────────────────
-// Reads/writes rows from the `settings` table using keys like "london_phone_en"
 function PhoneSettingsBlock({
   phoneMeta,
-  initialValues,   // { en: '...', ru: '...', ... }
+  initialValues,
   onSaved,
 }: {
   phoneMeta: (typeof PHONE_SETTINGS)[number]
@@ -272,13 +269,11 @@ function PhoneSettingsBlock({
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [expanded, setExpanded] = useState(false)
 
-  // Keep in sync if parent reloads
   useEffect(() => { setValues(initialValues) }, [initialValues])
 
   const handleSave = async () => {
     setSaving(true)
 
-    // Upsert one row per language
     const upserts = LANGUAGES.map(({ code }) => ({
       key: `${phoneMeta.prefix}_${code}`,
       value: values[code] || '',
@@ -330,6 +325,7 @@ function PhoneSettingsBlock({
 
           {/* Info callout */}
           <div className="bg-blue-50 border border-blue-100 rounded-md px-4 py-3">
+            {/* eslint-disable-next-line react/no-unescaped-entities */}
             <p className="text-xs text-blue-600 leading-relaxed">
               💡 {phoneMeta.hint}
             </p>
@@ -347,7 +343,7 @@ function PhoneSettingsBlock({
                   onChange={(e) =>
                     setValues((prev) => ({ ...prev, [code]: e.target.value }))
                   }
-                  dir="ltr"  /* phone numbers always LTR even for Arabic */
+                  dir="ltr"
                   placeholder={code === 'en' ? 'e.g. +44 207 971 1227' : 'Leave blank to use EN value'}
                   className="
                     flex-1 px-3 py-2 text-sm border border-gray-200 rounded-md
@@ -377,7 +373,6 @@ export default function ContentPage() {
   const [loading, setLoading]         = useState(true)
 
   const load = useCallback(async () => {
-    // Load site_content
     const keys = CONTENT_BLOCKS.map((b) => b.key)
     const { data: contentData } = await supabase
       .from('site_content')
@@ -390,7 +385,6 @@ export default function ContentPage() {
     }
     setContentMap(map)
 
-    // Load settings (all rows — we just need the phone ones here)
     const { data: settingsData } = await supabase.from('settings').select('*')
     const smap: Record<string, string> = {}
     for (const row of settingsData || []) {
@@ -417,7 +411,6 @@ export default function ContentPage() {
     })
   }
 
-  // Build per-language phone values for a given prefix from settingsMap
   const phoneValues = (prefix: string): Record<string, string> =>
     Object.fromEntries(
       LANGUAGES.map(({ code }) => [code, settingsMap[`${prefix}_${code}`] || ''])
@@ -450,7 +443,7 @@ export default function ContentPage() {
       <div className="mb-6">
         <h2 className="text-xl font-semibold">Contact Settings</h2>
         <p className="text-sm text-gray-400 mt-1">
-          Phone numbers shown in the Studio page "Get in touch" section.
+          Phone numbers shown in the Studio page &quot;Get in touch&quot; section.
           You can set a different number per language — useful for regional offices.
         </p>
       </div>
