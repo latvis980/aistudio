@@ -38,6 +38,9 @@ const UI_LABELS: Record<string, Record<Lang, string>> = {
   news: {
     en: 'News', ru: 'Новости', ar: 'أخبار', zh: '新闻', es: 'Noticias',
   },
+  no_projects_found: {
+    en: 'No projects found.', ru: 'Проекты не найдены.',    ar: 'لم يتم العثور على مشاريع.',    zh: '未找到项目。',    es: 'No se encontraron proyectos.',
+  },
   home: {
     en: 'Home', ru: 'Главная', ar: 'الرئيسية', zh: '首页', es: 'Inicio',
   },
