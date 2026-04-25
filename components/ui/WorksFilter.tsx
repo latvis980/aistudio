@@ -132,16 +132,13 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
       })
     })
 
-    // 6. Navigate once animation is complete
+    // 6. Navigate once animation is complete.
+    //    No cleanup needed — the component unmounts on navigation,
+    //    so React discards all state automatically. Resetting state
+    //    here would cause the filter to snap back open while the
+    //    old page is still visible during the Next.js transition.
     setTimeout(() => {
       router.push(`/works/${project.slug}`)
-      // Clean up ghost after navigation
-      setTimeout(() => {
-        ghost.style.display = 'none'
-        ghost.innerHTML = ''
-        setFilterCollapsed(false)
-        imageEl.style.opacity = ''
-      }, 400)
     }, 560)
   }, [router])
 
