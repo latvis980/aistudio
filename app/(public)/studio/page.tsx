@@ -58,12 +58,12 @@ export default async function StudioPage() {
   const londonPhone =
     settingsMap[`london_phone_${lang}`] ||
     settingsMap.london_phone ||
-    '+44 207 971 1227'
+    null
 
   const moscowPhone =
     settingsMap[`moscow_phone_${lang}`] ||
     settingsMap.moscow_phone ||
-    '+7 495 790 7776'
+    null
   // ───────────────────────────────────────────────────────────────────────────
 
   const rawMoscowAddress = settingsMap.moscow_address || "6 Novaya Ploshad' 109012 Moscow, Russia"
