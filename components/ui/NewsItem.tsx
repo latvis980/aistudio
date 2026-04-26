@@ -29,7 +29,7 @@ export default function NewsItemCard({ item, lang }: NewsItemProps) {
       */}
       <div className="grid grid-cols-[120px_1fr] gap-6 sm:grid-cols-[160px_1fr] md:grid-cols-[180px_1fr]">
 
-        {/* LEFT — 2:3 portrait thumbnail OR empty spacer */}
+        {/* LEFT — 3:2 landscape thumbnail OR empty spacer */}
         <div>
           {hasImage ? (
             <Link
@@ -38,8 +38,8 @@ export default function NewsItemCard({ item, lang }: NewsItemProps) {
               tabIndex={-1}
               aria-hidden="true"
             >
-              {/* aspect-[2/3] = portrait ratio: height is 1.5× the width */}
-              <div className="relative w-full aspect-[2/3]">
+              {/* aspect-[3/2] = landscape ratio: width is 1.5× the height */}
+              <div className="relative w-full aspect-[3/2]">
                 <Image
                   src={thumbnailSrc!}
                   alt={title}
@@ -51,7 +51,7 @@ export default function NewsItemCard({ item, lang }: NewsItemProps) {
             </Link>
           ) : (
             /* Silent spacer — same dimensions as the thumbnail */
-            <div className="w-full aspect-[2/3]" aria-hidden="true" />
+            <div className="w-full aspect-[3/2]" aria-hidden="true" />
           )}
         </div>
 
