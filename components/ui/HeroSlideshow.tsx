@@ -66,7 +66,7 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
   return (
     <div className="relative select-none">
       <div
-        className="relative overflow-hidden mx-auto w-full"
+        className="relative overflow-hidden mr-auto w-full"
         style={frameStyle}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
