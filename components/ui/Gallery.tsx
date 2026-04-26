@@ -1,7 +1,5 @@
 'use client'
 
-// components/ui/Gallery.tsx
-
 import { useRef, useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { motion, useInView, AnimatePresence, type Variants } from 'framer-motion'
@@ -55,27 +53,29 @@ function GalleryThumb({
   )
 }
 
-const slideVariants: Variants = {
-  enter: (dir: number) => ({
-    x: dir > 0 ? 80 : -80,
-    opacity: 0,
-    scale: 0.98,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    scale: 1,
-  },
-  exit: (dir: number) => ({
-    x: dir > 0 ? -80 : 80,
-    opacity: 0,
-    scale: 0.98,
-  }),
+// Simple fade — cleaner than slide for fill-mode images
+const fadeVariants: Variants = {
+  enter: { opacity: 0 },
+  center: { opacity: 1 },
+  exit: { opacity: 0 },
 }
 
-const slideTransition = {
-  duration: 0.35,
-  ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
+const fadeTransition = { duration: 0.25, ease: 'easeInOut' as const }
+
+function CloseIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      className="w-4 h-4 text-white/80"
+    >
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  )
 }
 
 function Lightbox({
@@ -95,43 +95,83 @@ function Lightbox({
   const dirRef = useRef<number>(0)
   const touchStartX = useRef<number>(0)
 
-  const prev = useCallback(() => {
-    dirRef.current = -1
-    setCurrent((i) => (i - 1 + images.length) % images.length)
-  }, [images.length])
+  // Zoom + pan state
+  const [zoomed, setZoomed] = useState(false)
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const [dragging, setDragging] = useState(false)
+  const dragStart = useRef({ mouseX: 0, mouseY: 0, panX: 0, panY: 0 })
 
-  const next = useCallback(() => {
-    dirRef.current = 1
-    setCurrent((i) => (i + 1) % images.length)
-  }, [images.length])
+  const navigate = useCallback(
+    (dir: number) => {
+      dirRef.current = dir
+      setZoomed(false)
+      setPan({ x: 0, y: 0 })
+      setCurrent((i) => (i + dir + images.length) % images.length)
+    },
+    [images.length],
+  )
 
+  const prev = useCallback(() => navigate(-1), [navigate])
+  const next = useCallback(() => navigate(1), [navigate])
+
+  const toggleZoom = useCallback(() => {
+    setZoomed((z) => !z)
+    setPan({ x: 0, y: 0 })
+  }, [])
+
+  // Lock body scroll
   useEffect(() => {
     const saved = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = saved }
+    return () => {
+      document.body.style.overflow = saved
+    }
   }, [])
 
+  // Keyboard nav
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowLeft') prev()
-      if (e.key === 'ArrowRight') next()
+      if (e.key === 'Escape') {
+        if (zoomed) {
+          setZoomed(false)
+          setPan({ x: 0, y: 0 })
+        } else {
+          onClose()
+        }
+      }
+      if (!zoomed && e.key === 'ArrowLeft') prev()
+      if (!zoomed && e.key === 'ArrowRight') next()
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [onClose, prev, next])
+  }, [onClose, prev, next, zoomed])
 
+  // Touch swipe (mobile)
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (zoomed) return
     touchStartX.current = e.touches[0].clientX
   }
-
   const handleTouchEnd = (e: React.TouchEvent) => {
+    if (zoomed) return
     const delta = touchStartX.current - e.changedTouches[0].clientX
-    if (Math.abs(delta) > 50) {
-      if (delta > 0) next()
-      else prev()
-    }
+    if (Math.abs(delta) > 50) delta > 0 ? next() : prev()
   }
+
+  // Drag-to-pan when zoomed (desktop)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!zoomed) return
+    setDragging(true)
+    dragStart.current = { mouseX: e.clientX, mouseY: e.clientY, panX: pan.x, panY: pan.y }
+    e.preventDefault()
+  }
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!zoomed || !dragging) return
+    setPan({
+      x: dragStart.current.panX + e.clientX - dragStart.current.mouseX,
+      y: dragStart.current.panY + e.clientY - dragStart.current.mouseY,
+    })
+  }
+  const handleMouseUp = () => setDragging(false)
 
   const caption = images[current].caption_en
     ? getField(images[current], 'caption', lang)
@@ -143,113 +183,84 @@ function Lightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 backdrop-blur-2xl bg-black/75 flex flex-col"
+      // group/lb enables CSS hover-reveal for arrows, zoom, counter, caption
+      className="fixed inset-0 z-50 bg-black flex group/lb"
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
     >
-      {/* Top bar — counter left, close right; sits above image area */}
-      <div className="relative z-30 flex-none h-14 px-5 flex items-center justify-between w-full">
-        <span className="text-white/60 text-xs tracking-widest uppercase select-none">
-          {current + 1} / {images.length}
-        </span>
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            strokeLinecap="round"
-            className="w-4 h-4 text-white/80"
-          >
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Image area — click zones are confined here, never reaching the top bar */}
+      {/* ── Image area: fills everything to the left of the right panel ── */}
       <div
-        className="relative flex-1 flex items-center justify-center overflow-hidden"
-        onClick={onClose}
+        className="relative flex-1 overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Image with direction-aware slide */}
-        <AnimatePresence mode="wait" custom={dirRef.current}>
+        {/* Transparent click zones for prev/next — sit below image layer */}
+        {!zoomed && images.length > 1 && (
+          <>
+            <button
+              onClick={prev}
+              aria-label="Previous image"
+              className="absolute inset-y-0 left-0 w-1/2 z-10 cursor-w-resize"
+            />
+            <button
+              onClick={next}
+              aria-label="Next image"
+              className="absolute inset-y-0 right-0 w-1/2 z-10 cursor-e-resize"
+            />
+          </>
+        )}
+
+        {/* Image — fills the entire image area via Next.js fill + object-contain */}
+        <AnimatePresence mode="wait">
           <motion.div
             key={current}
-            custom={dirRef.current}
-            variants={slideVariants}
+            variants={fadeVariants}
             initial="enter"
             animate="center"
             exit="exit"
-            transition={slideTransition}
-            className="relative flex items-center justify-center w-full h-full px-16"
-            onClick={(e) => e.stopPropagation()}
+            transition={fadeTransition}
+            // pointer-events-none lets clicks reach the zones below when not zoomed
+            className={`absolute inset-0 z-20 ${zoomed ? 'pointer-events-auto' : 'pointer-events-none'}`}
+            style={{ cursor: zoomed ? (dragging ? 'grabbing' : 'grab') : 'default' }}
+            onMouseDown={handleMouseDown}
           >
-            <Image
-              src={images[current].url}
-              alt={caption}
-              width={1800}
-              height={1200}
-              className="max-h-[80vh] max-w-[90vw] w-auto h-auto object-contain"
-              sizes="90vw"
-              priority
-            />
-
-            {/* Click zones inside image area */}
-            {images.length > 1 && (
-              <>
-                <button
-                  onClick={(e) => { e.stopPropagation(); prev() }}
-                  aria-label="Previous image"
-                  className="absolute inset-y-0 left-0 w-[40%] cursor-w-resize z-10"
-                />
-                <button
-                  onClick={(e) => { e.stopPropagation(); next() }}
-                  aria-label="Next image"
-                  className="absolute inset-y-0 right-0 w-[40%] cursor-e-resize z-10"
-                />
-              </>
-            )}
+            <div
+              className="w-full h-full"
+              style={{
+                transform: zoomed
+                  ? `scale(2) translate(${pan.x / 2}px, ${pan.y / 2}px)`
+                  : undefined,
+                // instant during drag, animated for zoom toggle
+                transition: dragging ? 'none' : 'transform 0.25s ease',
+              }}
+            >
+              <Image
+                src={images[current].url}
+                alt={caption}
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, calc(100vw - 56px)"
+                priority
+              />
+            </div>
           </motion.div>
         </AnimatePresence>
 
-        {/* Dot indicators */}
-        {images.length > 1 && (
-          <div className="absolute bottom-4 flex gap-2 select-none">
-            {images.map((_, i) => (
-              <button
-                key={i}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  dirRef.current = i > current ? 1 : -1
-                  setCurrent(i)
-                }}
-                aria-label={`Go to image ${i + 1}`}
-                className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                  i === current ? 'bg-white/80' : 'bg-white/30 hover:bg-white/50'
-                }`}
-              />
-            ))}
-          </div>
-        )}
+        {/* Counter — always visible on mobile, hover-reveal on desktop */}
+        <div className="absolute top-5 left-5 z-30 text-white/70 text-xs tracking-widest select-none pointer-events-none opacity-100 md:opacity-0 md:group-hover/lb:opacity-100 transition-opacity duration-200">
+          {current + 1} / {images.length}
+        </div>
 
-        {/* Caption */}
-        {caption && (
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pb-8 text-white/50 text-xs tracking-wide select-none whitespace-nowrap">
-            {caption}
-          </div>
-        )}
-
-        {/* Prev arrow — circular, left */}
-        {images.length > 1 && (
+        {/* Prev arrow — desktop hover only, hidden when zoomed */}
+        {!zoomed && images.length > 1 && (
           <button
-            onClick={(e) => { e.stopPropagation(); prev() }}
+            onClick={(e) => {
+              e.stopPropagation()
+              prev()
+            }}
             aria-label="Previous image"
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-20"
+            className="absolute left-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/50 hover:bg-black/70 hidden md:flex items-center justify-center opacity-0 group-hover/lb:opacity-100 transition-opacity duration-200"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -259,19 +270,22 @@ function Lightbox({
               strokeWidth={1.5}
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-5 h-5 text-white/80"
+              className="w-5 h-5 text-white"
             >
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
         )}
 
-        {/* Next arrow — circular, right */}
-        {images.length > 1 && (
+        {/* Next arrow — desktop hover only, hidden when zoomed */}
+        {!zoomed && images.length > 1 && (
           <button
-            onClick={(e) => { e.stopPropagation(); next() }}
+            onClick={(e) => {
+              e.stopPropagation()
+              next()
+            }}
             aria-label="Next image"
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-20"
+            className="absolute right-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/50 hover:bg-black/70 hidden md:flex items-center justify-center opacity-0 group-hover/lb:opacity-100 transition-opacity duration-200"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -281,12 +295,78 @@ function Lightbox({
               strokeWidth={1.5}
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-5 h-5 text-white/80"
+              className="w-5 h-5 text-white"
             >
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
         )}
+
+        {/* Zoom toggle — desktop hover only, bottom-right */}
+        <button
+          onClick={toggleZoom}
+          aria-label={zoomed ? 'Zoom out' : 'Zoom in'}
+          className="absolute bottom-5 right-5 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 hidden md:flex items-center justify-center opacity-0 group-hover/lb:opacity-100 transition-opacity duration-200"
+        >
+          {zoomed ? (
+            // minus = zoom out
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-4 h-4 text-white"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35M8 11h6" />
+            </svg>
+          ) : (
+            // plus = zoom in
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-4 h-4 text-white"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35M11 8v6M8 11h6" />
+            </svg>
+          )}
+        </button>
+
+        {/* Caption — always visible on mobile, hover-reveal on desktop */}
+        {caption && (
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 text-white/60 text-xs tracking-wide select-none whitespace-nowrap pointer-events-none opacity-100 md:opacity-0 md:group-hover/lb:opacity-100 transition-opacity duration-200">
+            {caption}
+          </div>
+        )}
+
+        {/* Mobile close — top-right corner, hidden on desktop */}
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="md:hidden absolute top-4 right-4 z-40 w-9 h-9 rounded-full bg-black/50 flex items-center justify-center"
+        >
+          <CloseIcon />
+        </button>
+      </div>
+
+      {/* ── Right panel (desktop only): close is always outside the image frame ── */}
+      <div className="hidden md:flex flex-none w-14 flex-col items-center pt-5">
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        >
+          <CloseIcon />
+        </button>
       </div>
     </motion.div>
   )
