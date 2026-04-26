@@ -165,14 +165,14 @@ export default async function StudioPage() {
                 <p className="text-body">
                   {settingsMap.london_address || '79-89 Lots Road SW10 0RN, London, UK'}
                 </p>
-                <p className="text-body-sm text-muted mt-1">T {londonPhone}</p>
+                {londonPhone && <p className="text-body-sm text-muted mt-1">T {londonPhone}</p>}
               </div>
 
               {/* Moscow / regional office — shown for RU, ZH, AR */}
               {(['ru', 'zh', 'ar'] as string[]).includes(lang) && (
                 <div>
                   <p className="text-body">{moscowAddress}</p>
-                  <p className="text-body-sm text-muted mt-1">T {moscowPhone}</p>
+                  {moscowPhone && <p className="text-body-sm text-muted mt-1">T {moscowPhone}</p>}
                 </div>
               )}
             </div>
