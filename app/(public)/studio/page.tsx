@@ -78,7 +78,7 @@ export default async function StudioPage() {
 
   return (
     <>
-      <Breadcrumb crumbs={[{ label: t('about', lang) }]} lang={lang} />
+      <Breadcrumb crumbs={[{ label: t('studio', lang) }]} lang={lang} />
 
       <AnimatedEntry>
         <div className="mb-12">
