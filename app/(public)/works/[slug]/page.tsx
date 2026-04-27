@@ -15,6 +15,7 @@ import SpecsGrid from '@/components/ui/SpecsGrid'
 import Gallery from '@/components/ui/Gallery'
 import HeroSlideshow from '@/components/ui/HeroSlideshow'
 import VimeoEmbed from '@/components/ui/VimeoEmbed'
+import { StaggerContainer, StaggerItem } from '@/components/ui/StaggerReveal'
 
 interface Props {
   params: { slug: string }
@@ -95,25 +96,38 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <>
-      <Breadcrumb
-        crumbs={[
-          { label: t('works', lang), href: '/works' },
-          { label: title },
-        ]}
-        lang={lang}
-      />
+      <StaggerContainer>
+        <StaggerItem>
+          <Breadcrumb
+            crumbs={[
+              { label: t('works', lang), href: '/works' },
+              { label: title },
+            ]}
+            lang={lang}
+          />
+        </StaggerItem>
 
-      <div className="flex gap-3 mb-3">
-        <Link href={`/works?typology=${p.typology}`}>
-          <TagLabel plain>{t(p.typology, lang)}</TagLabel>
-        </Link>
-        <Link href={`/works?typology=${p.status}`}>
-          <TagLabel plain>{t(p.status, lang)}</TagLabel>
-        </Link>
-      </div>
+        <StaggerItem>
+          <div className="flex gap-3 mb-3">
+            <Link href={`/works?typology=${p.typology}`}>
+              <TagLabel plain>{t(p.typology, lang)}</TagLabel>
+            </Link>
+            <Link href={`/works?typology=${p.status}`}>
+              <TagLabel plain>{t(p.status, lang)}</TagLabel>
+            </Link>
+          </div>
+        </StaggerItem>
 
-      <h1 className="page-title mb-2">{title}</h1>
-      {location && <p className="text-body text-muted mb-8">{location}</p>}
+        <StaggerItem>
+          <h1 className="page-title mb-2">{title}</h1>
+        </StaggerItem>
+
+        {location && (
+          <StaggerItem>
+            <p className="text-body text-muted mb-8">{location}</p>
+          </StaggerItem>
+        )}
+      </StaggerContainer>
 
       {/* ── 800px content column ── */}
       <div className="max-w-[800px]">
@@ -125,7 +139,11 @@ export default async function ProjectPage({ params }: Props) {
           if (heroImages.length === 0) return null
           return (
             <div className="mb-12">
-              <HeroSlideshow images={heroImages} title={title} />
+              <HeroSlideshow
+                images={heroImages}
+                title={title}
+                coverLayoutId={p.cover_image ? `project-cover-${p.slug}` : undefined}
+              />
             </div>
           )
         })()}

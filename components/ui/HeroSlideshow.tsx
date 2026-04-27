@@ -6,26 +6,42 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
 import { GalleryImage } from '@/lib/types'
+import { getCoverDims, rememberCoverDims } from '@/lib/coverDimsCache'
 
 interface HeroSlideshowProps {
   images: GalleryImage[]
   title: string
+  /** Shared layout id so the first hero can morph from the feed cover. */
+  coverLayoutId?: string
 }
 
 // Desktop cap for the longer dimension of the hero frame.
 const HERO_MAX_PX = 800
 
-export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
+export default function HeroSlideshow({ images, title, coverLayoutId }: HeroSlideshowProps) {
   const [current, setCurrent] = useState(0)
-  const [heroDims, setHeroDims] = useState<{ w: number; h: number } | null>(null)
+  // Seed dims so the frame reserves the correct aspect ratio on first paint
+  // and the layoutId morph from the feed cover lands on a stable target.
+  // Order: explicit width/height on the image record → sessionStorage cache
+  // populated by the feed CoverImage → null (portrait default).
+  const [heroDims, setHeroDims] = useState<{ w: number; h: number } | null>(() => {
+    const first = images[0]
+    if (first?.width && first?.height) return { w: first.width, h: first.height }
+    if (typeof window !== 'undefined' && first?.url) {
+      return getCoverDims(first.url)
+    }
+    return null
+  })
   const touchStartX = useRef(0)
 
   if (images.length === 0) return null
 
   const handleHeroLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    if (heroDims) return
     const img = e.currentTarget
-    setHeroDims({ w: img.naturalWidth, h: img.naturalHeight })
+    const next = { w: img.naturalWidth, h: img.naturalHeight }
+    if (images[0]?.url) rememberCoverDims(images[0].url, next)
+    if (heroDims && heroDims.w === next.w && heroDims.h === next.h) return
+    setHeroDims(next)
   }
 
   // Frame sizing derived from the hero image's natural aspect ratio so the
@@ -65,11 +81,16 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
 
   return (
     <div className="relative select-none">
-      <div
+      <motion.div
+        layoutId={coverLayoutId}
         className="relative overflow-hidden mr-auto w-full"
         style={frameStyle}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        transition={{ layout: { duration: 0.45, ease: [0.22, 0.61, 0.36, 1] } }}
+        // The seed dims above can come from sessionStorage (client-only),
+        // which can differ from the SSR null in rare hard-load scenarios.
+        suppressHydrationWarning
       >
         <AnimatePresence initial={false}>
           <motion.div
@@ -107,7 +128,7 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
             />
           </>
         )}
-      </div>
+      </motion.div>
 
       {images.length > 1 && (
         <div className="flex justify-center gap-2 mt-4">
