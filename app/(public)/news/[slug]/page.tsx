@@ -72,62 +72,63 @@ export default async function NewsDetailPage({ params }: Props) {
   const body = getField(item, 'body', lang)
 
   return (
-    <>
-      <Breadcrumb
-        crumbs={[
-          { label: t('studio_news', lang), href: '/news' },
-          { label: title },
-        ]}
-        lang={lang}
-      />
+      <>
+        <Breadcrumb
+          crumbs={[
+            { label: t('studio_news', lang), href: '/news' },
+            { label: title },
+          ]}
+          lang={lang}
+        />
 
-      {item.date && (
-        <p className="text-body-sm text-muted mb-2">{formatDate(item.date, lang)}</p>
-      )}
-      {item.source && (
-        <p className="text-tag uppercase tracking-wide-tag text-ink/70 mb-4">{item.source}</p>
-      )}
-
-      <h1 className="page-title mb-8">{title}</h1>
-
-      {/* ── 700px content column ── */}
-      <div className="max-w-[700px]">
-
-        {item.cover_image && (
-          <div className="mb-12">
-            <Image
-              src={item.cover_image}
-              alt={title}
-              width={700}
-              height={467}
-              className="w-full h-auto object-cover"
-              sizes="(max-width: 768px) 100vw, 700px"
-              priority
-            />
-          </div>
+        {item.date && (
+          <p className="text-body-sm text-muted mb-2">{formatDate(item.date, lang)}</p>
+        )}
+        {item.source && (
+          <p className="text-tag uppercase tracking-wide-tag text-ink/70 mb-4">{item.source}</p>
         )}
 
-        {(body || description) && (
-          <section className="mb-12">
-            <div className="text-body text-ink/90 whitespace-pre-line">
-              {body || description}
+        <h1 className="page-title mb-8">{title}</h1>
+
+        {/* ── 700px content column ── */}
+        <div className="max-w-[700px]">
+
+          {item.cover_image && (
+            <div className="mb-12">
+              <Image
+                src={item.cover_image}
+                alt={title}
+                width={700}
+                height={467}
+                className="w-full h-auto object-cover"
+                sizes="(max-width: 768px) 100vw, 700px"
+                priority
+              />
             </div>
-          </section>
-        )}
+          )}
 
-        {item.external_link && (
-          <div className="mt-8">
-            <BracketLink href={item.external_link} external>
-              {t('read_more', lang)}
-            </BracketLink>
-          </div>
-        )}
+          {(body || description) && (
+            <section className="mb-12">
+              <div className="text-body text-ink/90 whitespace-pre-line">
+                {body || description}
+              </div>
+            </section>
+          )}
 
-      </div>
-      {/* ── end 700px column ── */}
+          {item.external_link && (
+            <div className="mt-8">
+              <BracketLink href={item.external_link} external>
+                {t('read_more', lang)}
+              </BracketLink>
+            </div>
+          )}
 
-      <div className="mt-16 pt-8 border-t border-border">
-        <BracketLink href="/news">{t('studio_news', lang)}</BracketLink>
-      </div>
-    </>
-  )
+        </div>
+        {/* ── end 700px column ── */}
+
+        <div className="mt-16 pt-8 border-t border-border">
+          <BracketLink href="/news">{t('studio_news', lang)}</BracketLink>
+        </div>
+      </>
+    )
+  }
