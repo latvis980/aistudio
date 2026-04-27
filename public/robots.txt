@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+Disallow: /_next/
+
+Sitemap: https://aistudio.co.uk/sitemap.xml

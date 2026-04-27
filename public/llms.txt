@@ -1,0 +1,19 @@
+# ai studio
+
+> ai studio is an international architecture, design and urbanism practice based in London and Moscow. The studio works on contemporary architecture grounded in context — across master planning, public and private buildings, interiors and research.
+
+## Studio
+
+- [Studio](https://aistudio.co.uk/studio): About the practice, philosophy, team, and offices in London and Moscow.
+
+## Work
+
+- [Works](https://aistudio.co.uk/works): Portfolio of architecture, urbanism, interiors and design projects.
+- [Journal](https://aistudio.co.uk/journal): Long-form writing, essays and research from the studio.
+- [News](https://aistudio.co.uk/news): Announcements, project milestones and studio updates.
+- [Press](https://aistudio.co.uk/press): Selected media coverage and publications featuring the studio.
+
+## Legal
+
+- [Privacy Policy](https://aistudio.co.uk/privacy-policy): How the site handles personal data.
+- [Cookie Policy](https://aistudio.co.uk/cookie-policy): Use of cookies and tracking technologies.
