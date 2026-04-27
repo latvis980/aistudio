@@ -113,65 +113,64 @@ export default async function ProjectPage({ params }: Props) {
       </div>
 
       <h1 className="page-title mb-2">{title}</h1>
-
       {location && <p className="text-body text-muted mb-8">{location}</p>}
 
-      {(() => {
-        const heroImages: GalleryImage[] = []
-        if (p.cover_image) {
-          heroImages.push({ url: p.cover_image })
-        }
-        heroImages.push(...(p.gallery || []).filter((img) => img.is_hero))
-        if (heroImages.length === 0) return null
-        return (
-          <div className="mb-12 max-w-[75%]">
-            <HeroSlideshow images={heroImages} title={title} />
+      {/* ── 800px content column ── */}
+      <div className="max-w-[800px]">
+
+        {(() => {
+          const heroImages: GalleryImage[] = []
+          if (p.cover_image) heroImages.push({ url: p.cover_image })
+          heroImages.push(...(p.gallery || []).filter((img) => img.is_hero))
+          if (heroImages.length === 0) return null
+          return (
+            <div className="mb-12">
+              <HeroSlideshow images={heroImages} title={title} />
+            </div>
+          )
+        })()}
+
+        {(body || description) && (
+          <section className="mb-12">
+            <h2 className="section-label mb-6">{t('project_info', lang)}</h2>
+            <div className="text-body text-ink/90 whitespace-pre-line">
+              {body || description}
+            </div>
+          </section>
+        )}
+
+        <SpecsGrid
+          specs={p.specs || {}}
+          designTeam={p.design_team}
+          executionTeam={p.execution_team}
+        />
+
+        <Gallery
+          images={p.gallery || []}
+          projectTitle={title}
+          lang={lang}
+        />
+
+        {p.vimeo_url && (
+          <div className="mt-12">
+            <VimeoEmbed url={p.vimeo_url} />
           </div>
-        )
-      })()}
+        )}
 
-      {(body || description) && (
-        <section className="mb-12">
-          <h2 className="section-label mb-6">{t('project_info', lang)}</h2>
-          <div className="max-w-[700px] text-body text-ink/90 whitespace-pre-line">
-            {body || description}
-          </div>
-        </section>
-      )}
-
-      <SpecsGrid
-        specs={p.specs || {}}
-        designTeam={p.design_team}
-        executionTeam={p.execution_team}
-      />
-
-      <Gallery
-        images={p.gallery || []}
-        projectTitle={title}
-        lang={lang}
-      />
-
-      {p.vimeo_url && (
-        <div className="mt-12">
-          <VimeoEmbed url={p.vimeo_url} />
-        </div>
-      )}
+      </div>
+      {/* ── end 800px column ── */}
 
       <div className="flex justify-between items-center mt-16 pt-8 border-t border-border">
         {prevProject ? (
           <BracketLink href={`/works/${prevProject.slug}`}>
             {t('previous', lang)}
           </BracketLink>
-        ) : (
-          <div />
-        )}
+        ) : <span />}
         {nextProject ? (
           <BracketLink href={`/works/${nextProject.slug}`}>
             {t('next', lang)}
           </BracketLink>
-        ) : (
-          <div />
-        )}
+        ) : <span />}
       </div>
     </>
   )

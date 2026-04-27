@@ -18,7 +18,7 @@ export default function PressCard({ item, lang, projectSlugs }: PressCardProps) 
   const description = getField(item, 'description', lang)
 
   return (
-    <article className="flex flex-col md:flex-row gap-6 py-8 border-b border-border max-w-[720px]">
+    <article className="flex flex-col md:flex-row gap-6 py-8 border-b border-border max-w-[700px]">
       {(item.thumbnail_image || item.cover_image) && (
         <div className="w-full max-w-[200px] md:w-[200px] shrink-0 img-hover-scale">
           <Link href={`/press/${item.slug}`} className="block">

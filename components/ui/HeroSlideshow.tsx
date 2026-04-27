@@ -13,7 +13,7 @@ interface HeroSlideshowProps {
 }
 
 // Desktop cap for the longer dimension of the hero frame.
-const HERO_MAX_PX = 700
+const HERO_MAX_PX = 800
 
 export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
   const [current, setCurrent] = useState(0)
@@ -84,7 +84,7 @@ export default function HeroSlideshow({ images, title }: HeroSlideshowProps) {
               src={images[current].url}
               alt={`${title} — ${current + 1}`}
               fill
-              sizes="(max-width: 768px) 100vw, 700px"
+              sizes="(max-width: 768px) 100vw, 800px"
               className="object-contain"
               priority={current === 0}
               onLoad={current === 0 ? handleHeroLoad : undefined}

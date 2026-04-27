@@ -101,7 +101,7 @@ export default async function StudioPage() {
             <h2 className="section-label">{t('about', lang)}</h2>
           </div>
           <div className="flex-1">
-            <div className="text-body text-ink/90 whitespace-pre-line max-w-[600px]">
+            <div className="text-body text-ink/90 whitespace-pre-line max-w-[700px]">
               {aboutText}
             </div>
             <div className="mt-6">

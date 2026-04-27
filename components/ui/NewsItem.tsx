@@ -19,7 +19,7 @@ export default function NewsItemCard({ item, lang }: NewsItemProps) {
   const hasImage = Boolean(thumbnailSrc)
 
   return (
-    <article className="border-t border-border py-8 last:border-b max-w-[720px]">
+    <article className="border-t border-border py-8 last:border-b max-w-[700px]">
       {/*
         Fixed 2-column grid on ALL rows — image column is always present.
         When there is no image, an invisible spacer of identical dimensions
