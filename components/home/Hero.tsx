@@ -22,17 +22,22 @@ interface HeroProps {
     "ai studio"      → 5.4rem
     gap              → 0.93rem
     "architecture"   → 3.1rem
-    gap              → 0.93rem
-    "design"         ← RIGHT COLUMN HEADER ALIGNS HERE
-    gap              → 0.93rem
+    gap              → 0.93rem  ← top of "design" at 10.36rem from section top
+    "design"         → 3.1rem
+    gap              → 0.93rem  ← BOTTOM of "design" at 13.46rem
     "urbanism"
 
   Right column padding-top (lg):
-    5.4 + 0.93 + 3.1 + 0.93 = 10.36rem
+    The h2 BOTTOM must align with the BOTTOM of "design".
+    Bottom of "design" = 5.4 + 0.93 + 3.1 + 0.93 + 3.1 = 13.46rem
+    h2 line box       = text-base (1rem) × leading-normal (1.5) = 1.5rem
+    → pt = 13.46 − 1.5 = 11.96rem
+
+  The mb-4 gap between h2 and description body is unchanged.
 */
 
 const LINE_GAP = '0.93rem'
-const RIGHT_COL_PT_LG = '10.36rem'
+const RIGHT_COL_PT_LG = '11.96rem'
 
 export default function Hero({ tagline, description, quote, quoteAuthor }: HeroProps) {
   return (
@@ -68,7 +73,7 @@ export default function Hero({ tagline, description, quote, quoteAuthor }: HeroP
         </div>
       </motion.div>
 
-      {/* ── RIGHT COLUMN ── padded so header aligns with the "design" line ── */}
+      {/* ── RIGHT COLUMN ── h2 bottom border level with bottom of "design" ── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
