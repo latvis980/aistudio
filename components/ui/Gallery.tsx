@@ -306,7 +306,7 @@ export default function Gallery({ images, projectTitle, lang }: GalleryProps) {
 
   return (
     <>
-      <div className="mt-16 max-w-[66.667%]">
+      <div className="mt-16">
         {/*
           CSS columns = masonry-like flow.
           Each image renders at its own natural height via the width=0/height=0
