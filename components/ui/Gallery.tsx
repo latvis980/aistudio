@@ -32,23 +32,44 @@ function GalleryThumb({
     ? getField(image, 'caption', lang)
     : `${projectTitle} — ${index + 1}`
 
+  // Use stored dimensions when available so the image renders at its natural
+  // aspect ratio. Fall back to a sensible 4:3 default only when missing.
+  const hasNaturalSize =
+    typeof image.width === 'number' &&
+    typeof image.height === 'number' &&
+    image.width > 0 &&
+    image.height > 0
+
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y: 16 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
       transition={{ duration: 0.4, delay: (index % 6) * 0.04 }}
-      className="cursor-pointer overflow-hidden aspect-[4/3] bg-gray-100"
+      className={`cursor-pointer overflow-hidden bg-gray-100 break-inside-avoid mb-2 ${
+        hasNaturalSize ? '' : 'aspect-[4/3]'
+      }`}
       onClick={onClick}
     >
-      <Image
-        src={image.url}
-        alt={caption}
-        width={400}
-        height={300}
-        className="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-[1.04]"
-        sizes="(max-width: 768px) 100vw, 33vw"
-      />
+      {hasNaturalSize ? (
+        <Image
+          src={image.url}
+          alt={caption}
+          width={image.width!}
+          height={image.height!}
+          className="w-full h-auto transition-transform duration-500 ease-out hover:scale-[1.04]"
+          sizes="(max-width: 768px) 100vw, 33vw"
+        />
+      ) : (
+        <Image
+          src={image.url}
+          alt={caption}
+          width={400}
+          height={300}
+          className="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-[1.04]"
+          sizes="(max-width: 768px) 100vw, 33vw"
+        />
+      )}
     </motion.div>
   )
 }
@@ -183,19 +204,17 @@ function Lightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      // group/lb enables CSS hover-reveal for arrows, zoom, counter, caption
       className="fixed inset-0 z-50 bg-black flex group/lb"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      {/* ── Image area: fills everything to the left of the right panel ── */}
+      {/* ── Image area ── */}
       <div
         className="relative flex-1 overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Transparent click zones for prev/next — sit below image layer */}
         {!zoomed && images.length > 1 && (
           <>
             <button
@@ -211,7 +230,6 @@ function Lightbox({
           </>
         )}
 
-        {/* Image — fills the entire image area via Next.js fill + object-contain */}
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
@@ -220,7 +238,6 @@ function Lightbox({
             animate="center"
             exit="exit"
             transition={fadeTransition}
-            // pointer-events-none lets clicks reach the zones below when not zoomed
             className={`absolute inset-0 z-20 ${zoomed ? 'pointer-events-auto' : 'pointer-events-none'}`}
             style={{ cursor: zoomed ? (dragging ? 'grabbing' : 'grab') : 'default' }}
             onMouseDown={handleMouseDown}
@@ -231,7 +248,6 @@ function Lightbox({
                 transform: zoomed
                   ? `scale(2) translate(${pan.x / 2}px, ${pan.y / 2}px)`
                   : undefined,
-                // instant during drag, animated for zoom toggle
                 transition: dragging ? 'none' : 'transform 0.25s ease',
               }}
             >
@@ -247,108 +263,62 @@ function Lightbox({
           </motion.div>
         </AnimatePresence>
 
-        {/* Counter — always visible on mobile, hover-reveal on desktop */}
+        {/* Counter */}
         <div className="absolute top-5 left-5 z-30 text-white/70 text-xs tracking-widest select-none pointer-events-none opacity-100 md:opacity-0 md:group-hover/lb:opacity-100 transition-opacity duration-200">
           {current + 1} / {images.length}
         </div>
 
-        {/* Prev arrow — desktop hover only, hidden when zoomed */}
+        {/* Prev arrow */}
         {!zoomed && images.length > 1 && (
           <button
-            onClick={(e) => {
-              e.stopPropagation()
-              prev()
-            }}
+            onClick={(e) => { e.stopPropagation(); prev() }}
             aria-label="Previous image"
             className="absolute left-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/50 hover:bg-black/70 hidden md:flex items-center justify-center opacity-0 group-hover/lb:opacity-100 transition-opacity duration-200"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-5 h-5 text-white"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
         )}
 
-        {/* Next arrow — desktop hover only, hidden when zoomed */}
+        {/* Next arrow */}
         {!zoomed && images.length > 1 && (
           <button
-            onClick={(e) => {
-              e.stopPropagation()
-              next()
-            }}
+            onClick={(e) => { e.stopPropagation(); next() }}
             aria-label="Next image"
             className="absolute right-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/50 hover:bg-black/70 hidden md:flex items-center justify-center opacity-0 group-hover/lb:opacity-100 transition-opacity duration-200"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-5 h-5 text-white"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white">
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
         )}
 
-        {/* Zoom toggle — desktop hover only, bottom-right */}
+        {/* Zoom toggle */}
         <button
           onClick={toggleZoom}
           aria-label={zoomed ? 'Zoom out' : 'Zoom in'}
           className="absolute bottom-5 right-5 z-30 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 hidden md:flex items-center justify-center opacity-0 group-hover/lb:opacity-100 transition-opacity duration-200"
         >
           {zoomed ? (
-            // minus = zoom out
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-4 h-4 text-white"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35M8 11h6" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white">
+              <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35M8 11h6" />
             </svg>
           ) : (
-            // plus = zoom in
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-4 h-4 text-white"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35M11 8v6M8 11h6" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-white">
+              <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35M11 8v6M8 11h6" />
             </svg>
           )}
         </button>
 
-        {/* Caption — always visible on mobile, hover-reveal on desktop */}
+        {/* Caption */}
         {caption && (
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 text-white/60 text-xs tracking-wide select-none whitespace-nowrap pointer-events-none opacity-100 md:opacity-0 md:group-hover/lb:opacity-100 transition-opacity duration-200">
             {caption}
           </div>
         )}
 
-        {/* Mobile close — top-right corner, hidden on desktop */}
+        {/* Mobile close */}
         <button
           onClick={onClose}
           aria-label="Close"
@@ -358,7 +328,7 @@ function Lightbox({
         </button>
       </div>
 
-      {/* ── Right panel (desktop only): close is always outside the image frame ── */}
+      {/* ── Right panel: desktop close button ── */}
       <div className="hidden md:flex flex-none w-14 flex-col items-center pt-5">
         <button
           onClick={onClose}
@@ -385,8 +355,14 @@ export default function Gallery({ images, projectTitle, lang }: GalleryProps) {
 
   return (
     <>
+      {/*
+        CSS columns gives a masonry-like flow so portrait and landscape
+        images sit at their own natural heights rather than being cropped
+        to a uniform grid cell. On mobile: 1 column. On md+: 3 columns.
+        `gap-2` between columns; individual thumbs use `mb-2` for row gap.
+      */}
       <div className="mt-16 max-w-[66.667%]">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div className="columns-1 md:columns-3 gap-2">
           {images.map((image, i) => (
             <GalleryThumb
               key={i}

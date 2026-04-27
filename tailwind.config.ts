@@ -23,8 +23,8 @@ const config: Config = {
       },
       fontSize: {
         'page-title': ['3.5rem', { lineHeight: '1.1', fontWeight: '300' }],
-        'section-label': ['1.5rem', { lineHeight: '1.3', fontWeight: '400' }],
-        'card-title': ['1.25rem', { lineHeight: '1.4', fontWeight: '400' }],
+        'section-label': ['1.15rem', { lineHeight: '1.3', fontWeight: '400' }],
+        'card-title': ['1.6rem', { lineHeight: '1.35', fontWeight: '300' }],
         'tag': ['0.6875rem', { lineHeight: '1', fontWeight: '500', letterSpacing: '0.15em' }],
         'nav': ['0.6875rem', { lineHeight: '1', fontWeight: '500', letterSpacing: '0.2em' }],
         'body': ['0.9375rem', { lineHeight: '1.7', fontWeight: '400' }],

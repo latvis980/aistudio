@@ -19,13 +19,11 @@ export default function NewsItemCard({ item, lang }: NewsItemProps) {
   const hasImage = Boolean(thumbnailSrc)
 
   return (
-    <article className="border-t border-border py-8 last:border-b">
+    <article className="border-t border-border py-8 last:border-b max-w-[720px]">
       {/*
         Fixed 2-column grid on ALL rows — image column is always present.
         When there is no image, an invisible spacer of identical dimensions
         holds the column so text is always left-aligned to the same position.
-
-        Column widths: 120px mobile → 160px sm → 180px md+
       */}
       <div className="grid grid-cols-[120px_1fr] gap-6 sm:grid-cols-[160px_1fr] md:grid-cols-[180px_1fr]">
 
@@ -38,7 +36,6 @@ export default function NewsItemCard({ item, lang }: NewsItemProps) {
               tabIndex={-1}
               aria-hidden="true"
             >
-              {/* aspect-[3/2] = landscape ratio: width is 1.5× the height */}
               <div className="relative w-full aspect-[3/2]">
                 <Image
                   src={thumbnailSrc!}
@@ -50,7 +47,6 @@ export default function NewsItemCard({ item, lang }: NewsItemProps) {
               </div>
             </Link>
           ) : (
-            /* Silent spacer — same dimensions as the thumbnail */
             <div className="w-full aspect-[3/2]" aria-hidden="true" />
           )}
         </div>
@@ -66,7 +62,7 @@ export default function NewsItemCard({ item, lang }: NewsItemProps) {
           <h3 className="text-card-title lowercase leading-snug mb-2">
             <Link
               href={`/news/${item.slug}`}
-              className="hover:opacity-70 transition-opacity duration-200"
+              className="hover:text-accent transition-colors duration-300"
             >
               {title}
             </Link>

@@ -27,6 +27,8 @@ export type Status = 'completed' | 'construction' | 'ongoing' | 'concept'
 
 export interface GalleryImage {
   url: string
+  width?: number | null
+  height?: number | null
   caption_en?: string | null
   caption_ru?: string | null
   caption_ar?: string | null

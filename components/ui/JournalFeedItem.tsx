@@ -22,18 +22,18 @@ export default function JournalFeedItem({ item, lang }: JournalFeedItemProps) {
         : `/works/${item.slug}`
 
   return (
-    <article className="py-8 border-b border-border">
+    <article className="py-8 border-b border-border max-w-[720px]">
       <div className="flex flex-col md:flex-row gap-6">
         {item.type !== 'news' && item.cover_image && (
-          <div className="md:w-[280px] shrink-0 img-hover-scale">
+          <div className="w-full max-w-[200px] md:w-[200px] shrink-0 img-hover-scale">
             <Link href={href}>
               <Image
                 src={item.cover_image}
                 alt={item.title}
-                width={280}
-                height={190}
+                width={200}
+                height={136}
                 className="w-full h-auto object-cover"
-                sizes="(max-width: 768px) 100vw, 280px"
+                sizes="(max-width: 768px) 200px, 200px"
               />
             </Link>
           </div>

@@ -18,17 +18,17 @@ export default function PressCard({ item, lang, projectSlugs }: PressCardProps) 
   const description = getField(item, 'description', lang)
 
   return (
-    <article className="flex flex-col md:flex-row gap-6 py-8 border-b border-border">
+    <article className="flex flex-col md:flex-row gap-6 py-8 border-b border-border max-w-[720px]">
       {(item.thumbnail_image || item.cover_image) && (
-        <div className="md:w-[320px] shrink-0 img-hover-scale">
-          <Link href={`/press/${item.slug}`}>
+        <div className="w-full max-w-[200px] md:w-[200px] shrink-0 img-hover-scale">
+          <Link href={`/press/${item.slug}`} className="block">
             <Image
               src={item.thumbnail_image || item.cover_image!}
               alt={title}
-              width={320}
-              height={220}
+              width={200}
+              height={140}
               className="w-full h-auto object-cover"
-              sizes="(max-width: 768px) 100vw, 320px"
+              sizes="(max-width: 768px) 200px, 200px"
             />
           </Link>
         </div>
@@ -56,7 +56,10 @@ export default function PressCard({ item, lang, projectSlugs }: PressCardProps) 
         </div>
 
         <h3 className="text-card-title lowercase mb-2">
-          <Link href={`/press/${item.slug}`} className="hover:text-accent transition-colors duration-300">
+          <Link
+            href={`/press/${item.slug}`}
+            className="hover:text-accent transition-colors duration-300"
+          >
             {title}
           </Link>
         </h3>
@@ -72,7 +75,13 @@ export default function PressCard({ item, lang, projectSlugs }: PressCardProps) 
             </BracketLink>
           )}
           {item.project_id && (
-            <BracketLink href={projectSlugs?.[item.project_id] ? `/works/${projectSlugs[item.project_id]}` : '/works'}>
+            <BracketLink
+              href={
+                projectSlugs?.[item.project_id]
+                  ? `/works/${projectSlugs[item.project_id]}`
+                  : '/works'
+              }
+            >
               {t('view_project', lang)}
             </BracketLink>
           )}
