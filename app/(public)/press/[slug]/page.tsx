@@ -165,3 +165,4 @@ export default async function PressDetailPage({ params }: Props) {
       </div>
     </>
   )
+}
