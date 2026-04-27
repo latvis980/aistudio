@@ -5,6 +5,7 @@ import Sidebar from '@/components/layout/Sidebar'
 import Footer from '@/components/layout/Footer'
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher'
 import CookieBanner from '@/components/layout/CookieBanner'
+import PageTransition from '@/components/layout/PageTransition'
 import { getLangFromCookies } from '@/lib/utils'
 import { isRTL } from '@/lib/i18n'
 
@@ -29,7 +30,7 @@ export default function PublicLayout({
 
       {/* Main content area */}
       <main className="content-area px-6 lg:ps-content-px lg:pe-sidebar pt-28 lg:pt-12 pb-8 min-h-screen">
-        {children}
+        <PageTransition>{children}</PageTransition>
         <Footer lang={lang} />
       </main>
       <CookieBanner lang={lang} />

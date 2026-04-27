@@ -2,7 +2,7 @@
 
 // components/ui/ProjectCard.tsx
 
-import { useRef } from 'react'
+import Link from 'next/link'
 import TagLabel from '@/components/ui/TagLabel'
 import CoverImage from '@/components/ui/CoverImage'
 import { Project, Lang } from '@/lib/types'
@@ -11,34 +11,29 @@ import { getField, t } from '@/lib/i18n'
 interface ProjectCardProps {
   project: Project
   lang: Lang
-  /** Called instead of navigating — parent runs the transition animation */
-  onOpen: (project: Project, imageEl: HTMLElement) => void
 }
 
-export default function ProjectCard({ project, lang, onOpen }: ProjectCardProps) {
+export default function ProjectCard({ project, lang }: ProjectCardProps) {
   const title       = getField(project, 'title', lang)
   const location    = getField(project, 'location', lang)
   const description = getField(project, 'description', lang)
-  const imageRef    = useRef<HTMLDivElement>(null)
 
-  function handleClick() {
-    if (imageRef.current) {
-      onOpen(project, imageRef.current)
-    }
-  }
+  const coverLayoutId = `project-cover-${project.slug}`
 
   return (
-    <article
-      className="group cursor-pointer"
-      onClick={handleClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleClick() }}
+    <Link
+      href={`/works/${project.slug}`}
+      prefetch
+      className="group block cursor-pointer"
       aria-label={title}
     >
       {project.cover_image && (
-        <div ref={imageRef} className="img-hover-scale mb-4">
-          <CoverImage src={project.cover_image} alt={title} />
+        <div className="img-hover-scale mb-4">
+          <CoverImage
+            src={project.cover_image}
+            alt={title}
+            layoutId={coverLayoutId}
+          />
         </div>
       )}
 
@@ -58,6 +53,6 @@ export default function ProjectCard({ project, lang, onOpen }: ProjectCardProps)
       {description && (
         <p className="text-body text-ink/80 max-w-[600px]">{description}</p>
       )}
-    </article>
+    </Link>
   )
 }
