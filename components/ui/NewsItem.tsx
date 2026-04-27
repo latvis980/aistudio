@@ -59,7 +59,7 @@ export default function NewsItemCard({ item, lang }: NewsItemProps) {
             </p>
           )}
 
-          <h3 className="text-card-title lowercase leading-snug mb-2">
+          <h3 className="text-[1.92rem] font-light lowercase leading-snug mb-2">
             <Link
               href={`/news/${item.slug}`}
               className="hover:text-accent transition-colors duration-300"

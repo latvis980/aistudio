@@ -47,7 +47,7 @@ export default function ProjectCard({ project, lang, onOpen }: ProjectCardProps)
         <TagLabel plain>{t(project.status, lang)}</TagLabel>
       </div>
 
-      <h2 className="text-card-title lowercase group-hover:text-accent transition-colors duration-300 mb-2">
+      <h2 className="text-[2.24rem] leading-[1.35] font-light lowercase group-hover:text-accent transition-colors duration-300 mb-2">
         {title}
       </h2>
 
