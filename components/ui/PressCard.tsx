@@ -55,7 +55,7 @@ export default function PressCard({ item, lang, projectSlugs }: PressCardProps) 
           <TagLabel>{t(item.category, lang)}</TagLabel>
         </div>
 
-        <h3 className="text-card-title lowercase mb-2">
+        <h3 className="text-[1.92rem] leading-[1.35] font-light lowercase mb-2">
           <Link
             href={`/press/${item.slug}`}
             className="hover:text-accent transition-colors duration-300"

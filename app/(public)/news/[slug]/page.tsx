@@ -88,7 +88,7 @@ export default async function NewsDetailPage({ params }: Props) {
           <p className="text-tag uppercase tracking-wide-tag text-ink/70 mb-4">{item.source}</p>
         )}
 
-        <h1 className="page-title mb-8">{title}</h1>
+        <h1 className="text-[1.4rem] lg:text-[2.45rem] lowercase font-light text-ink leading-[1.1] mb-8">{title}</h1>
 
         {/* ── 700px content column ── */}
         <div className="max-w-[700px]">
