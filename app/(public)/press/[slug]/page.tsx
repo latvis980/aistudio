@@ -102,13 +102,7 @@ export default async function PressDetailPage({ params }: Props) {
         {item.publication_name && (
           <div className="flex items-center gap-2">
             {item.favicon_url && (
-              <Image
-                src={item.favicon_url}
-                alt=""
-                width={16}
-                height={16}
-                className="rounded-sm"
-              />
+              <Image src={item.favicon_url} alt="" width={16} height={16} className="rounded-sm" />
             )}
             <span className="text-tag uppercase tracking-wide-tag text-ink/70">
               {item.publication_name}
@@ -121,48 +115,53 @@ export default async function PressDetailPage({ params }: Props) {
         <p className="text-body-sm text-muted mb-2">{formatDate(item.date, lang)}</p>
       )}
 
-      <h1 className="text-[1.5rem] lg:text-page-title lowercase font-light text-ink leading-[1.1] mb-8">{title}</h1>
+      <h1 className="text-[1.5rem] lg:text-page-title lowercase font-light text-ink leading-[1.1] mb-8">
+        {title}
+      </h1>
 
-      {item.cover_image && (
-        <div className="mb-12">
-          <Image
-            src={item.cover_image}
-            alt={title}
-            width={1200}
-            height={800}
-            className="w-full h-auto object-cover"
-            sizes="(max-width: 768px) 100vw, 1200px"
-            priority
-          />
-        </div>
-      )}
+      {/* ── 700px content column ── */}
+      <div className="max-w-[700px]">
 
-      {(body || description) && (
-        <section className="mb-12">
-          <div className="max-w-[700px] text-body text-ink/90 whitespace-pre-line">
-            {body || description}
+        {item.cover_image && (
+          <div className="mb-12">
+            <Image
+              src={item.cover_image}
+              alt={title}
+              width={700}
+              height={467}
+              className="w-full h-auto object-cover"
+              sizes="(max-width: 768px) 100vw, 700px"
+              priority
+            />
           </div>
-        </section>
-      )}
+        )}
 
-      <div className="flex gap-4 mt-8">
-        {item.external_link && (
-          <BracketLink href={item.external_link} external>
-            {t('read_full_article', lang)}
-          </BracketLink>
+        {(body || description) && (
+          <section className="mb-12">
+            <div className="text-body text-ink/90 whitespace-pre-line">
+              {body || description}
+            </div>
+          </section>
         )}
-        {projectSlug && (
-          <BracketLink href={`/works/${projectSlug}`}>
-            {projectTitle || t('project', lang)}
-          </BracketLink>
-        )}
+
+        <div className="flex gap-4 mt-8">
+          {item.external_link && (
+            <BracketLink href={item.external_link} external>
+              {t('read_full_article', lang)}
+            </BracketLink>
+          )}
+          {projectSlug && (
+            <BracketLink href={`/works/${projectSlug}`}>
+              {projectTitle || t('project', lang)}
+            </BracketLink>
+          )}
+        </div>
+
       </div>
+      {/* ── end 700px column ── */}
 
       <div className="mt-16 pt-8 border-t border-border">
-        <BracketLink href="/press">
-          {t('press', lang)}
-        </BracketLink>
+        <BracketLink href="/press">{t('press', lang)}</BracketLink>
       </div>
     </>
   )
-}
