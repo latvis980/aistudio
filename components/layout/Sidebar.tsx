@@ -44,7 +44,7 @@ export default function Sidebar({ lang }: SidebarProps) {
         <Link href="/" className="block mb-12 group">
           <Image
             src="/images/logo-header.png"
-            alt="AI Studio — Architecture · Design · Urbanism"
+            alt="ai studio — Architecture · Design · Urbanism"
             width={1743}
             height={417}
             className="w-[126px] h-auto"
@@ -80,7 +80,7 @@ export default function Sidebar({ lang }: SidebarProps) {
           <Link href="/" className="block">
             <Image
               src="/images/logo-header.png"
-              alt="AI Studio"
+              alt="ai studio"
               width={1743}
               height={417}
               className="h-8 w-auto"

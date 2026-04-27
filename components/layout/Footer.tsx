@@ -132,7 +132,7 @@ export default function Footer({ lang }: FooterProps) {
         <div className="flex items-center gap-4">
           <Image
             src="/images/logo-footer.png"
-            alt="AI Studio"
+            alt="ai studio"
             width={540}
             height={540}
             className="w-9 h-9 rounded-sm"

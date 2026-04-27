@@ -14,10 +14,10 @@ import AnimatedEntry from '@/components/ui/AnimatedEntry'
 
 export const metadata: Metadata = {
   title: 'Studio',
-  description: 'About AI Studio — international architecture, design and urbanism practice.',
+  description: 'About ai studio — international architecture, design and urbanism practice.',
   openGraph: {
-    title: 'Studio — AI Studio',
-    description: 'About AI Studio — international architecture, design and urbanism practice.',
+    title: 'Studio — ai studio',
+    description: 'About ai studio — international architecture, design and urbanism practice.',
     images: ['/aistudio.png'],
   },
   twitter: {
