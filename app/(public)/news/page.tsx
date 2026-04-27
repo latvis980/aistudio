@@ -12,10 +12,10 @@ import AnimatedEntry from '@/components/ui/AnimatedEntry'
 
 export const metadata: Metadata = {
   title: 'Studio News',
-  description: 'Latest studio news and updates from AI Studio.',
+  description: 'Latest studio news and updates from ai studio.',
   openGraph: {
-    title: 'Studio News — AI Studio',
-    description: 'Latest studio news and updates from AI Studio.',
+    title: 'Studio News — ai studio',
+    description: 'Latest studio news and updates from ai studio.',
   },
 }
 

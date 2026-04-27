@@ -10,7 +10,7 @@ export const size = {
 }
 
 export const contentType = 'image/png'
-export const alt = 'AI Studio — Architecture, Design, Urbanism'
+export const alt = 'ai studio — Architecture, Design, Urbanism'
 
 export default async function Image() {
   return new ImageResponse(

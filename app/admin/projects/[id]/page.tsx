@@ -464,7 +464,7 @@ export default function ProjectEditorPage() {
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <h3 className="text-sm font-medium mb-4">SEO Preview</h3>
           <div className="border border-gray-100 rounded p-4 space-y-1">
-            <div className="text-blue-600 text-sm">{project.title_en} — AI Studio</div>
+            <div className="text-blue-600 text-sm">{project.title_en} — ai studio</div>
             <div className="text-emerald-700 text-xs">aistudio.co.uk/works/{project.slug}</div>
             <div className="text-sm text-gray-600 line-clamp-2">{project.description_en || 'No description'}</div>
           </div>

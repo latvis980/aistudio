@@ -84,7 +84,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link href="/admin" className="block">
                   <Image
                     src="/images/logo-header.png"
-                    alt="AI Studio"
+                    alt="ai studio"
                     width={1743}
                     height={417}
                     className="w-[100px] h-auto"

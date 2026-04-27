@@ -45,13 +45,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: project.title_en,
     description: project.description_en,
     openGraph: {
-      title: `${project.title_en} — AI Studio`,
+      title: `${project.title_en} — ai studio`,
       description: project.description_en || undefined,
       images: project.cover_image ? [project.cover_image] : undefined,
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${project.title_en} — AI Studio`,
+      title: `${project.title_en} — ai studio`,
       description: project.description_en || undefined,
       images: project.cover_image ? [project.cover_image] : undefined,
     },

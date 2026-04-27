@@ -8,11 +8,11 @@ import { isRTL } from '@/lib/i18n'
 
 export const metadata: Metadata = {
   title: {
-    default: 'AI Studio — Architecture, Design, Urbanism',
-    template: '%s — AI Studio',
+    default: 'ai studio — Architecture, Design, Urbanism',
+    template: '%s — ai studio',
   },
   description:
-    'AI Studio is an international architecture, design and urbanism practice based in London and Moscow.',
+    'ai studio is an international architecture, design and urbanism practice based in London and Moscow.',
   metadataBase: new URL('https://aistudio.co.uk'),
   icons: {
     icon: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
   openGraph: {
     type: 'website',
-    siteName: 'AI Studio',
+    siteName: 'ai studio',
     locale: 'en_GB',
   },
   twitter: {
