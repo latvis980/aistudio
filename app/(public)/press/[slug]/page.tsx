@@ -123,13 +123,13 @@ export default async function PressDetailPage({ params }: Props) {
       <div className="max-w-[700px]">
 
         {item.cover_image && (
-          <div className="mb-12">
+          <div className="mb-12 text-left">
             <Image
               src={item.cover_image}
               alt={title}
               width={700}
-              height={467}
-              className="w-full h-auto object-cover"
+              height={700}
+              className="max-w-full max-h-[700px] w-auto h-auto"
               sizes="(max-width: 768px) 100vw, 700px"
               priority
             />
