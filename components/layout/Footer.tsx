@@ -90,13 +90,17 @@ export default function Footer({ lang }: FooterProps) {
               {t('press', lang)}
             </Link>
             <div className="flex flex-col gap-1.5">
-              {['media', 'interviews', 'awards'].map((cat) => (
+              {[
+                { value: 'media',     label: 'media' },
+                { value: 'interview', label: 'interviews' },
+                { value: 'awards',    label: 'awards' },
+              ].map(({ value, label }) => (
                 <Link
-                  key={cat}
-                  href={`/press?category=${cat}`}
+                  key={value}
+                  href={`/press?category=${value}`}
                   className="text-muted hover:text-ink transition-colors duration-300 uppercase text-tag tracking-wide-tag"
                 >
-                  {t(cat, lang)}
+                  {t(label, lang)}
                 </Link>
               ))}
             </div>
