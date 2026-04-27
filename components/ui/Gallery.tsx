@@ -32,49 +32,36 @@ function GalleryThumb({
     ? getField(image, 'caption', lang)
     : `${projectTitle} — ${index + 1}`
 
-  // Use stored dimensions when available so the image renders at its natural
-  // aspect ratio. Fall back to a sensible 4:3 default only when missing.
-  const hasNaturalSize =
-    typeof image.width === 'number' &&
-    typeof image.height === 'number' &&
-    image.width > 0 &&
-    image.height > 0
-
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y: 16 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
       transition={{ duration: 0.4, delay: (index % 6) * 0.04 }}
-      className={`cursor-pointer overflow-hidden bg-gray-100 break-inside-avoid mb-2 ${
-        hasNaturalSize ? '' : 'aspect-[4/3]'
-      }`}
+      // break-inside-avoid keeps the image in one column; mb-2 is the row gap
+      className="cursor-pointer overflow-hidden bg-gray-100 break-inside-avoid mb-2"
       onClick={onClick}
     >
-      {hasNaturalSize ? (
-        <Image
-          src={image.url}
-          alt={caption}
-          width={image.width!}
-          height={image.height!}
-          className="w-full h-auto transition-transform duration-500 ease-out hover:scale-[1.04]"
-          sizes="(max-width: 768px) 100vw, 33vw"
-        />
-      ) : (
-        <Image
-          src={image.url}
-          alt={caption}
-          width={400}
-          height={300}
-          className="w-full h-full object-cover transition-transform duration-500 ease-out hover:scale-[1.04]"
-          sizes="(max-width: 768px) 100vw, 33vw"
-        />
-      )}
+      {/*
+        width={0} height={0} + style width/height is the Next.js trick for
+        rendering at the image's own natural aspect ratio without knowing
+        dimensions in advance. No stored width/height needed.
+      */}
+      <Image
+        src={image.url}
+        alt={caption}
+        width={0}
+        height={0}
+        sizes="(max-width: 768px) 100vw, 33vw"
+        style={{ width: '100%', height: 'auto', display: 'block' }}
+        className="transition-transform duration-500 ease-out hover:scale-[1.04]"
+      />
     </motion.div>
   )
 }
 
-// Simple fade — cleaner than slide for fill-mode images
+// ─── Lightbox (unchanged) ────────────────────────────────────────────────────
+
 const fadeVariants: Variants = {
   enter: { opacity: 0 },
   center: { opacity: 1 },
@@ -116,7 +103,6 @@ function Lightbox({
   const dirRef = useRef<number>(0)
   const touchStartX = useRef<number>(0)
 
-  // Zoom + pan state
   const [zoomed, setZoomed] = useState(false)
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const [dragging, setDragging] = useState(false)
@@ -140,25 +126,17 @@ function Lightbox({
     setPan({ x: 0, y: 0 })
   }, [])
 
-  // Lock body scroll
   useEffect(() => {
     const saved = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = saved
-    }
+    return () => { document.body.style.overflow = saved }
   }, [])
 
-  // Keyboard nav
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (zoomed) {
-          setZoomed(false)
-          setPan({ x: 0, y: 0 })
-        } else {
-          onClose()
-        }
+        if (zoomed) { setZoomed(false); setPan({ x: 0, y: 0 }) }
+        else { onClose() }
       }
       if (!zoomed && e.key === 'ArrowLeft') prev()
       if (!zoomed && e.key === 'ArrowRight') next()
@@ -167,7 +145,6 @@ function Lightbox({
     return () => window.removeEventListener('keydown', handleKey)
   }, [onClose, prev, next, zoomed])
 
-  // Touch swipe (mobile)
   const handleTouchStart = (e: React.TouchEvent) => {
     if (zoomed) return
     touchStartX.current = e.touches[0].clientX
@@ -178,7 +155,6 @@ function Lightbox({
     if (Math.abs(delta) > 50) { if (delta > 0) { next() } else { prev() } }
   }
 
-  // Drag-to-pan when zoomed (desktop)
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!zoomed) return
     setDragging(true)
@@ -209,7 +185,6 @@ function Lightbox({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      {/* ── Image area ── */}
       <div
         className="relative flex-1 overflow-hidden"
         onTouchStart={handleTouchStart}
@@ -217,16 +192,8 @@ function Lightbox({
       >
         {!zoomed && images.length > 1 && (
           <>
-            <button
-              onClick={prev}
-              aria-label="Previous image"
-              className="absolute inset-y-0 left-0 w-1/2 z-10 cursor-w-resize"
-            />
-            <button
-              onClick={next}
-              aria-label="Next image"
-              className="absolute inset-y-0 right-0 w-1/2 z-10 cursor-e-resize"
-            />
+            <button onClick={prev} aria-label="Previous image" className="absolute inset-y-0 left-0 w-1/2 z-10 cursor-w-resize" />
+            <button onClick={next} aria-label="Next image" className="absolute inset-y-0 right-0 w-1/2 z-10 cursor-e-resize" />
           </>
         )}
 
@@ -245,9 +212,7 @@ function Lightbox({
             <div
               className="w-full h-full"
               style={{
-                transform: zoomed
-                  ? `scale(2) translate(${pan.x / 2}px, ${pan.y / 2}px)`
-                  : undefined,
+                transform: zoomed ? `scale(2) translate(${pan.x / 2}px, ${pan.y / 2}px)` : undefined,
                 transition: dragging ? 'none' : 'transform 0.25s ease',
               }}
             >
@@ -263,38 +228,33 @@ function Lightbox({
           </motion.div>
         </AnimatePresence>
 
-        {/* Counter */}
         <div className="absolute top-5 left-5 z-30 text-white/70 text-xs tracking-widest select-none pointer-events-none opacity-100 md:opacity-0 md:group-hover/lb:opacity-100 transition-opacity duration-200">
           {current + 1} / {images.length}
         </div>
 
-        {/* Prev arrow */}
         {!zoomed && images.length > 1 && (
-          <button
-            onClick={(e) => { e.stopPropagation(); prev() }}
-            aria-label="Previous image"
-            className="absolute left-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/50 hover:bg-black/70 hidden md:flex items-center justify-center opacity-0 group-hover/lb:opacity-100 transition-opacity duration-200"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); prev() }}
+              aria-label="Previous image"
+              className="absolute left-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/50 hover:bg-black/70 hidden md:flex items-center justify-center opacity-0 group-hover/lb:opacity-100 transition-opacity duration-200"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); next() }}
+              aria-label="Next image"
+              className="absolute right-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/50 hover:bg-black/70 hidden md:flex items-center justify-center opacity-0 group-hover/lb:opacity-100 transition-opacity duration-200"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </>
         )}
 
-        {/* Next arrow */}
-        {!zoomed && images.length > 1 && (
-          <button
-            onClick={(e) => { e.stopPropagation(); next() }}
-            aria-label="Next image"
-            className="absolute right-5 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/50 hover:bg-black/70 hidden md:flex items-center justify-center opacity-0 group-hover/lb:opacity-100 transition-opacity duration-200"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
-        )}
-
-        {/* Zoom toggle */}
         <button
           onClick={toggleZoom}
           aria-label={zoomed ? 'Zoom out' : 'Zoom in'}
@@ -311,36 +271,27 @@ function Lightbox({
           )}
         </button>
 
-        {/* Caption */}
         {caption && (
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 text-white/60 text-xs tracking-wide select-none whitespace-nowrap pointer-events-none opacity-100 md:opacity-0 md:group-hover/lb:opacity-100 transition-opacity duration-200">
             {caption}
           </div>
         )}
 
-        {/* Mobile close */}
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          className="md:hidden absolute top-4 right-4 z-40 w-9 h-9 rounded-full bg-black/50 flex items-center justify-center"
-        >
+        <button onClick={onClose} aria-label="Close" className="md:hidden absolute top-4 right-4 z-40 w-9 h-9 rounded-full bg-black/50 flex items-center justify-center">
           <CloseIcon />
         </button>
       </div>
 
-      {/* ── Right panel: desktop close button ── */}
       <div className="hidden md:flex flex-none w-14 flex-col items-center pt-5">
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-        >
+        <button onClick={onClose} aria-label="Close" className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
           <CloseIcon />
         </button>
       </div>
     </motion.div>
   )
 }
+
+// ─── Main export ─────────────────────────────────────────────────────────────
 
 export default function Gallery({ images, projectTitle, lang }: GalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -355,13 +306,12 @@ export default function Gallery({ images, projectTitle, lang }: GalleryProps) {
 
   return (
     <>
-      {/*
-        CSS columns gives a masonry-like flow so portrait and landscape
-        images sit at their own natural heights rather than being cropped
-        to a uniform grid cell. On mobile: 1 column. On md+: 3 columns.
-        `gap-2` between columns; individual thumbs use `mb-2` for row gap.
-      */}
       <div className="mt-16 max-w-[66.667%]">
+        {/*
+          CSS columns = masonry-like flow.
+          Each image renders at its own natural height via the width=0/height=0
+          Next.js trick — no stored dimensions needed.
+        */}
         <div className="columns-1 md:columns-3 gap-2">
           {images.map((image, i) => (
             <GalleryThumb
