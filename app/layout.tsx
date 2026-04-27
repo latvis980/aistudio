@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   description:
     'ai studio is an international architecture, design and urbanism practice based in London and Moscow.',
   metadataBase: new URL('https://aistudio.co.uk'),
+  alternates: {
+    canonical: '/',
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -33,6 +36,79 @@ export const metadata: Metadata = {
   },
 }
 
+const organizationLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': 'https://aistudio.co.uk/#organization',
+  name: 'ai studio',
+  alternateName: 'AI Studio',
+  legalName: 'ai international ltd',
+  url: 'https://aistudio.co.uk',
+  email: 'office@aistudio.co.uk',
+  description:
+    'ai studio is an international, multi-disciplinary architecture, design and urbanism practice with offices in London and Moscow.',
+  logo: 'https://aistudio.co.uk/web-app-manifest-512x512.png',
+  image: 'https://aistudio.co.uk/aistudio.png',
+  foundingDate: '2018',
+  founder: {
+    '@type': 'Person',
+    name: 'Anton Khmelnitskiy',
+    jobTitle: 'Founder & Principal',
+    alumniOf: { '@type': 'CollegeOrUniversity', name: 'Moscow Architectural Institute' },
+  },
+  knowsAbout: [
+    'Architecture',
+    'Urbanism',
+    'Master planning',
+    'Interior design',
+    'Hospitality design',
+    'Mixed-use development',
+    'Residential design',
+    'Public buildings',
+  ],
+  knowsLanguage: ['en', 'ru', 'ar', 'zh', 'es'],
+  areaServed: { '@type': 'Place', name: 'Worldwide' },
+  address: [
+    {
+      '@type': 'PostalAddress',
+      streetAddress: '79–89 Lots Road',
+      addressLocality: 'London',
+      postalCode: 'SW10 0RN',
+      addressCountry: 'GB',
+    },
+    {
+      '@type': 'PostalAddress',
+      streetAddress: "6 Novaya Ploshad'",
+      addressLocality: 'Moscow',
+      postalCode: '109012',
+      addressCountry: 'RU',
+    },
+  ],
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      contactType: 'general enquiries',
+      email: 'office@aistudio.co.uk',
+      availableLanguage: ['English', 'Russian', 'Arabic', 'Chinese', 'Spanish'],
+    },
+  ],
+  sameAs: [
+    'https://www.linkedin.com/company/aistudioprofile/',
+    'https://t.me/a_d_u_media',
+    'https://adu.media',
+  ],
+}
+
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': 'https://aistudio.co.uk/#website',
+  url: 'https://aistudio.co.uk',
+  name: 'ai studio',
+  publisher: { '@id': 'https://aistudio.co.uk/#organization' },
+  inLanguage: ['en-GB', 'ru-RU', 'ar', 'zh', 'es'],
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -44,7 +120,17 @@ export default function RootLayout({
 
   return (
     <html lang={lang} dir={rtl ? 'rtl' : 'ltr'}>
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
+        />
+        {children}
+      </body>
     </html>
   )
 }
