@@ -4,7 +4,6 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
-import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/navigation'
 import { Lang, LANGUAGES } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -25,15 +24,24 @@ const itemVariants: Variants = {
 
 export default function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
   const [open, setOpen] = useState(false)
+  const [switching, setSwitching] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   const current = LANGUAGES.find((l) => l.code === currentLang)!
 
-  function switchLang(code: Lang) {
-    setCookie('lang', code, { maxAge: 60 * 60 * 24 * 365 })
+  async function switchLang(code: Lang) {
+    if (code === currentLang || switching) return
+    setSwitching(true)
     setOpen(false)
+
+    // Set the cookie on the server FIRST, then refresh.
+    // This guarantees the new cookie is committed to the browser
+    // before Next.js re-renders the server components.
+    await fetch(`/api/set-lang?lang=${code}`)
+
     router.refresh()
+    setSwitching(false)
   }
 
   useEffect(() => {
@@ -50,7 +58,8 @@ export default function LanguageSwitcher({ currentLang }: LanguageSwitcherProps)
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 text-nav uppercase tracking-wide-nav text-muted hover:text-ink transition-colors duration-300"
+        disabled={switching}
+        className="flex items-center gap-1.5 text-nav uppercase tracking-wide-nav text-muted hover:text-ink transition-colors duration-300 disabled:opacity-50"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
