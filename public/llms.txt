@@ -1,0 +1,63 @@
+# ai studio
+
+> ai studio is an international, multi-disciplinary architecture, design and urbanism practice with offices in London and Moscow. The studio designs contemporary architecture grounded in context — across master planning, public and private buildings, hospitality, mixed-use, residential, office and interior projects. ai studio was formed in 2018 following the split of Architects of Invention; the practice has been operating under its principal since 2005.
+
+## Studio
+
+- **Trading name:** ai studio (also styled "AI Studio")
+- **Legal entity:** ai international ltd
+- **Founder & Principal:** Anton Khmelnitskiy — MArch, Moscow Architectural Institute (1997); formerly Partner at Foster + Partners (2005–2018)
+- **Disciplines:** architecture · design · urbanism
+- **Project typologies:** residential, office, public, hospitality, mixed-use, masterplan, interior
+- **Press categories:** media, interviews, awards
+- **Working languages:** English, Русский (Russian), العربية (Arabic), 中文 (Chinese), Español (Spanish)
+
+## Offices
+
+- **London (HQ):** 79–89 Lots Road, London SW10 0RN, United Kingdom
+- **Moscow:** 6 Novaya Ploshad', 109012 Moscow, Russia
+
+## Contact
+
+- Email: office@aistudio.co.uk
+- LinkedIn: https://www.linkedin.com/company/aistudioprofile/
+- Telegram (a/d/u media channel): https://t.me/a_d_u_media
+
+## Pages
+
+- [Home](https://aistudio.co.uk/): Studio introduction and featured projects.
+- [Studio](https://aistudio.co.uk/studio): About the practice, founder bio, offices and contact.
+- [Works](https://aistudio.co.uk/works): Complete portfolio of architecture, urbanism and interior projects.
+- [Journal](https://aistudio.co.uk/journal): Combined editorial feed (news, press, project essays).
+- [News](https://aistudio.co.uk/news): Studio announcements and project milestones.
+- [Press](https://aistudio.co.uk/press): Selected media coverage and publications.
+
+## Works by typology
+
+- [Residential](https://aistudio.co.uk/works?typology=residential)
+- [Office](https://aistudio.co.uk/works?typology=office)
+- [Public](https://aistudio.co.uk/works?typology=public)
+- [Hospitality](https://aistudio.co.uk/works?typology=hospitality)
+- [Mixed-use](https://aistudio.co.uk/works?typology=mixed-use)
+- [Masterplan](https://aistudio.co.uk/works?typology=masterplan)
+- [Interior](https://aistudio.co.uk/works?typology=interior)
+
+## Press categories
+
+- [Media coverage](https://aistudio.co.uk/press?category=media)
+- [Interviews](https://aistudio.co.uk/press?category=interviews)
+- [Awards](https://aistudio.co.uk/press?category=awards)
+
+## Sister project
+
+- [a/d/u media](https://adu.media): the studio's editorial channel on architecture, design and urbanism.
+
+## Legal
+
+- [Privacy Policy](https://aistudio.co.uk/privacy-policy)
+- [Cookie Policy](https://aistudio.co.uk/cookie-policy)
+
+## Machine-readable index
+
+- Sitemap: https://aistudio.co.uk/sitemap.xml
+- robots.txt: https://aistudio.co.uk/robots.txt
