@@ -112,7 +112,7 @@ export default async function ProjectPage({ params }: Props) {
             <Link href={`/works?typology=${p.typology}`}>
               <TagLabel plain>{t(p.typology, lang)}</TagLabel>
             </Link>
-            <Link href={`/works?typology=${p.status}`}>
+            <Link href={`/works?status=${p.status}`}>
               <TagLabel plain>{t(p.status, lang)}</TagLabel>
             </Link>
           </div>

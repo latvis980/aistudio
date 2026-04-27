@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default async function WorksPage({
   searchParams,
 }: {
-  searchParams: { typology?: string }
+  searchParams: { typology?: string; status?: string }
 }) {
   const cookieStore = cookies()
   const lang = getLangFromCookies(cookieStore)
@@ -43,7 +43,7 @@ export default async function WorksPage({
         <WorksFilter
           projects={(projects as Project[]) || []}
           lang={lang}
-          initialTypology={searchParams.typology}
+          initialTypology={searchParams.typology || searchParams.status}
         />
       </AnimatedEntry>
     </>
