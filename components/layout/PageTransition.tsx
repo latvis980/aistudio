@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 import { LayoutRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { useContext, useRef, ReactNode } from 'react'
+import { Lang } from '@/lib/types'
 
 function FrozenRouter({ children }: { children: ReactNode }) {
   const context = useContext(LayoutRouterContext)
@@ -24,13 +25,19 @@ function FrozenRouter({ children }: { children: ReactNode }) {
   )
 }
 
-export default function PageTransition({ children }: { children: ReactNode }) {
+export default function PageTransition({
+  children,
+  lang,
+}: {
+  children: ReactNode
+  lang: Lang
+}) {
   const pathname = usePathname()
 
   return (
     <AnimatePresence mode="popLayout" initial={false}>
       <motion.div
-        key={pathname}
+        key={`${pathname}-${lang}`}
         // The entering page is fully opaque so the morphing layoutId image
         // (e.g. project cover → hero) doesn't fade in during its motion.
         // Only the exiting page fades out — header text on the new page

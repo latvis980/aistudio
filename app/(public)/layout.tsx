@@ -30,7 +30,7 @@ export default function PublicLayout({
 
       {/* Main content area */}
       <main className="content-area px-6 lg:ps-content-px lg:pe-sidebar pt-28 lg:pt-12 pb-8 min-h-screen">
-        <PageTransition>{children}</PageTransition>
+        <PageTransition lang={lang}>{children}</PageTransition>
         <Footer lang={lang} />
       </main>
       <CookieBanner lang={lang} />
