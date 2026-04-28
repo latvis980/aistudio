@@ -29,6 +29,7 @@ export default function PressEditorPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [fetchingFavicon, setFetchingFavicon] = useState(false)
+  const [faviconCacheBust, setFaviconCacheBust] = useState(0)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -116,6 +117,7 @@ export default function PressEditorPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed')
       updateLocal('favicon_url', data.favicon_url)
+      setFaviconCacheBust(Date.now())
       setToast({ message: 'Favicon fetched', type: 'success' })
       setTimeout(() => setToast(null), 2000)
     } catch (err) {
@@ -210,7 +212,13 @@ export default function PressEditorPage() {
             <div className="flex items-center gap-3">
               {item.favicon_url && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={item.favicon_url} alt="" width={24} height={24} className="rounded-sm" />
+                <img
+                  src={faviconCacheBust ? `${item.favicon_url}${item.favicon_url.includes('?') ? '&' : '?'}t=${faviconCacheBust}` : item.favicon_url}
+                  alt=""
+                  width={24}
+                  height={24}
+                  className="rounded-sm"
+                />
               )}
               <button
                 type="button"
