@@ -38,15 +38,9 @@ function GalleryThumb({
       initial={{ opacity: 0, y: 16 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
       transition={{ duration: 0.4, delay: (index % 6) * 0.04 }}
-      // break-inside-avoid keeps the image in one column; mb-2 is the row gap
-      className="cursor-pointer overflow-hidden bg-gray-100 break-inside-avoid mb-2"
+      className="cursor-pointer overflow-hidden bg-gray-100"
       onClick={onClick}
     >
-      {/*
-        width={0} height={0} + style width/height is the Next.js trick for
-        rendering at the image's own natural aspect ratio without knowing
-        dimensions in advance. No stored width/height needed.
-      */}
       <Image
         src={image.url}
         alt={caption}
@@ -307,21 +301,34 @@ export default function Gallery({ images, projectTitle, lang }: GalleryProps) {
   return (
     <>
       <div className="mt-16">
-        {/*
-          CSS columns = masonry-like flow.
-          Each image renders at its own natural height via the width=0/height=0
-          Next.js trick — no stored dimensions needed.
-        */}
-        <div className="columns-1 md:columns-3 gap-2">
+        <div className="md:hidden flex flex-col gap-2">
           {images.map((image, i) => (
             <GalleryThumb
-              key={i}
+              key={`m-${i}`}
               image={image}
               index={i}
               projectTitle={projectTitle}
               lang={lang}
               onClick={() => openLightbox(i)}
             />
+          ))}
+        </div>
+        <div className="hidden md:flex gap-2">
+          {[0, 1, 2].map((col) => (
+            <div key={col} className="flex-1 flex flex-col gap-2 min-w-0">
+              {images.map((image, i) =>
+                i % 3 === col ? (
+                  <GalleryThumb
+                    key={i}
+                    image={image}
+                    index={i}
+                    projectTitle={projectTitle}
+                    lang={lang}
+                    onClick={() => openLightbox(i)}
+                  />
+                ) : null,
+              )}
+            </div>
           ))}
         </div>
       </div>
