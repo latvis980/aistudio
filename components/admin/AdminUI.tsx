@@ -126,11 +126,13 @@ export function ImageUpload({
   bucket,
   currentUrl,
   onUploaded,
+  onRemove,
   slug,
 }: {
   bucket: string
   currentUrl?: string | null
   onUploaded: (url: string) => void
+  onRemove?: () => void
   slug: string
 }) {
   const [uploading, setUploading] = useState(false)
@@ -180,20 +182,36 @@ export function ImageUpload({
         </div>
       )}
       <div className="flex flex-col gap-2">
-        <label className="
-          px-3 py-1.5 text-xs border border-gray-200 rounded-md bg-white
-          hover:bg-gray-50 cursor-pointer transition-colors inline-block
-          disabled:opacity-50
-        ">
-          {uploading ? 'Uploading…' : currentUrl ? 'Replace image' : 'Upload image'}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleUpload}
-            className="hidden"
-            disabled={uploading}
-          />
-        </label>
+        <div className="flex items-center gap-2">
+          <label className="
+            px-3 py-1.5 text-xs border border-gray-200 rounded-md bg-white
+            hover:bg-gray-50 cursor-pointer transition-colors inline-block
+            disabled:opacity-50
+          ">
+            {uploading ? 'Uploading…' : currentUrl ? 'Replace image' : 'Upload image'}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleUpload}
+              className="hidden"
+              disabled={uploading}
+            />
+          </label>
+          {currentUrl && onRemove && (
+            <button
+              type="button"
+              onClick={onRemove}
+              disabled={uploading}
+              className="
+                px-3 py-1.5 text-xs border border-gray-200 rounded-md bg-white
+                text-gray-500 hover:text-red-500 hover:border-red-200
+                transition-colors disabled:opacity-50
+              "
+            >
+              Remove
+            </button>
+          )}
+        </div>
         {currentUrl && (
           <p className="text-[11px] text-gray-400 break-all max-w-xs leading-relaxed">
             {decodeURIComponent(currentUrl.split('/').pop() || '')}

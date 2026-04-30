@@ -278,6 +278,7 @@ export default function ProjectEditorPage() {
               bucket="project-images"
               currentUrl={project.cover_image}
               onUploaded={(url) => updateLocal('cover_image', url)}
+              onRemove={() => updateLocal('cover_image', null)}
               slug={project.slug}
             />
           </fieldset>

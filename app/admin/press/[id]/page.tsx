@@ -246,7 +246,7 @@ export default function PressEditorPage() {
         <p className="text-xs text-gray-400 mb-3">
           Displayed on the individual article page.
         </p>
-        <ImageUpload bucket="press-images" currentUrl={item.cover_image} onUploaded={(url) => updateLocal('cover_image', url)} slug={item.slug} />
+        <ImageUpload bucket="press-images" currentUrl={item.cover_image} onUploaded={(url) => updateLocal('cover_image', url)} onRemove={() => updateLocal('cover_image', null)} slug={item.slug} />
       </fieldset>
 
       {/* Thumbnail image */}
@@ -259,6 +259,7 @@ export default function PressEditorPage() {
           bucket="press-images"
           currentUrl={item.thumbnail_image}
           onUploaded={(url) => updateLocal('thumbnail_image', url)}
+          onRemove={() => updateLocal('thumbnail_image', null)}
           slug={`${item.slug}-thumb`}
         />
       </fieldset>
