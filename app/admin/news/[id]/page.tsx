@@ -219,6 +219,7 @@ export default function NewsEditorPage() {
           bucket="news-images"
           currentUrl={item.cover_image}
           onUploaded={(url) => updateLocal('cover_image', url)}
+          onRemove={() => updateLocal('cover_image', null)}
           slug={item.slug}
         />
       </fieldset>
@@ -233,6 +234,7 @@ export default function NewsEditorPage() {
           bucket="news-images"
           currentUrl={item.thumbnail_image}
           onUploaded={(url) => updateLocal('thumbnail_image', url)}
+          onRemove={() => updateLocal('thumbnail_image', null)}
           slug={`${item.slug}-thumb`}
         />
         <label className="flex items-center gap-2 text-sm mt-4 cursor-pointer">
