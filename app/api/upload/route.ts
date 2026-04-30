@@ -53,7 +53,14 @@ export async function POST(request: NextRequest) {
       .from(bucket)
       .getPublicUrl(path)
 
-    return NextResponse.json({ publicUrl })
+    // Replacements overwrite the same storage path, so the public URL is
+    // identical to the previous one. Without a cache-buster, browsers, the
+    // Supabase CDN edge, and the Next.js image optimizer keep serving the
+    // old bytes. Stamp the URL with the upload time so each replace yields
+    // a unique URL that flows through to the DB.
+    const versionedUrl = `${publicUrl}?v=${Date.now()}`
+
+    return NextResponse.json({ publicUrl: versionedUrl })
   } catch (error) {
     console.error('Upload route error:', error)
     return NextResponse.json(

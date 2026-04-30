@@ -134,7 +134,6 @@ export function ImageUpload({
   slug: string
 }) {
   const [uploading, setUploading] = useState(false)
-  const [cacheBust, setCacheBust] = useState(0)
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -155,33 +154,25 @@ export function ImageUpload({
 
       if (!res.ok) {
         alert(`Upload failed: ${data.error || 'Unknown error'}`)
-        setUploading(false)
         return
       }
 
-      setCacheBust(Date.now())
       onUploaded(data.publicUrl)
     } catch {
       alert('Upload failed: network error')
+    } finally {
+      setUploading(false)
+      // Reset the input so the same file can be re-selected after replace
+      e.target.value = ''
     }
-
-    setUploading(false)
-    // Reset the input so the same file can be re-selected after replace
-    e.target.value = ''
   }
-
-  const previewSrc = currentUrl
-    ? cacheBust
-      ? `${currentUrl}${currentUrl.includes('?') ? '&' : '?'}t=${cacheBust}`
-      : currentUrl
-    : ''
 
   return (
     <div className="flex items-start gap-4">
       {currentUrl ? (
         <div className="w-32 h-20 rounded overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={previewSrc} alt="" className="w-full h-full object-cover" />
+          <img src={currentUrl} alt="" className="w-full h-full object-cover" />
         </div>
       ) : (
         <div className="w-32 h-20 rounded bg-gray-100 border border-dashed border-gray-300 shrink-0 flex items-center justify-center">

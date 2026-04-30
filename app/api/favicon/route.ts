@@ -63,7 +63,12 @@ export async function POST(request: NextRequest) {
       .from(BUCKET)
       .getPublicUrl(filename)
 
-    return NextResponse.json({ favicon_url: publicUrl })
+    // Re-fetches overwrite the same path, so the URL is identical without
+    // a cache-buster — the CDN/browser/Next.js image optimizer keeps the
+    // old bytes. Stamp it so each refetch produces a unique URL.
+    const versionedUrl = `${publicUrl}?v=${Date.now()}`
+
+    return NextResponse.json({ favicon_url: versionedUrl })
   } catch (error) {
     console.error('Favicon error:', error)
     return NextResponse.json(
