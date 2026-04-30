@@ -186,15 +186,23 @@ export default async function StudioPage() {
 
         <div className="mt-12">
           <p className="text-body-sm text-muted mb-4">ai studio london</p>
-          <div className="aspect-video">
-            <video
+          <div className="aspect-video relative">
+            <Image
+              src="/aistudio-london.jpg"
+              alt="ai studio london"
+              fill
+              sizes="(min-width: 1024px) 900px, 100vw"
+              className="object-cover"
+              priority
+            />
+            {/* <video
               src="/aistudio.mp4"
               className="w-full h-full object-cover"
               autoPlay
               muted
               loop
               playsInline
-            />
+            /> */}
           </div>
         </div>
       </AnimatedEntry>
