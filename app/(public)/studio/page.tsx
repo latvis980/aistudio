@@ -188,7 +188,7 @@ export default async function StudioPage() {
           <p className="text-body-sm text-muted mb-4">ai studio london</p>
           <div className="aspect-video relative">
             <Image
-              src="/aistudio-london.jpg"
+              src="/aistudio.png"
               alt="ai studio london"
               fill
               sizes="(min-width: 1024px) 900px, 100vw"
