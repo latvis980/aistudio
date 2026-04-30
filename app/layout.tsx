@@ -30,9 +30,11 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'ai studio',
     locale: 'en_GB',
+    images: ['/aistudio.png'],
   },
   twitter: {
     card: 'summary_large_image',
+    images: ['/aistudio.png'],
   },
 }
 
