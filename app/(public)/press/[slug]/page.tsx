@@ -129,7 +129,7 @@ export default async function PressDetailPage({ params }: Props) {
               alt={title}
               width={700}
               height={700}
-              className="max-w-full max-h-[700px] w-auto h-auto"
+              className="w-full h-auto"
               sizes="(max-width: 768px) 100vw, 700px"
               priority
             />
