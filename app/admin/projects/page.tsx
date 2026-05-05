@@ -32,7 +32,7 @@ const STATUSES: { value: Status; label: string }[] = [
 ]
 
 type Filter = 'all' | 'hidden' | 'featured' | 'nocover' | Typology | Status
-type SortKey = 'alpha' | 'updated'
+type SortKey = 'alpha' | 'updated' | 'order'
 type SortDir = 'asc' | 'desc'
 
 export default function AdminProjectsPage() {
@@ -159,6 +159,8 @@ export default function AdminProjectsPage() {
         let cmp = 0
         if (sortKey === 'alpha') {
           cmp = a.title_en.localeCompare(b.title_en)
+        } else if (sortKey === 'order') {
+          cmp = (a.display_order ?? Infinity) - (b.display_order ?? Infinity)
         } else {
           cmp = new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
         }
@@ -298,6 +300,22 @@ export default function AdminProjectsPage() {
             Updated
             <span className="text-[10px] leading-none">
               {sortKey === 'updated' ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+            </span>
+          </button>
+          <button
+            onClick={() => toggleSort('order')}
+            title="Sort by display order"
+            className={`
+              flex items-center gap-1 px-2 py-1 text-xs rounded-md transition-colors
+              ${sortKey === 'order'
+                ? 'bg-[#1a1a1a] text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+              }
+            `}
+          >
+            Order
+            <span className="text-[10px] leading-none">
+              {sortKey === 'order' ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
             </span>
           </button>
         </div>
