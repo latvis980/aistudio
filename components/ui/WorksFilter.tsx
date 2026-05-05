@@ -58,6 +58,7 @@ export default function WorksFilter({ projects, lang, initialTypology }: WorksFi
   function changeFilter(value: string) {
     setActiveFilter(value)
     setVisibleCount(PAGE_SIZE)
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   function changeSearch(value: string) {
