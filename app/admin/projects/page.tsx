@@ -32,6 +32,8 @@ const STATUSES: { value: Status; label: string }[] = [
 ]
 
 type Filter = 'all' | 'hidden' | 'featured' | 'nocover' | Typology | Status
+type SortKey = 'alpha' | 'updated'
+type SortDir = 'asc' | 'desc'
 
 export default function AdminProjectsPage() {
   const searchParams = useSearchParams()
@@ -43,6 +45,8 @@ export default function AdminProjectsPage() {
   const [loading, setLoading] = useState(!cachedProjects)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<Filter>(filterParam || 'all')
+  const [sortKey, setSortKey] = useState<SortKey | null>(null)
+  const [sortDir, setSortDir] = useState<SortDir>('asc')
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   // Sync local state to cache on every change
@@ -139,6 +143,28 @@ export default function AdminProjectsPage() {
         return true
     }
   })
+
+  // ── Sorting ──────────────────────────────────────
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortKey(key)
+      setSortDir('asc')
+    }
+  }
+
+  const sorted = sortKey
+    ? [...filtered].sort((a, b) => {
+        let cmp = 0
+        if (sortKey === 'alpha') {
+          cmp = a.title_en.localeCompare(b.title_en)
+        } else {
+          cmp = new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
+        }
+        return sortDir === 'asc' ? cmp : -cmp
+      })
+    : filtered
 
   // ── Bulk actions ─────────────────────────────────
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -238,6 +264,43 @@ export default function AdminProjectsPage() {
             onChange={(v) => setFilter((v || 'all') as Filter)}
           />
         </div>
+
+        {/* Sort buttons */}
+        <div className="flex items-center gap-1 ml-auto">
+          <span className="text-xs text-gray-400 mr-1">Sort by</span>
+          <button
+            onClick={() => toggleSort('alpha')}
+            title="Sort alphabetically"
+            className={`
+              flex items-center gap-1 px-2 py-1 text-xs rounded-md transition-colors
+              ${sortKey === 'alpha'
+                ? 'bg-[#1a1a1a] text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+              }
+            `}
+          >
+            A–Z
+            <span className="text-[10px] leading-none">
+              {sortKey === 'alpha' ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+            </span>
+          </button>
+          <button
+            onClick={() => toggleSort('updated')}
+            title="Sort by last updated"
+            className={`
+              flex items-center gap-1 px-2 py-1 text-xs rounded-md transition-colors
+              ${sortKey === 'updated'
+                ? 'bg-[#1a1a1a] text-white'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+              }
+            `}
+          >
+            Updated
+            <span className="text-[10px] leading-none">
+              {sortKey === 'updated' ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Bulk actions */}
@@ -274,10 +337,10 @@ export default function AdminProjectsPage() {
                 <th className="w-8 px-3 py-2.5">
                   <input
                     type="checkbox"
-                    checked={selected.size === filtered.length && filtered.length > 0}
+                    checked={selected.size === sorted.length && sorted.length > 0}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setSelected(new Set(filtered.map((p) => p.id)))
+                        setSelected(new Set(sorted.map((p) => p.id)))
                       } else {
                         setSelected(new Set())
                       }
@@ -296,7 +359,7 @@ export default function AdminProjectsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.map((project) => (
+              {sorted.map((project) => (
                 <tr
                   key={project.id}
                   className={`
@@ -410,7 +473,7 @@ export default function AdminProjectsPage() {
           </table>
         </div>
 
-        {filtered.length === 0 && (
+        {sorted.length === 0 && (
           <div className="px-6 py-12 text-center text-sm text-gray-400">
             No projects match this filter.
           </div>
