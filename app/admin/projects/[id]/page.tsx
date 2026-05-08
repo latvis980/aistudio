@@ -141,6 +141,25 @@ export default function ProjectEditorPage() {
   // ── Delete ───────────────────────────────────────
   const handleDelete = async () => {
     setDeleting(true)
+
+    // Unlink press/news (preserve the items, just clear the reference) and
+    // remove homepage slides (meaningless without the project) before
+    // deleting the project itself, so FK constraints don't block the delete.
+    const unlinkPress = await supabase
+      .from('press').update({ project_id: null }).eq('project_id', id)
+    const unlinkNews = await supabase
+      .from('news').update({ project_id: null }).eq('project_id', id)
+    const removeSlides = await supabase
+      .from('homepage_slides').delete().eq('project_id', id)
+
+    const cleanupError = unlinkPress.error || unlinkNews.error || removeSlides.error
+    if (cleanupError) {
+      setDeleting(false)
+      setToast({ message: `Delete failed: ${cleanupError.message}`, type: 'error' })
+      setShowDeleteConfirm(false)
+      return
+    }
+
     const { error } = await supabase.from('projects').delete().eq('id', id)
     setDeleting(false)
     if (error) {
