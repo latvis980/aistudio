@@ -31,6 +31,7 @@ export default async function WorksPage({
   const { data: projects } = await supabase
     .from('projects')
     .select('*')
+    .eq('show_in_journal', true)
     .order('display_order', { ascending: true })
 
   return (
