@@ -1,15 +1,20 @@
 'use client'
 
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect, useCallback, type ReactNode } from 'react'
 import Image from 'next/image'
 import { motion, useInView, AnimatePresence, type Variants } from 'framer-motion'
 import { GalleryImage, Lang } from '@/lib/types'
 import { getField } from '@/lib/i18n'
+import { rememberCoverDims, getCoverDims } from '@/lib/coverDimsCache'
 
 interface GalleryProps {
   images: GalleryImage[]
   projectTitle: string
   lang: Lang
+  /** Applied to the first image so it can morph from the Works feed cover. */
+  coverLayoutId?: string
+  /** Rendered between the first image and the rest of the gallery. */
+  bodySlot?: ReactNode
 }
 
 function GalleryThumb({
@@ -18,43 +23,69 @@ function GalleryThumb({
   projectTitle,
   lang,
   onClick,
+  layoutId,
 }: {
   image: GalleryImage
   index: number
   projectTitle: string
   lang: Lang
   onClick: () => void
+  layoutId?: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-30px' })
+
+  const [isPortrait, setIsPortrait] = useState<boolean | null>(() => {
+    if (typeof window === 'undefined') return null
+    const cached = getCoverDims(image.url)
+    return cached ? cached.h >= cached.w : null
+  })
 
   const caption = image.caption_en
     ? getField(image, 'caption', lang)
     : `${projectTitle} — ${index + 1}`
 
+  // The first image participates in a shared-layout morph from the feed.
+  // Skip the fade/translate so the morph plays cleanly.
+  const useFade = !layoutId
+
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 16 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-      transition={{ duration: 0.4, delay: (index % 6) * 0.04 }}
-      className="cursor-pointer overflow-hidden bg-gray-100"
+      layoutId={layoutId}
+      initial={useFade ? { opacity: 0, y: 16 } : false}
+      animate={useFade ? (isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }) : undefined}
+      transition={
+        useFade
+          ? { duration: 0.4 }
+          : { layout: { duration: 0.45, ease: [0.22, 0.61, 0.36, 1] } }
+      }
+      className="cursor-pointer flex justify-start"
       onClick={onClick}
+      suppressHydrationWarning
     >
       <Image
         src={image.url}
         alt={caption}
         width={0}
         height={0}
-        sizes="(max-width: 768px) 100vw, 33vw"
-        style={{ width: '100%', height: 'auto', display: 'block' }}
-        className="transition-transform duration-500 ease-out hover:scale-[1.04]"
+        sizes="(max-width: 768px) 100vw, 700px"
+        style={
+          isPortrait
+            ? { height: 'min(700px, 90vw)', width: 'auto', maxWidth: '100%' }
+            : { width: '100%', maxWidth: '700px', height: 'auto' }
+        }
+        onLoad={(e) => {
+          const img = e.currentTarget
+          rememberCoverDims(image.url, { w: img.naturalWidth, h: img.naturalHeight })
+          setIsPortrait(img.naturalHeight >= img.naturalWidth)
+        }}
       />
     </motion.div>
   )
 }
 
-// ─── Lightbox (unchanged) ────────────────────────────────────────────────────
+// ─── Lightbox ────────────────────────────────────────────────────────────────
 
 const fadeVariants: Variants = {
   enter: { opacity: 0 },
@@ -287,7 +318,13 @@ function Lightbox({
 
 // ─── Main export ─────────────────────────────────────────────────────────────
 
-export default function Gallery({ images, projectTitle, lang }: GalleryProps) {
+export default function Gallery({
+  images,
+  projectTitle,
+  lang,
+  coverLayoutId,
+  bodySlot,
+}: GalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
 
@@ -298,39 +335,32 @@ export default function Gallery({ images, projectTitle, lang }: GalleryProps) {
     setLightboxOpen(true)
   }
 
+  const [first, ...rest] = images
+
   return (
     <>
-      <div className="mt-16">
-        <div className="md:hidden flex flex-col gap-2">
-          {images.map((image, i) => (
-            <GalleryThumb
-              key={`m-${i}`}
-              image={image}
-              index={i}
-              projectTitle={projectTitle}
-              lang={lang}
-              onClick={() => openLightbox(i)}
-            />
-          ))}
-        </div>
-        <div className="hidden md:flex gap-2">
-          {[0, 1, 2].map((col) => (
-            <div key={col} className="flex-1 flex flex-col gap-2 min-w-0">
-              {images.map((image, i) =>
-                i % 3 === col ? (
-                  <GalleryThumb
-                    key={i}
-                    image={image}
-                    index={i}
-                    projectTitle={projectTitle}
-                    lang={lang}
-                    onClick={() => openLightbox(i)}
-                  />
-                ) : null,
-              )}
-            </div>
-          ))}
-        </div>
+      <div className="flex flex-col gap-8">
+        <GalleryThumb
+          image={first}
+          index={0}
+          projectTitle={projectTitle}
+          lang={lang}
+          onClick={() => openLightbox(0)}
+          layoutId={coverLayoutId}
+        />
+
+        {bodySlot}
+
+        {rest.map((image, i) => (
+          <GalleryThumb
+            key={i + 1}
+            image={image}
+            index={i + 1}
+            projectTitle={projectTitle}
+            lang={lang}
+            onClick={() => openLightbox(i + 1)}
+          />
+        ))}
       </div>
 
       <AnimatePresence>

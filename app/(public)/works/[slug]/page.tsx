@@ -13,7 +13,6 @@ import TagLabel from '@/components/ui/TagLabel'
 import BracketLink from '@/components/ui/BracketLink'
 import SpecsGrid from '@/components/ui/SpecsGrid'
 import Gallery from '@/components/ui/Gallery'
-import HeroSlideshow from '@/components/ui/HeroSlideshow'
 import VimeoEmbed from '@/components/ui/VimeoEmbed'
 import { StaggerContainer, StaggerItem } from '@/components/ui/StaggerReveal'
 
@@ -133,34 +132,37 @@ export default async function ProjectPage({ params }: Props) {
       <div className="max-w-[800px]">
 
         {(() => {
-          const heroImages: GalleryImage[] = []
-          if (p.cover_image) heroImages.push({ url: p.cover_image })
-          heroImages.push(...(p.gallery || []).filter((img) => img.is_hero))
-          if (heroImages.length === 0) return null
+          const coverUrl = p.cover_image
+          const galleryImages: GalleryImage[] = []
+          if (coverUrl) galleryImages.push({ url: coverUrl })
+          for (const img of p.gallery || []) {
+            if (img.url !== coverUrl) galleryImages.push(img)
+          }
+          if (galleryImages.length === 0) {
+            return (body || description) ? (
+              <section className="mb-12">
+                <div className="text-body text-ink/90 whitespace-pre-line">
+                  {body || description}
+                </div>
+              </section>
+            ) : null
+          }
           return (
-            <div className="mb-12">
-              <HeroSlideshow
-                images={heroImages}
-                title={title}
-                coverLayoutId={p.cover_image ? `project-cover-${p.slug}` : undefined}
-              />
-            </div>
+            <Gallery
+              images={galleryImages}
+              projectTitle={title}
+              lang={lang}
+              coverLayoutId={coverUrl ? `project-cover-${p.slug}` : undefined}
+              bodySlot={
+                (body || description) ? (
+                  <div className="text-body text-ink/90 whitespace-pre-line">
+                    {body || description}
+                  </div>
+                ) : null
+              }
+            />
           )
         })()}
-
-        {(body || description) && (
-          <section className="mb-12">
-            <div className="text-body text-ink/90 whitespace-pre-line">
-              {body || description}
-            </div>
-          </section>
-        )}
-
-        <Gallery
-          images={p.gallery || []}
-          projectTitle={title}
-          lang={lang}
-        />
 
         {p.vimeo_url && (
           <div className="mt-12">
