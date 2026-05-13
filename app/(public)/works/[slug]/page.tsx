@@ -119,7 +119,7 @@ export default async function ProjectPage({ params }: Props) {
         </StaggerItem>
 
         <StaggerItem>
-          <h1 className="page-title mb-2">{title}</h1>
+          <h1 className="text-[1.3rem] lg:text-[2.275rem] leading-[1.1] lowercase font-light text-ink mb-2">{title}</h1>
         </StaggerItem>
 
         {location && (
@@ -150,18 +150,11 @@ export default async function ProjectPage({ params }: Props) {
 
         {(body || description) && (
           <section className="mb-12">
-            <h2 className="section-label mb-6">{t('project_info', lang)}</h2>
             <div className="text-body text-ink/90 whitespace-pre-line">
               {body || description}
             </div>
           </section>
         )}
-
-        <SpecsGrid
-          specs={p.specs || {}}
-          designTeam={p.design_team}
-          executionTeam={p.execution_team}
-        />
 
         <Gallery
           images={p.gallery || []}
@@ -174,6 +167,12 @@ export default async function ProjectPage({ params }: Props) {
             <VimeoEmbed url={p.vimeo_url} />
           </div>
         )}
+
+        <SpecsGrid
+          specs={p.specs || {}}
+          designTeam={p.design_team}
+          executionTeam={p.execution_team}
+        />
 
       </div>
       {/* ── end 800px column ── */}
